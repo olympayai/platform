@@ -513,6 +513,7 @@ export default function Landing() {
             borderRight: isMobile ? "none" : `1px solid ${C.border}`,
             borderBottom: isMobile ? `1px solid ${C.border}` : "none",
             display: "flex", flexDirection: "column", justifyContent: "center",
+            overflow: "hidden", minWidth: 0,
           }}>
             <div style={{
               display: "inline-flex", alignItems: "center",
@@ -553,48 +554,44 @@ export default function Landing() {
               OPEN YOUR ACCOUNT
             </button>
 
-            {/* Logo ticker */}
-            <div style={{ marginTop: "64px", overflow: "hidden", position: "relative" }}>
-              <style>{`
-                @keyframes ticker {
-                  0%   { transform: translateX(0); }
-                  100% { transform: translateX(-50%); }
-                }
-                .logo-ticker { animation: ticker 18s linear infinite; }
-                .logo-ticker:hover { animation-play-state: paused; }
-              `}</style>
-              <div className="logo-ticker" style={{
-                display: "flex", alignItems: "center", gap: "48px",
-                width: "max-content",
-              }}>
-                {[...["Stripe", "OpenAI", "Anthropic", "Visa", "Mastercard", "OpenClaw"],
-                  ...["Stripe", "OpenAI", "Anthropic", "Visa", "Mastercard", "OpenClaw"]
-                ].map((logo, i) => (
-                  <span key={i} style={{ display: "flex", alignItems: "center", gap: "48px" }}>
-                    <span style={{
-                      fontFamily: MONO, fontSize: "11px",
-                      color: "rgba(10,10,8,0.22)", letterSpacing: "0.08em",
-                      whiteSpace: "nowrap", userSelect: "none",
-                    }}>{logo}</span>
-                    <span style={{
-                      width: "3px", height: "3px", borderRadius: "50%",
-                      background: "rgba(196,146,58,0.3)", flexShrink: 0,
-                      display: "inline-block",
-                    }} />
-                  </span>
+            {/* Partner logos */}
+            <div style={{ marginTop: "56px" }}>
+              <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(10,10,8,0.3)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "16px" }}>
+                Works with
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                {[
+                  { name: "Stripe",     dot: "#635BFF" },
+                  { name: "OpenAI",     dot: "#10a37f" },
+                  { name: "Anthropic",  dot: "#cc785c" },
+                  { name: "Visa",       dot: "#1A1F71" },
+                  { name: "Mastercard", dot: "#EB001B" },
+                  { name: "OpenClaw",   dot: C.gold },
+                ].map(l => (
+                  <div key={l.name} style={{
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    padding: "5px 10px",
+                    border: `1px solid ${C.border}`, borderRadius: "4px",
+                    background: "rgba(255,255,255,0.5)",
+                  }}>
+                    <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: l.dot, flexShrink: 0 }} />
+                    <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(10,10,8,0.55)", letterSpacing: "0.06em" }}>{l.name}</span>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right — hidden on mobile */}
+          {/* Right — visible on tablet+, hidden only on small mobile */}
           {!isMobile && (
             <div style={{
-              padding: "64px 72px",
+              padding: isTablet ? "40px 32px" : "56px 72px",
               display: "flex", alignItems: "center", justifyContent: "center",
               background: C.cream,
             }}>
-              <DarkCard />
+              <div style={{ transform: isTablet ? "scale(0.82)" : "scale(1)", transformOrigin: "center center" }}>
+                <DarkCard />
+              </div>
             </div>
           )}
         </div>
