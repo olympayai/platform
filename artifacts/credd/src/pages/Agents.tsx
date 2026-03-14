@@ -162,10 +162,10 @@ export default function Agents() {
                 </button>
                 <button 
                   type="submit" 
-                  disabled={isPending}
+                  disabled={isCreating}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2.5 rounded-xl font-medium shadow-lg shadow-primary/25 disabled:opacity-50 transition-all"
                 >
-                  {isPending ? 'Creating...' : 'Create Agent'}
+                  {isCreating ? 'Creating...' : 'Create Agent'}
                 </button>
               </div>
             </form>

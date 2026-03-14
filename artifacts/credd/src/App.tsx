@@ -11,7 +11,9 @@ import Cards from "@/pages/Cards";
 import Policies from "@/pages/Policies";
 import Transactions from "@/pages/Transactions";
 import Approvals from "@/pages/Approvals";
+import Merchants from "@/pages/Merchants";
 import AuditLogs from "@/pages/AuditLogs";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -34,7 +36,9 @@ function Router() {
         <Route path="/policies" component={Policies} />
         <Route path="/transactions" component={Transactions} />
         <Route path="/approvals" component={Approvals} />
+        <Route path="/merchants" component={Merchants} />
         <Route path="/audit-logs" component={AuditLogs} />
+        <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
     </AppLayout>
