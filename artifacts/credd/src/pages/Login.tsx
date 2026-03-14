@@ -121,44 +121,6 @@ export default function Login() {
               )}
             </button>
 
-            {/* Divider */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: "12px",
-              margin: "20px 0",
-            }}>
-              <div style={{ flex: 1, height: "1px", background: BORDER }} />
-              <span style={{ fontFamily: MONO, fontSize: "9px", color: MUTED, letterSpacing: "0.1em" }}>OR</span>
-              <div style={{ flex: 1, height: "1px", background: BORDER }} />
-            </div>
-
-            {/* Wallet login via Privy modal (covers wallet too) */}
-            <button
-              onClick={login}
-              disabled={!ready}
-              style={{
-                width: "100%", padding: "11px 20px",
-                fontFamily: MONO, fontSize: "11px", fontWeight: 500,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                background: "transparent", color: MUTED,
-                border: `1px solid ${BORDER}`, borderRadius: "4px",
-                cursor: ready ? "pointer" : "not-allowed",
-                opacity: ready ? 1 : 0.6,
-                transition: "all 0.15s",
-              }}
-              onMouseEnter={e => {
-                if (ready) {
-                  (e.currentTarget as HTMLElement).style.borderColor = GOLD;
-                  (e.currentTarget as HTMLElement).style.color = GOLD;
-                }
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = BORDER;
-                (e.currentTarget as HTMLElement).style.color = MUTED;
-              }}
-            >
-              More sign-in options
-            </button>
-
             {/* Terms note */}
             <p style={{
               fontFamily: SANS, fontSize: "11px", color: MUTED,
