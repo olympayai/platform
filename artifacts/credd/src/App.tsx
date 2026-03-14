@@ -59,17 +59,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
-      <Route path="/dashboard" component={DashboardRouter} />
-      <Route path="/agents" component={DashboardRouter} />
-      <Route path="/accounts" component={DashboardRouter} />
-      <Route path="/cards" component={DashboardRouter} />
-      <Route path="/policies" component={DashboardRouter} />
-      <Route path="/transactions" component={DashboardRouter} />
-      <Route path="/approvals" component={DashboardRouter} />
-      <Route path="/merchants" component={DashboardRouter} />
-      <Route path="/audit-logs" component={DashboardRouter} />
-      <Route path="/api" component={DashboardRouter} />
-      <Route path="/settings" component={DashboardRouter} />
+      <Route path="/:rest*" component={DashboardRouter} />
       <Route component={NotFound} />
     </Switch>
   );

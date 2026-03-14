@@ -1,5 +1,5 @@
 import { Shield, Bell, Key, Database } from "lucide-react";
-import { PageHeader, GOLD, BLACK, CREAM, BORDER, MUTED, MONO, SANS, SERIF } from "@/components/ui/page-shell";
+import { PageHeader, GOLD, BLACK, CREAM, BORDER, MUTED, MONO, SANS } from "@/components/ui/page-shell";
 
 const ITEMS = [
   { icon: Shield,   title: "Security",       desc: "API keys, access controls, and authentication settings.",      badge: "Configure" },

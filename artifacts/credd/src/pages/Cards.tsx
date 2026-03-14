@@ -82,16 +82,17 @@ export default function Cards() {
                   <TD>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div style={{
-                        height: "28px", width: "44px", background: BLACK,
-                        borderRadius: "3px", display: "flex", alignItems: "center", justifyContent: "center",
+                        height: "30px", width: "48px", background: BLACK,
+                        borderRadius: "4px", display: "flex", alignItems: "center", justifyContent: "center",
+                        flexShrink: 0,
                       }}>
-                        <span style={{ fontFamily: MONO, fontSize: "8px", color: "#c4923a", fontWeight: 700 }}>
-                          {(card.brand || "VISA").toUpperCase()}
+                        <span style={{ fontFamily: MONO, fontSize: "9px", color: "#c4923a", fontWeight: 700, letterSpacing: "0.04em" }}>
+                          {card.brand?.toLowerCase() === "mastercard" ? "MC" : (card.brand || "VISA").toUpperCase().slice(0, 4)}
                         </span>
                       </div>
                       <div>
-                        <div style={{ fontFamily: MONO, fontWeight: 600 }}>•••• {card.last4 || "****"}</div>
-                        <div style={{ fontFamily: MONO, fontSize: "10px", color: MUTED }}>{card.id.substring(0, 12)}...</div>
+                        <div style={{ fontFamily: MONO, fontSize: "13px", fontWeight: 600 }}>•••• {card.last4 || "****"}</div>
+                        <div style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginTop: "2px" }}>{card.id.substring(0, 14)}…</div>
                       </div>
                     </div>
                   </TD>
