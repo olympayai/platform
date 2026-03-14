@@ -552,14 +552,37 @@ export default function Landing() {
               OPEN YOUR ACCOUNT
             </button>
 
-            {/* Logos */}
-            <div style={{ display: "flex", alignItems: "center", gap: "32px", marginTop: "64px" }}>
-              {["Stripe", "OpenAI", "LangChain", "Anthropic"].map((logo) => (
-                <span key={logo} style={{
-                  fontFamily: MONO, fontSize: "11px",
-                  color: "rgba(10,10,8,0.25)", letterSpacing: "0.05em",
-                }}>{logo}</span>
-              ))}
+            {/* Logo ticker */}
+            <div style={{ marginTop: "64px", overflow: "hidden", position: "relative" }}>
+              <style>{`
+                @keyframes ticker {
+                  0%   { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+                .logo-ticker { animation: ticker 18s linear infinite; }
+                .logo-ticker:hover { animation-play-state: paused; }
+              `}</style>
+              <div className="logo-ticker" style={{
+                display: "flex", alignItems: "center", gap: "48px",
+                width: "max-content",
+              }}>
+                {[...["Stripe", "OpenAI", "Anthropic", "Visa", "Mastercard", "OpenClaw"],
+                  ...["Stripe", "OpenAI", "Anthropic", "Visa", "Mastercard", "OpenClaw"]
+                ].map((logo, i) => (
+                  <span key={i} style={{ display: "flex", alignItems: "center", gap: "48px" }}>
+                    <span style={{
+                      fontFamily: MONO, fontSize: "11px",
+                      color: "rgba(10,10,8,0.22)", letterSpacing: "0.08em",
+                      whiteSpace: "nowrap", userSelect: "none",
+                    }}>{logo}</span>
+                    <span style={{
+                      width: "3px", height: "3px", borderRadius: "50%",
+                      background: "rgba(196,146,58,0.3)", flexShrink: 0,
+                      display: "inline-block",
+                    }} />
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
