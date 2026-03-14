@@ -12,14 +12,13 @@ export default function Merchants() {
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Merchants</h1>
+          <h1 className="text-2xl font-bold text-[#000000]">Merchants</h1>
           <p className="text-sm text-slate-500 mt-1">Manage merchant allowlists, blocklists, and spending rules.</p>
         </div>
         <button className="bg-primary hover:bg-primary/90 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg shadow-primary/20">
           <Plus className="h-4 w-4" /> Add Merchant
         </button>
       </div>
-
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl overflow-hidden">
         <div className="p-4 border-b border-white/[0.06] flex items-center gap-3">
           <Search className="h-4 w-4 text-slate-500" />
@@ -47,7 +46,7 @@ export default function Merchants() {
                       <Store className="h-4 w-4 text-slate-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-white">{m.name}</p>
+                      <p className="font-medium text-[#000000]">{m.name}</p>
                       <p className="text-[11px] font-mono text-slate-600">{m.id}</p>
                     </div>
                   </div>
