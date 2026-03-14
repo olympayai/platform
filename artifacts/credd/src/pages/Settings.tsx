@@ -1,48 +1,84 @@
-import { Settings as SettingsIcon, Shield, Bell, Key, Database } from "lucide-react";
+import { Shield, Bell, Key, Database } from "lucide-react";
+import { PageHeader, GOLD, BLACK, CREAM, BORDER, MUTED, MONO, SANS, SERIF } from "@/components/ui/page-shell";
+
+const ITEMS = [
+  { icon: Shield,   title: "Security",       desc: "API keys, access controls, and authentication settings.",      badge: "Configure" },
+  { icon: Bell,     title: "Notifications",  desc: "Manage alerts for approvals, policy violations, and anomalies.", badge: "Configure" },
+  { icon: Key,      title: "API Access",     desc: "Generate and manage API credentials for agents.",               badge: "Manage" },
+  { icon: Database, title: "Data Retention", desc: "Configure how long audit logs and transaction data are kept.",   badge: "Configure" },
+];
+
+const PLATFORM_INFO = [
+  { label: "Version",        value: "1.0.0" },
+  { label: "Environment",    value: "Production" },
+  { label: "Region",         value: "us-east-1" },
+  { label: "Policy engine",  value: "Olympay v1 (ALLOW / DENY / REVIEW)" },
+];
 
 export default function Settings() {
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <div>
-        <h1 className="text-2xl font-bold text-[#000000]">Settings</h1>
-        <p className="text-sm text-slate-500 mt-1">Configure platform behaviour, security, and notifications.</p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[
-          { icon: Shield, title: "Security", desc: "API keys, access controls, and authentication settings.", badge: "Configure" },
-          { icon: Bell, title: "Notifications", desc: "Manage alerts for approvals, policy violations, and anomalies.", badge: "Configure" },
-          { icon: Key, title: "API Access", desc: "Generate and manage API credentials for agents.", badge: "Manage" },
-          { icon: Database, title: "Data Retention", desc: "Configure how long audit logs and transaction data are kept.", badge: "Configure" },
-        ].map((item) => (
+    <div>
+      <PageHeader title="Settings" subtitle="Configure platform behaviour, security, and notifications." />
+
+      {/* Setting cards grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", marginBottom: "24px" }}>
+        {ITEMS.map((item) => (
           <div
             key={item.title}
-            className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 hover:bg-white/[0.05] transition-all cursor-pointer group"
+            style={{
+              background: "#fff",
+              border: `1px solid ${BORDER}`,
+              borderRadius: "8px",
+              padding: "20px",
+              cursor: "pointer",
+              transition: "border-color 0.15s",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = GOLD; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = BORDER; }}
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-white/[0.05] rounded-lg">
-                <item.icon className="h-4 w-4 text-slate-400" />
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+              <div style={{
+                padding: "8px",
+                background: CREAM,
+                border: `1px solid ${BORDER}`,
+                borderRadius: "6px",
+                display: "inline-flex",
+              }}>
+                <item.icon size={14} color={MUTED} />
               </div>
-              <span className="text-[11px] text-primary border border-primary/30 bg-primary/10 rounded px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                {item.badge}
-              </span>
+              <span style={{
+                fontFamily: MONO, fontSize: "9px", fontWeight: 700,
+                color: GOLD, background: `${GOLD}12`,
+                border: `1px solid ${GOLD}35`,
+                borderRadius: "3px", padding: "2px 8px",
+                letterSpacing: "0.08em", textTransform: "uppercase",
+              }}>{item.badge}</span>
             </div>
-            <h3 className="text-sm font-semibold text-white mb-1">{item.title}</h3>
-            <p className="text-xs text-slate-500">{item.desc}</p>
+            <div>
+              <p style={{ fontFamily: SANS, fontSize: "13px", fontWeight: 600, color: BLACK, marginBottom: "4px" }}>{item.title}</p>
+              <p style={{ fontFamily: SANS, fontSize: "12px", color: MUTED, lineHeight: 1.6 }}>{item.desc}</p>
+            </div>
           </div>
         ))}
       </div>
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
-        <h3 className="text-sm font-semibold text-white mb-4">Platform information</h3>
-        <div className="space-y-3 text-sm">
-          {[
-            { label: "Version", value: "1.0.0" },
-            { label: "Environment", value: "Production" },
-            { label: "Region", value: "us-east-1" },
-            { label: "Policy engine", value: "Dredd v1 (ALLOW / DENY / REVIEW)" },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
-              <span className="text-slate-500">{label}</span>
-              <span className="text-slate-300 font-mono text-xs">{value}</span>
+
+      {/* Platform info panel */}
+      <div style={{ background: "#fff", border: `1px solid ${BORDER}`, borderRadius: "8px", overflow: "hidden" }}>
+        <div style={{ padding: "16px 20px", borderBottom: `1px solid ${BORDER}`, background: CREAM }}>
+          <p style={{ fontFamily: SANS, fontSize: "13px", fontWeight: 600, color: BLACK }}>Platform information</p>
+        </div>
+        <div style={{ padding: "0 20px" }}>
+          {PLATFORM_INFO.map(({ label, value }, i) => (
+            <div key={label} style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "14px 0",
+              borderBottom: i < PLATFORM_INFO.length - 1 ? `1px solid ${BORDER}` : "none",
+            }}>
+              <span style={{ fontFamily: SANS, fontSize: "13px", color: MUTED }}>{label}</span>
+              <span style={{ fontFamily: MONO, fontSize: "11px", color: BLACK }}>{value}</span>
             </div>
           ))}
         </div>
