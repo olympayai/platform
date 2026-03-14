@@ -20,7 +20,6 @@ import AuditLogs from "@/pages/AuditLogs";
 import Api from "@/pages/Api";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
-import Banner from "@/pages/Banner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,7 +59,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
-      <Route path="/banner" component={Banner} />
       <Route path="/dashboard" component={DashboardRouter} />
       <Route path="/agents" component={DashboardRouter} />
       <Route path="/accounts" component={DashboardRouter} />
