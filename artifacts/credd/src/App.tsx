@@ -17,6 +17,7 @@ import Transactions from "@/pages/Transactions";
 import Approvals from "@/pages/Approvals";
 import Merchants from "@/pages/Merchants";
 import AuditLogs from "@/pages/AuditLogs";
+import Api from "@/pages/Api";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
@@ -45,6 +46,7 @@ function DashboardRouter() {
           <Route path="/approvals" component={Approvals} />
           <Route path="/merchants" component={Merchants} />
           <Route path="/audit-logs" component={AuditLogs} />
+          <Route path="/api" component={Api} />
           <Route path="/settings" component={Settings} />
         </Switch>
       </AppLayout>
@@ -66,6 +68,7 @@ function Router() {
       <Route path="/approvals" component={DashboardRouter} />
       <Route path="/merchants" component={DashboardRouter} />
       <Route path="/audit-logs" component={DashboardRouter} />
+      <Route path="/api" component={DashboardRouter} />
       <Route path="/settings" component={DashboardRouter} />
       <Route component={NotFound} />
     </Switch>
