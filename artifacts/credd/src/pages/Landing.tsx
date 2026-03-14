@@ -94,100 +94,163 @@ const USE_CASES = [
 /* ─── Dark virtual card component ─── */
 function DarkCard() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
-      {/* Card */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "14px", width: "380px" }}>
+
+      {/* ── Physical card ── */}
       <div style={{
-        background: C.cardBg,
-        borderRadius: "12px",
-        padding: "24px",
-        width: "340px",
-        border: `1px solid rgba(255,255,255,0.08)`,
+        width: "100%",
+        aspectRatio: "1.586",
+        background: "linear-gradient(145deg, #1c1c19 0%, #0d0d0b 55%, #1e190f 100%)",
+        borderRadius: "18px",
+        padding: "26px 28px",
+        boxSizing: "border-box",
+        border: "1px solid rgba(196,146,58,0.18)",
+        boxShadow: "0 24px 56px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Activity size={14} color={C.goldLight} />
-            <span style={{ fontFamily: MONO, fontSize: "11px", color: C.goldLight, fontWeight: 500 }}>Credd AI</span>
+        {/* Decorative radial glows */}
+        <div style={{
+          position: "absolute", top: "-80px", right: "-80px",
+          width: "260px", height: "260px", borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(196,146,58,0.09) 0%, transparent 65%)",
+          pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute", bottom: "-50px", left: "-30px",
+          width: "200px", height: "200px", borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(196,146,58,0.05) 0%, transparent 65%)",
+          pointerEvents: "none",
+        }} />
+
+        {/* Top row */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
+            <div style={{
+              width: "30px", height: "30px", borderRadius: "7px",
+              background: "rgba(196,146,58,0.14)",
+              border: "1px solid rgba(196,146,58,0.28)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <Activity size={13} color={C.goldLight} />
+            </div>
+            <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 700, letterSpacing: "0.07em" }}>CREDD AI</span>
           </div>
-          <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.1em" }}>VISA</span>
+          {/* Network circles (Mastercard-style) */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "rgba(255,255,255,0.13)", marginRight: "-10px", zIndex: 1 }} />
+            <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "rgba(196,146,58,0.38)" }} />
+          </div>
         </div>
 
-        <div style={{ fontFamily: MONO, fontSize: "15px", color: C.cardText, letterSpacing: "0.3em", marginBottom: "6px" }}>
-          •••• •••• •••• 7842
-        </div>
-        <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
-          <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em" }}>EXP</div>
-            <div style={{ fontFamily: MONO, fontSize: "11px", color: C.cardText }}>12/25</div>
+        {/* Middle: chip + PAN */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          {/* EMV chip */}
+          <div style={{
+            width: "38px", height: "28px", borderRadius: "5px",
+            background: "linear-gradient(135deg, #d4a845 0%, #a07830 45%, #c9983f 100%)",
+            marginBottom: "18px",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
+            position: "relative", overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: "1px", background: "rgba(0,0,0,0.18)", transform: "translateY(-50%)" }} />
+            <div style={{ position: "absolute", top: 0, bottom: 0, left: "50%", width: "1px", background: "rgba(0,0,0,0.15)", transform: "translateX(-50%)" }} />
+            <div style={{ position: "absolute", top: "6px", left: "6px", right: "6px", bottom: "6px", borderRadius: "2px", border: "1px solid rgba(0,0,0,0.12)" }} />
           </div>
-          <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em" }}>CVV</div>
-            <div style={{ fontFamily: MONO, fontSize: "11px", color: C.cardText }}>•••</div>
+          <div style={{ fontFamily: MONO, fontSize: "16px", color: "#e6dcc6", letterSpacing: "0.26em", fontWeight: 500 }}>
+            •••• •••• •••• 7842
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        {/* Bottom row */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", position: "relative", zIndex: 1 }}>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>AGENT</div>
-            <div style={{ fontFamily: MONO, fontSize: "12px", color: C.cardText, fontWeight: 500, letterSpacing: "0.05em" }}>PROCUREMENT-BOT</div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "6px", marginBottom: "2px" }}>CARD TYPE</div>
-            <div style={{ fontFamily: MONO, fontSize: "11px", color: C.cardText }}>MULTI_USE</div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(229,212,175,0.45)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "3px" }}>Agent</div>
+            <div style={{ fontFamily: MONO, fontSize: "12px", color: "#e6dcc6", fontWeight: 600, letterSpacing: "0.05em", marginBottom: "10px" }}>PROCUREMENT-BOT</div>
+            <div style={{ display: "flex", gap: "22px" }}>
+              <div>
+                <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(229,212,175,0.45)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "2px" }}>Valid thru</div>
+                <div style={{ fontFamily: MONO, fontSize: "11px", color: "#e6dcc6" }}>12 / 27</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(229,212,175,0.45)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "2px" }}>CVV</div>
+                <div style={{ fontFamily: MONO, fontSize: "11px", color: "#e6dcc6" }}>•••</div>
+              </div>
+            </div>
           </div>
           <div style={{ textAlign: "right" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", justifyContent: "flex-end", marginBottom: "4px" }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }}></div>
-              <span style={{ fontFamily: MONO, fontSize: "9px", color: "#4ade80", letterSpacing: "0.1em" }}>ACTIVE</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", justifyContent: "flex-end", marginBottom: "8px" }}>
+              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#4ade80" }} />
+              <span style={{ fontFamily: MONO, fontSize: "8px", color: "#4ade80", letterSpacing: "0.14em" }}>ACTIVE</span>
             </div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>LIMIT</div>
-            <div style={{ fontFamily: MONO, fontSize: "13px", color: "#4ade80", fontWeight: 600 }}>$1,500</div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(229,212,175,0.45)", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "3px" }}>Spend limit</div>
+            <div style={{ fontFamily: MONO, fontSize: "22px", color: C.goldLight, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1 }}>$1,500</div>
           </div>
         </div>
       </div>
 
-      {/* Virtual Account */}
+      {/* ── Virtual Account panel ── */}
       <div style={{
         background: "#fff",
         border: `1px solid ${C.border}`,
-        borderTop: "none",
-        borderRadius: "0 0 12px 12px",
-        padding: "20px 24px",
-        width: "340px",
+        borderRadius: "14px",
+        padding: "18px 22px",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
       }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <Activity size={10} color={C.gold} />
-            <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.12em", textTransform: "uppercase" }}>Virtual Account</span>
+        {/* Header */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          marginBottom: "14px", paddingBottom: "12px",
+          borderBottom: `1px solid ${C.border}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+            <Activity size={11} color={C.gold} />
+            <span style={{ fontFamily: MONO, fontSize: "9px", color: C.black, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Virtual Account</span>
           </div>
-          <div>
-            <span style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.1em" }}>ACH · Fedwire</span>
-          </div>
+          <span style={{
+            fontFamily: MONO, fontSize: "8px", color: C.muted,
+            letterSpacing: "0.08em", background: C.cream,
+            border: `1px solid ${C.border}`, padding: "2px 8px", borderRadius: "4px",
+          }}>ACH · Fedwire</span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+        {/* Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Account Holder</div>
-            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: C.gold }}></div>
-              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.black, fontWeight: 500 }}>PROCUREMENT-BOT</span>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Account Holder</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: C.gold, flexShrink: 0 }} />
+              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.black, fontWeight: 600 }}>PROCUREMENT-BOT</span>
             </div>
           </div>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Policy</div>
-            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, fontWeight: 500 }}>CONTRACTORS</div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Policy</div>
+            <span style={{
+              fontFamily: MONO, fontSize: "9px", color: C.gold, fontWeight: 700,
+              background: `${C.gold}14`, border: `1px solid ${C.gold}35`,
+              padding: "2px 8px", borderRadius: "4px", display: "inline-block", letterSpacing: "0.06em",
+            }}>CONTRACTORS</span>
           </div>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Routing Number</div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Routing</div>
             <div style={{ fontFamily: MONO, fontSize: "10px", color: C.black }}>021 000 021</div>
           </div>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Balance</div>
-            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, fontWeight: 600 }}>$12,400</div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Balance</div>
+            <div style={{ fontFamily: MONO, fontSize: "14px", color: C.black, fontWeight: 700 }}>
+              $12,400<span style={{ fontSize: "9px", color: C.muted, fontWeight: 400 }}>.00</span>
+            </div>
           </div>
-          <div style={{ gridColumn: "1/-1" }}>
-            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Account Number</div>
-            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.black }}>•••• •••• 4891</div>
+          <div style={{ gridColumn: "1/-1", paddingTop: "10px", borderTop: `1px solid ${C.border}` }}>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Account Number</div>
+            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.black, letterSpacing: "0.1em" }}>•••• •••• 4891</div>
           </div>
         </div>
       </div>
+
     </div>
   );
 }
