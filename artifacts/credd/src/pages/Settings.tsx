@@ -4,10 +4,9 @@ export default function Settings() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div>
-        <h1 className="text-2xl font-bold text-white">Settings</h1>
+        <h1 className="text-2xl font-bold text-[#000000]">Settings</h1>
         <p className="text-sm text-slate-500 mt-1">Configure platform behaviour, security, and notifications.</p>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[
           { icon: Shield, title: "Security", desc: "API keys, access controls, and authentication settings.", badge: "Configure" },
@@ -32,7 +31,6 @@ export default function Settings() {
           </div>
         ))}
       </div>
-
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
         <h3 className="text-sm font-semibold text-white mb-4">Platform information</h3>
         <div className="space-y-3 text-sm">
