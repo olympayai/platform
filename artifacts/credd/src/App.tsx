@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AppLayout } from "@/components/layout/AppLayout";
+import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Agents from "@/pages/Agents";
 import Accounts from "@/pages/Accounts";
@@ -25,11 +26,11 @@ const queryClient = new QueryClient({
   },
 });
 
-function Router() {
+function DashboardRouter() {
   return (
     <AppLayout>
       <Switch>
-        <Route path="/" component={Dashboard} />
+        <Route path="/dashboard" component={Dashboard} />
         <Route path="/agents" component={Agents} />
         <Route path="/accounts" component={Accounts} />
         <Route path="/cards" component={Cards} />
@@ -39,9 +40,27 @@ function Router() {
         <Route path="/merchants" component={Merchants} />
         <Route path="/audit-logs" component={AuditLogs} />
         <Route path="/settings" component={Settings} />
-        <Route component={NotFound} />
       </Switch>
     </AppLayout>
+  );
+}
+
+function Router() {
+  return (
+    <Switch>
+      <Route path="/" component={Landing} />
+      <Route path="/dashboard" component={DashboardRouter} />
+      <Route path="/agents" component={DashboardRouter} />
+      <Route path="/accounts" component={DashboardRouter} />
+      <Route path="/cards" component={DashboardRouter} />
+      <Route path="/policies" component={DashboardRouter} />
+      <Route path="/transactions" component={DashboardRouter} />
+      <Route path="/approvals" component={DashboardRouter} />
+      <Route path="/merchants" component={DashboardRouter} />
+      <Route path="/audit-logs" component={DashboardRouter} />
+      <Route path="/settings" component={DashboardRouter} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 

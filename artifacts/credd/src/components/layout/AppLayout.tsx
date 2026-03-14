@@ -18,7 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Overview", href: "/", icon: LayoutDashboard },
+  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Agents", href: "/agents", icon: Users },
   { name: "Accounts", href: "/accounts", icon: Wallet },
   { name: "Cards", href: "/cards", icon: CreditCard },
@@ -45,12 +45,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside className="w-[160px] flex-shrink-0 flex flex-col border-r border-white/[0.06] bg-[#0b0f1a]">
         {/* Logo */}
-        <div className="h-14 flex items-center px-4 border-b border-white/[0.06]">
+        <Link href="/" className="h-14 flex items-center px-4 border-b border-white/[0.06] hover:opacity-80 transition-opacity">
           <Activity className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
           <span className="font-bold text-base text-white tracking-tight">
             Credd <span className="text-primary">AI</span>
           </span>
-        </div>
+        </Link>
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-0.5">
