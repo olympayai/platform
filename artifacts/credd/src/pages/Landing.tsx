@@ -554,30 +554,48 @@ export default function Landing() {
               OPEN YOUR ACCOUNT
             </button>
 
-            {/* Partner logos */}
+            {/* Partner logos — scrolling ticker */}
             <div style={{ marginTop: "56px" }}>
-              <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(10,10,8,0.3)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "16px" }}>
+              <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(10,10,8,0.3)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "14px" }}>
                 Works with
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-                {[
-                  { name: "Stripe",     dot: "#635BFF" },
-                  { name: "OpenAI",     dot: "#10a37f" },
-                  { name: "Anthropic",  dot: "#cc785c" },
-                  { name: "Visa",       dot: "#1A1F71" },
-                  { name: "Mastercard", dot: "#EB001B" },
-                  { name: "OpenClaw",   dot: C.gold },
-                ].map(l => (
-                  <div key={l.name} style={{
-                    display: "inline-flex", alignItems: "center", gap: "6px",
-                    padding: "5px 10px",
-                    border: `1px solid ${C.border}`, borderRadius: "4px",
-                    background: "rgba(255,255,255,0.5)",
-                  }}>
-                    <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: l.dot, flexShrink: 0 }} />
-                    <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(10,10,8,0.55)", letterSpacing: "0.06em" }}>{l.name}</span>
-                  </div>
-                ))}
+              <style>{`
+                @keyframes chip-scroll {
+                  0%   { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+                .chip-ticker { animation: chip-scroll 20s linear infinite; }
+                .chip-ticker:hover { animation-play-state: paused; }
+              `}</style>
+              <div style={{ overflow: "hidden" }}>
+                <div className="chip-ticker" style={{ display: "flex", gap: "8px", width: "max-content", alignItems: "center" }}>
+                  {[
+                    { name: "Stripe",     dot: "#635BFF" },
+                    { name: "OpenAI",     dot: "#10a37f" },
+                    { name: "Anthropic",  dot: "#cc785c" },
+                    { name: "Visa",       dot: "#1A1F71" },
+                    { name: "Mastercard", dot: "#EB001B" },
+                    { name: "OpenClaw",   dot: C.gold },
+                    { name: "Stripe",     dot: "#635BFF" },
+                    { name: "OpenAI",     dot: "#10a37f" },
+                    { name: "Anthropic",  dot: "#cc785c" },
+                    { name: "Visa",       dot: "#1A1F71" },
+                    { name: "Mastercard", dot: "#EB001B" },
+                    { name: "OpenClaw",   dot: C.gold },
+                  ].map((l, i) => (
+                    <div key={i} style={{
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                      padding: "5px 11px",
+                      border: `1px solid ${C.border}`, borderRadius: "4px",
+                      background: "rgba(255,255,255,0.45)",
+                      opacity: 0.65,
+                      flexShrink: 0,
+                    }}>
+                      <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: l.dot, flexShrink: 0 }} />
+                      <span style={{ fontFamily: MONO, fontSize: "10px", color: "rgba(10,10,8,0.55)", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>{l.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
