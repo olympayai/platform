@@ -1,456 +1,596 @@
 import { useLocation } from "wouter";
-import { useState, useEffect, useRef } from "react";
-import {
-  CreditCard,
-  Wallet,
-  ShieldCheck,
-  Eye,
-  FileText,
-  ArrowRight,
-  Check,
-  ChevronRight,
-  Activity,
-  Menu,
-  X,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Activity, ArrowRight, ArrowUpRight } from "lucide-react";
+
+/* ─── Color & font tokens (self-contained, no Tailwind theme) ─── */
+const C = {
+  cream: "#f7f2e9",
+  black: "#0a0a08",
+  gold: "#c4923a",
+  goldLight: "#d4a84a",
+  muted: "#7a7060",
+  border: "#d5cbbf",
+  cardBg: "#111110",
+  cardText: "#e0d5c0",
+};
+const SERIF = "'Playfair Display', Georgia, serif";
+const SANS = "'Inter', sans-serif";
+const MONO = "'JetBrains Mono', monospace";
 
 const NAV_LINKS = [
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Features", href: "#features" },
-  { label: "Use Cases", href: "#use-cases" },
-  { label: "Integration", href: "#integration" },
+  "Use Cases",
+  "Cards",
+  "Virtual Accounts",
+  "Pricing",
+  "Agents",
+  "Audit Logs",
+  "API",
 ];
 
 const STEPS = [
   {
-    n: "01",
+    n: "Step 01",
     title: "Set your rules",
     desc: "Define what your agent can spend on, where, how much, and how often. Merchant allowlists, spend limits, time windows — all configurable.",
+    tag: "POLICY_ENGINE",
   },
   {
-    n: "02",
+    n: "Step 02",
     title: "Agent requests access",
-    desc: "Before any transaction, your agent declares what it needs to buy or get paid for. Intent is recorded and attached to the request.",
+    desc: "Before any transaction, your agent declares intent. The request is recorded and attached to the transaction permanently.",
+    tag: "AWAITING_APPROVAL",
   },
   {
-    n: "03",
+    n: "Step 03",
     title: "Credd checks and issues",
-    desc: "If the request passes your rules, a card or account is issued and locked to that exact transaction. ALLOW, DENY, or escalate to REVIEW.",
+    desc: "If the request passes your rules, a decision is returned instantly: ALLOW, DENY, or escalate to human REVIEW.",
+    tag: "DECISION: ALLOW",
   },
   {
-    n: "04",
+    n: "Step 04",
     title: "Agent completes the transaction",
-    desc: "Your agent uses the issued card or account to complete the purchase or receive the payment — within the locked constraints.",
+    desc: "Your agent uses the issued card or account to complete the purchase within the locked constraints.",
+    tag: "PURCHASE_COMPLETE",
   },
   {
-    n: "05",
+    n: "Step 05",
     title: "Automatic verification",
-    desc: "Every transaction is checked against the original request. Anything that doesn't match gets flagged and routed for human approval.",
+    desc: "Every transaction is checked against the original request. Anything that doesn't match gets flagged immediately.",
+    tag: "VERIFIED: MATCHED",
   },
 ];
 
 const FEATURES = [
   {
     n: "01",
-    icon: CreditCard,
     title: "Cards and Accounts That Match the Job",
     desc: "Single-use cards for one-time purchases. Multi-use cards with velocity limits, active hours, and merchant locks. Virtual accounts for agents that receive payments. All issued instantly.",
   },
   {
     n: "02",
-    icon: ShieldCheck,
     title: "Spend Policies That Stick",
     desc: "Set what each agent can buy or receive, where, and how much. Agents declare intent before every transaction. Violations freeze the card immediately.",
   },
   {
     n: "03",
-    icon: Eye,
     title: "Live Transaction View",
     desc: "See every authorization and settlement as it happens. Full audit trail per transaction. Pull compliance reports any time.",
   },
   {
     n: "04",
-    icon: FileText,
-    title: "Built-in Audit Evidence",
+    title: "Built-in Dispute Evidence",
     desc: "Every transaction comes with intent attestation and a full decision trail. If a charge gets questioned, you already have the proof.",
   },
 ];
 
 const USE_CASES = [
-  { n: "01", title: "Procurement Agents", category: "Buying & Purchasing" },
-  { n: "02", title: "E-commerce Purchasing Agents", category: "Shopping & Procurement" },
-  { n: "03", title: "SaaS Subscription Management", category: "Recurring Payments" },
-  { n: "04", title: "Travel & Booking Automation", category: "Flights, Hotels, Rentals" },
-  { n: "05", title: "Contractor & Freelancer Payments", category: "Paying People" },
+  { n: "01", title: "AI Procurement Agents", cat: "Buying & Purchasing" },
+  { n: "02", title: "E-commerce Purchasing Agents", cat: "Shopping & Procurement" },
+  { n: "03", title: "SaaS Subscription Management", cat: "Recurring Payments" },
+  { n: "04", title: "Travel & Booking Automation", cat: "Flights, Hotels, Rentals" },
+  { n: "05", title: "Contractor & Freelancer Payments", cat: "Paying People" },
 ];
 
-const INTEGRATION_STEPS = [
-  {
-    n: "Step 01",
-    title: "Create your account",
-    items: ["Register and set up your workspace", "Get your API credentials"],
-  },
-  {
-    n: "Step 02",
-    title: "Set your policies",
-    items: ["Define spending limits and merchant rules", "Fund your account and issue your first card"],
-  },
-  {
-    n: "Step 03",
-    title: "Start spending",
-    items: ["Agents start transacting autonomously", "Monitor every purchase in real-time"],
-  },
-];
-
-function Ticker() {
-  const items = [
-    "SPEND_LIMITS:CONFIGURABLE",
-    "MERCHANT_RULES:ACTIVE",
-    "APPROVAL:REQUIRED",
-    "CHECKS:REALTIME",
-    "CARD_OR_ACCOUNT:ISSUED",
-    "ISSUANCE:INSTANT",
-    "MERCHANT:VERIFIED",
-    "SPEND_LIMIT:ENFORCED",
-    "VERIFIED:AUTOMATIC",
-    "MISMATCHES:NONE",
-  ];
-  const doubled = [...items, ...items];
-
+/* ─── Dark virtual card component ─── */
+function DarkCard() {
   return (
-    <div className="overflow-hidden border-t border-b border-white/10 py-3 bg-white/[0.02]">
-      <div className="flex animate-[ticker_30s_linear_infinite] whitespace-nowrap">
-        {doubled.map((item, i) => (
-          <span key={i} className="inline-flex items-center mx-6 text-[11px] font-mono tracking-widest text-white/40">
-            {item}
-            <span className="mx-6 text-white/10">•</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function VirtualCard() {
-  return (
-    <div className="relative w-[320px] select-none">
-      <div className="rounded-2xl bg-white text-black p-6 shadow-2xl border border-black/10">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <Activity className="h-5 w-5" />
-            <span className="font-bold text-sm tracking-tight">Credd AI</span>
+    <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
+      {/* Card */}
+      <div style={{
+        background: C.cardBg,
+        borderRadius: "12px",
+        padding: "24px",
+        width: "340px",
+        border: `1px solid rgba(255,255,255,0.08)`,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Activity size={14} color={C.goldLight} />
+            <span style={{ fontFamily: MONO, fontSize: "11px", color: C.goldLight, fontWeight: 500 }}>Credd AI</span>
           </div>
-          <span className="text-[10px] font-mono bg-black text-white rounded px-2 py-0.5">VIRTUAL</span>
+          <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.1em" }}>VISA</span>
         </div>
-        <div className="font-mono text-lg tracking-[0.2em] mb-6 text-black/80">
-          •••• •••• •••• 4242
+
+        <div style={{ fontFamily: MONO, fontSize: "15px", color: C.cardText, letterSpacing: "0.3em", marginBottom: "6px" }}>
+          •••• •••• •••• 7842
         </div>
-        <div className="flex items-end justify-between">
+        <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
           <div>
-            <p className="text-[9px] uppercase tracking-widest text-black/40 mb-0.5">Agent</p>
-            <p className="font-mono text-sm font-bold">procurement-bot</p>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em" }}>EXP</div>
+            <div style={{ fontFamily: MONO, fontSize: "11px", color: C.cardText }}>12/25</div>
           </div>
-          <div className="text-right">
-            <p className="text-[9px] uppercase tracking-widest text-black/40 mb-0.5">Limit</p>
-            <p className="font-mono text-sm font-bold">$500.00</p>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em" }}>CVV</div>
+            <div style={{ fontFamily: MONO, fontSize: "11px", color: C.cardText }}>•••</div>
           </div>
-          <div className="text-right">
-            <p className="text-[9px] uppercase tracking-widest text-black/40 mb-0.5">Status</p>
-            <div className="flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-black"></div>
-              <p className="font-mono text-sm font-bold">ACTIVE</p>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>AGENT</div>
+            <div style={{ fontFamily: MONO, fontSize: "12px", color: C.cardText, fontWeight: 500, letterSpacing: "0.05em" }}>PROCUREMENT-BOT</div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "6px", marginBottom: "2px" }}>CARD TYPE</div>
+            <div style={{ fontFamily: MONO, fontSize: "11px", color: C.cardText }}>MULTI_USE</div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", justifyContent: "flex-end", marginBottom: "4px" }}>
+              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }}></div>
+              <span style={{ fontFamily: MONO, fontSize: "9px", color: "#4ade80", letterSpacing: "0.1em" }}>ACTIVE</span>
+            </div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>LIMIT</div>
+            <div style={{ fontFamily: MONO, fontSize: "13px", color: "#4ade80", fontWeight: 600 }}>$1,500</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Virtual Account */}
+      <div style={{
+        background: "#fff",
+        border: `1px solid ${C.border}`,
+        borderTop: "none",
+        borderRadius: "0 0 12px 12px",
+        padding: "20px 24px",
+        width: "340px",
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <Activity size={10} color={C.gold} />
+            <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.12em", textTransform: "uppercase" }}>Virtual Account</span>
+          </div>
+          <div>
+            <span style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.1em" }}>ACH · Fedwire</span>
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Account Holder</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: C.gold }}></div>
+              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.black, fontWeight: 500 }}>PROCUREMENT-BOT</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Floating badge */}
-      <div className="absolute -bottom-4 -right-4 bg-black text-white rounded-xl px-4 py-2.5 shadow-xl border border-white/10 text-xs font-mono">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-white animate-pulse"></div>
-          <span>ALLOW — $24.99</span>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Policy</div>
+            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, fontWeight: 500 }}>CONTRACTORS</div>
+          </div>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Routing Number</div>
+            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.black }}>021 000 021</div>
+          </div>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Balance</div>
+            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, fontWeight: 600 }}>$12,400</div>
+          </div>
+          <div style={{ gridColumn: "1/-1" }}>
+            <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>Account Number</div>
+            <div style={{ fontFamily: MONO, fontSize: "10px", color: C.black }}>•••• •••• 4891</div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
+/* ─── Flow step tag ─── */
+function Tag({ label, accent }: { label: string; accent?: boolean }) {
+  return (
+    <div style={{
+      display: "inline-block",
+      fontFamily: MONO,
+      fontSize: "9px",
+      letterSpacing: "0.08em",
+      padding: "3px 8px",
+      border: `1px solid ${accent ? C.gold : C.border}`,
+      borderRadius: "4px",
+      color: accent ? C.gold : C.muted,
+      background: accent ? `${C.gold}10` : "transparent",
+      whiteSpace: "nowrap",
+    }}>
+      {label}
+    </div>
+  );
+}
+
+/* ─── Main component ─── */
 export default function Landing() {
   const [, navigate] = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
   const scrollTo = (id: string) => {
-    setMenuOpen(false);
-    document.getElementById(id.replace("#", ""))?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased">
-      <style>{`
-        @keyframes ticker {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-        .animate-float { animation: float 4s ease-in-out infinite; }
-      `}</style>
+    <div style={{ fontFamily: SANS, background: C.cream, color: C.black, minHeight: "100vh" }}>
 
-      {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-black/90 backdrop-blur-md border-b border-white/10" : ""}`}>
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity className="h-5 w-5 text-white" />
-            <span className="font-bold text-white tracking-tight">Credd AI</span>
+      {/* ── NAVBAR ── */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        background: scrolled ? "rgba(10,10,8,0.97)" : C.black,
+        backdropFilter: "blur(12px)",
+        borderBottom: `1px solid rgba(255,255,255,0.07)`,
+        transition: "background 0.2s",
+      }}>
+        <div style={{
+          maxWidth: "1280px", margin: "0 auto",
+          padding: "0 24px", height: "48px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Activity size={14} color={C.goldLight} />
+            <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 500, letterSpacing: "0.05em" }}>
+              CREDD AI
+            </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((l) => (
-              <button
-                key={l.label}
-                onClick={() => scrollTo(l.href)}
-                className="text-sm text-white/60 hover:text-white transition-colors"
-              >
-                {l.label}
-              </button>
+          {/* Nav links */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
+            {NAV_LINKS.map((l, i) => (
+              <button key={l} onClick={() => scrollTo(i === 0 ? "use-cases" : i === 1 ? "features" : "integration")}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  padding: "0 14px", height: "48px",
+                  fontFamily: MONO, fontSize: "10px", letterSpacing: "0.08em",
+                  color: "rgba(229,220,200,0.55)",
+                  borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.07)" : "none",
+                  textTransform: "uppercase",
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = C.goldLight)}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(229,220,200,0.55)")}
+              >{l}</button>
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="text-sm text-white/60 hover:text-white transition-colors"
-            >
-              Sign in
-            </button>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-white/90 transition-all"
-            >
-              Get Started Free
-            </button>
-          </div>
-
-          <button className="md:hidden text-white/60 hover:text-white" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {/* CTA */}
+          <button onClick={() => navigate("/dashboard")} style={{
+            background: C.gold, border: "none", cursor: "pointer",
+            padding: "8px 18px",
+            fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em",
+            color: C.black, fontWeight: 600, textTransform: "uppercase",
+            borderRadius: "4px",
+            transition: "background 0.15s",
+          }}
+            onMouseEnter={e => (e.currentTarget.style.background = C.goldLight)}
+            onMouseLeave={e => (e.currentTarget.style.background = C.gold)}
+          >
+            DASHBOARD →
           </button>
         </div>
-
-        {menuOpen && (
-          <div className="md:hidden bg-black border-b border-white/10 px-6 pb-4 space-y-2">
-            {NAV_LINKS.map((l) => (
-              <button
-                key={l.label}
-                onClick={() => scrollTo(l.href)}
-                className="block w-full text-left text-sm text-white/60 hover:text-white py-2"
-              >
-                {l.label}
-              </button>
-            ))}
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="w-full bg-white text-black text-sm font-semibold px-4 py-2 rounded-lg mt-2"
-            >
-              Get Started Free
-            </button>
-          </div>
-        )}
       </nav>
 
-      {/* Hero */}
-      <section className="pt-40 pb-28 px-6 max-w-6xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 border border-white/15 rounded-full px-3 py-1 text-[11px] text-white/50 font-mono mb-8">
-              <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></div>
-              FINANCIAL OS FOR AUTONOMOUS AGENTS
-            </div>
-            <h1 className="text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-6">
+      {/* ── HERO ── */}
+      <section style={{ paddingTop: "48px", borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "calc(100vh - 48px)" }}>
+          {/* Left */}
+          <div style={{
+            padding: "64px 72px",
+            borderRight: `1px solid ${C.border}`,
+            display: "flex", flexDirection: "column", justifyContent: "center",
+          }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center",
+              fontFamily: MONO, fontSize: "9px", letterSpacing: "0.15em",
+              color: C.muted, textTransform: "uppercase",
+              border: `1px solid ${C.border}`, borderRadius: "2px",
+              padding: "3px 8px", marginBottom: "32px", width: "fit-content",
+            }}>HOME</div>
+
+            <h1 style={{
+              fontFamily: SERIF, fontSize: "clamp(40px, 4.5vw, 60px)",
+              fontWeight: 400, lineHeight: 1.1,
+              color: C.black, marginBottom: "24px",
+            }}>
               Give your AI agent its own card and bank account.
             </h1>
-            <p className="text-lg text-white/50 leading-relaxed mb-10 max-w-lg">
+
+            <p style={{
+              fontFamily: SANS, fontSize: "15px", lineHeight: 1.65,
+              color: C.muted, marginBottom: "40px", maxWidth: "400px",
+            }}>
               Set spend limits, lock them to the right merchants, and watch every transaction in real time. No risk to your own accounts.
             </p>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="bg-white text-black font-semibold px-6 py-3 rounded-lg hover:bg-white/90 transition-all flex items-center gap-2"
-              >
-                Get Started Free <ArrowRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => scrollTo("#how-it-works")}
-                className="text-sm text-white/50 hover:text-white transition-colors flex items-center gap-1.5"
-              >
-                How it works <ChevronRight className="h-4 w-4" />
-              </button>
+
+            <button onClick={() => navigate("/dashboard")} style={{
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              padding: "14px 32px", width: "fit-content",
+              fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em",
+              fontWeight: 600, textTransform: "uppercase",
+              background: "transparent",
+              border: `2px solid ${C.gold}`,
+              color: C.gold, cursor: "pointer", borderRadius: "3px",
+              transition: "all 0.2s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.black; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.gold; }}
+            >
+              GET STARTED FREE
+            </button>
+
+            {/* Logos */}
+            <div style={{ display: "flex", alignItems: "center", gap: "32px", marginTop: "64px" }}>
+              {["Circle", "YC", "merlin", "Balancer"].map((logo) => (
+                <span key={logo} style={{
+                  fontFamily: MONO, fontSize: "11px",
+                  color: "rgba(10,10,8,0.25)", letterSpacing: "0.05em",
+                }}>{logo}</span>
+              ))}
             </div>
           </div>
 
-          <div className="flex justify-center lg:justify-end">
-            <div className="animate-float">
-              <VirtualCard />
-            </div>
+          {/* Right */}
+          <div style={{
+            padding: "64px 72px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: C.cream,
+          }}>
+            <DarkCard />
           </div>
         </div>
       </section>
 
-      {/* Ticker */}
-      <Ticker />
-
-      {/* How it Works */}
-      <section id="how-it-works" className="py-28 px-6 max-w-6xl mx-auto">
-        <div className="mb-16">
-          <p className="text-[11px] font-mono tracking-widest text-white/30 mb-4">HOW IT WORKS</p>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight max-w-xl">
+      {/* ── HOW IT WORKS ── */}
+      <section id="how-it-works" style={{ borderBottom: `1px solid ${C.border}` }}>
+        {/* Header */}
+        <div style={{
+          padding: "64px 72px 48px",
+          borderBottom: `1px solid ${C.border}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+            <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
+            <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>How it works</span>
+          </div>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 400, lineHeight: 1.15, maxWidth: "700px" }}>
             Built for agents that spend and get paid.
           </h2>
+          <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginTop: "16px", maxWidth: "580px", lineHeight: 1.65 }}>
+            Your agent says what it needs to buy or get paid for. Credd checks it against your rules. If it passes, a card or account is issued and locked to that exact transaction.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] border border-white/[0.06] rounded-2xl overflow-hidden">
+        {/* Steps */}
+        <div>
           {STEPS.map((step, i) => (
-            <div
-              key={step.n}
-              className={`bg-black p-8 hover:bg-white/[0.03] transition-colors ${
-                i === STEPS.length - 1 && STEPS.length % 3 !== 0 ? "md:col-span-2 lg:col-span-1" : ""
-              }`}
-            >
-              <p className="text-[11px] font-mono text-white/25 mb-5 tracking-widest">Step {step.n}</p>
-              <h3 className="text-base font-semibold text-white mb-3">{step.title}</h3>
-              <p className="text-sm text-white/40 leading-relaxed">{step.desc}</p>
+            <div key={step.n} style={{
+              display: "grid", gridTemplateColumns: "280px 1fr 200px",
+              borderBottom: i < STEPS.length - 1 ? `1px solid ${C.border}` : "none",
+              minHeight: "120px",
+            }}>
+              {/* Step text */}
+              <div style={{
+                padding: "32px 40px",
+                borderRight: `1px solid ${C.border}`,
+              }}>
+                <div style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.12em", marginBottom: "10px" }}>{step.n}</div>
+                <div style={{ fontFamily: SANS, fontSize: "14px", fontWeight: 600, color: C.black, marginBottom: "8px" }}>{step.title}</div>
+                <div style={{ fontFamily: SANS, fontSize: "12px", color: C.muted, lineHeight: 1.65 }}>{step.desc}</div>
+              </div>
+
+              {/* Center visual */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                padding: "32px",
+                borderRight: `1px solid ${C.border}`,
+                position: "relative",
+              }}>
+                {/* Connecting line */}
+                {i < STEPS.length - 1 && (
+                  <div style={{
+                    position: "absolute", bottom: 0, left: "50%",
+                    width: "1px", height: "100%",
+                    background: `linear-gradient(to bottom, ${C.border} 0%, transparent 100%)`,
+                    zIndex: 0,
+                  }} />
+                )}
+                <div style={{
+                  position: "relative", zIndex: 1,
+                  width: "48px", height: "48px",
+                  border: `1px solid ${i === 0 ? C.gold : C.border}`,
+                  borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: i === 0 ? `${C.gold}15` : C.cream,
+                }}>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "10px", fontWeight: 600,
+                    color: i === 0 ? C.gold : C.muted,
+                  }}>{String(i + 1).padStart(2, "0")}</span>
+                </div>
+              </div>
+
+              {/* Tag */}
+              <div style={{
+                padding: "32px 24px",
+                display: "flex", alignItems: "center", justifyContent: "flex-start",
+              }}>
+                <Tag label={step.tag} accent={i === 2} />
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-28 px-6 max-w-6xl mx-auto border-t border-white/[0.06]">
-        <div className="mb-16">
-          <p className="text-[11px] font-mono tracking-widest text-white/30 mb-4">FEATURES</p>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight max-w-xl">
+      {/* ── FEATURES ── */}
+      <section id="features" style={{ borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+            <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
+            <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Features</span>
+          </div>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, maxWidth: "600px" }}>
             Everything you need to trust your agents with real money.
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {FEATURES.map((f) => (
-            <div
-              key={f.n}
-              className="border border-white/[0.08] rounded-2xl p-8 hover:border-white/20 hover:bg-white/[0.02] transition-all group"
-            >
-              <div className="flex items-start gap-5">
-                <div>
-                  <p className="text-[10px] font-mono text-white/20 mb-4 tracking-widest">{f.n}</p>
-                  <div className="p-2.5 border border-white/10 rounded-lg w-fit mb-5 group-hover:border-white/25 transition-colors">
-                    <f.icon className="h-5 w-5 text-white/60" />
-                  </div>
-                  <h3 className="text-base font-semibold text-white mb-3">{f.title}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed">{f.desc}</p>
-                </div>
-              </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
+          {FEATURES.map((f, i) => (
+            <div key={f.n} style={{
+              padding: "40px 32px",
+              borderRight: i < FEATURES.length - 1 ? `1px solid ${C.border}` : "none",
+            }}>
+              <div style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, marginBottom: "20px" }}>{f.n}</div>
+              <h3 style={{ fontFamily: SANS, fontSize: "14px", fontWeight: 600, color: C.black, lineHeight: 1.4, marginBottom: "12px" }}>{f.title}</h3>
+              <p style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Use Cases */}
-      <section id="use-cases" className="py-28 px-6 max-w-6xl mx-auto border-t border-white/[0.06]">
-        <div className="mb-16">
-          <p className="text-[11px] font-mono tracking-widest text-white/30 mb-4">USE CASES</p>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight">Agents in production.</h2>
-        </div>
-
-        <div className="space-y-px border border-white/[0.06] rounded-2xl overflow-hidden">
-          {USE_CASES.map((uc) => (
-            <div
-              key={uc.n}
-              className="flex items-center justify-between bg-black hover:bg-white/[0.03] transition-colors px-8 py-6 group cursor-pointer border-b border-white/[0.04] last:border-0"
-            >
-              <div className="flex items-center gap-8">
-                <span className="text-[11px] font-mono text-white/20 w-6">{uc.n}</span>
-                <div>
-                  <p className="font-semibold text-white group-hover:text-white/80 transition-colors">{uc.title}</p>
-                  <p className="text-sm text-white/35 mt-0.5">{uc.category}</p>
-                </div>
-              </div>
-              <ArrowRight className="h-4 w-4 text-white/20 group-hover:text-white/60 group-hover:translate-x-1 transition-all" />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Integration */}
-      <section id="integration" className="py-28 px-6 max-w-6xl mx-auto border-t border-white/[0.06]">
-        <div className="mb-5">
-          <p className="text-[11px] font-mono tracking-widest text-white/30 mb-4">INTEGRATION</p>
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-[10px] font-mono text-white/20 bg-white/[0.05] border border-white/10 rounded px-2 py-0.5">SETUP</span>
-            <ArrowRight className="h-3 w-3 text-white/20" />
-            <span className="text-[10px] font-mono text-white/20 bg-white/[0.05] border border-white/10 rounded px-2 py-0.5">LIVE</span>
+      {/* ── USE CASES ── */}
+      <section id="use-cases" style={{ borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+            <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
+            <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Use Cases</span>
           </div>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight">Go live in minutes.</h2>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>Agents in production.</h2>
+            <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>Agents in Production</span>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mt-16">
-          {INTEGRATION_STEPS.map((step) => (
-            <div key={step.n} className="border border-white/[0.08] rounded-2xl p-7">
-              <p className="text-[10px] font-mono text-white/20 tracking-widest mb-5">{step.n}</p>
-              <h3 className="text-base font-semibold text-white mb-5">{step.title}</h3>
-              <ul className="space-y-2.5">
-                {step.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-sm text-white/40">
-                    <span className="text-white/20 mt-0.5">▸</span>
-                    {item}
+        <div>
+          {USE_CASES.map((uc, i) => (
+            <div key={uc.n}
+              style={{
+                display: "grid", gridTemplateColumns: "80px 1fr 60px",
+                padding: "28px 80px",
+                borderBottom: i < USE_CASES.length - 1 ? `1px solid ${C.border}` : "none",
+                cursor: "pointer", transition: "background 0.15s",
+                alignItems: "center",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "rgba(196,146,58,0.04)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >
+              <span style={{ fontFamily: MONO, fontSize: "11px", color: C.muted }}>{uc.n}</span>
+              <div>
+                <div style={{ fontFamily: SANS, fontSize: "17px", fontWeight: 500, color: C.black, marginBottom: "3px" }}>{uc.title}</div>
+                <div style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.06em" }}>{uc.cat}</div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <ArrowUpRight size={16} color={C.muted} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── INTEGRATION ── */}
+      <section id="integration" style={{ borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+            <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
+            <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Integration</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+            <Tag label="SETUP" />
+            <ArrowRight size={12} color={C.muted} />
+            <Tag label="LIVE" accent />
+          </div>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>Go live in minutes.</h2>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
+          {[
+            { n: "Step 01", title: "Create your account", items: ["Sign up and set up your workspace", "Get your API credentials and access tokens"] },
+            { n: "Step 02", title: "Set your policies", items: ["Define spending limits and merchant rules", "Fund your account and issue your first card"] },
+            { n: "Step 03", title: "Start spending", items: ["Agents start transacting autonomously", "Monitor every purchase in real-time"] },
+          ].map((step, i) => (
+            <div key={step.n} style={{
+              padding: "48px 40px",
+              borderRight: i < 2 ? `1px solid ${C.border}` : "none",
+            }}>
+              <div style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.12em", marginBottom: "16px" }}>{step.n}</div>
+              <h3 style={{ fontFamily: SANS, fontSize: "16px", fontWeight: 600, color: C.black, marginBottom: "20px" }}>{step.title}</h3>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
+                {step.items.map(item => (
+                  <li key={item} style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                    <span style={{ fontFamily: MONO, fontSize: "11px", color: C.muted, marginTop: "1px" }}>▸</span>
+                    <span style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.6 }}>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-      </section>
 
-      {/* CTA */}
-      <section className="py-28 px-6 border-t border-white/[0.06]">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-5">
-            Ready to get started?
-          </h2>
-          <p className="text-white/40 text-lg mb-10">Up and running in minutes.</p>
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="bg-white text-black font-semibold px-8 py-4 rounded-xl text-base hover:bg-white/90 transition-all inline-flex items-center gap-2"
+        {/* Ready CTA */}
+        <div style={{
+          padding: "64px 80px",
+          borderTop: `1px solid ${C.border}`,
+          display: "flex", flexDirection: "column", alignItems: "flex-start",
+        }}>
+          <h3 style={{ fontFamily: SERIF, fontSize: "28px", fontWeight: 400, marginBottom: "8px" }}>Ready to get started?</h3>
+          <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginBottom: "28px" }}>Up and running in minutes.</p>
+          <button onClick={() => navigate("/dashboard")} style={{
+            display: "inline-flex", alignItems: "center", gap: "8px",
+            padding: "13px 28px",
+            fontFamily: MONO, fontSize: "11px", letterSpacing: "0.12em",
+            fontWeight: 600, textTransform: "uppercase",
+            background: C.black, color: C.cream,
+            border: `1px solid ${C.black}`, cursor: "pointer",
+            borderRadius: "3px", transition: "all 0.2s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.color = C.black; }}
+            onMouseLeave={e => { e.currentTarget.style.background = C.black; e.currentTarget.style.borderColor = C.black; e.currentTarget.style.color = C.cream; }}
           >
-            Open Dashboard <ArrowRight className="h-5 w-5" />
+            START ISSUING <ArrowRight size={13} />
           </button>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-white/60" />
-            <span className="font-bold text-sm text-white/60">Credd AI</span>
-          </div>
-          <p className="text-xs text-white/25 font-mono text-center">
-            The financial OS for AI agents. All transaction policies enforced at the platform level.
-          </p>
-          <div className="flex items-center gap-6">
-            {["Privacy", "Terms", "Docs"].map((l) => (
-              <button key={l} className="text-xs text-white/30 hover:text-white/60 transition-colors">
-                {l}
-              </button>
-            ))}
-          </div>
+      {/* ── FOOTER ── */}
+      <footer style={{
+        padding: "32px 80px",
+        borderTop: `1px solid ${C.border}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Activity size={13} color={C.gold} />
+          <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>CREDD AI</span>
+        </div>
+        <p style={{ fontFamily: SANS, fontSize: "12px", color: C.muted }}>
+          The financial OS for AI agents. Credd is not a bank.
+        </p>
+        <div style={{ display: "flex", gap: "24px" }}>
+          {["Privacy", "Terms", "Docs", "API"].map(l => (
+            <button key={l} style={{
+              background: "none", border: "none", cursor: "pointer",
+              fontFamily: MONO, fontSize: "10px", color: C.muted,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              transition: "color 0.15s",
+            }}
+              onMouseEnter={e => (e.currentTarget.style.color = C.black)}
+              onMouseLeave={e => (e.currentTarget.style.color = C.muted)}
+            >{l}</button>
+          ))}
         </div>
       </footer>
     </div>
