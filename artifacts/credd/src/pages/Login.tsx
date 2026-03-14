@@ -38,7 +38,7 @@ export default function Login() {
         <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
           <Activity size={14} color={GOLD} />
           <span style={{ fontFamily: MONO, fontSize: "13px", color: GOLD, fontWeight: 600, letterSpacing: "0.04em" }}>
-            CREDD AI
+            OLYMPAY
           </span>
         </a>
       </nav>
@@ -71,7 +71,7 @@ export default function Login() {
               fontFamily: SERIF, fontSize: "24px", fontWeight: 400,
               color: BLACK, marginBottom: "6px",
             }}>
-              Sign in to Credd AI
+              Sign in to Olympay
             </h1>
             <p style={{ fontFamily: SANS, fontSize: "13px", color: MUTED }}>
               Access your AI agent financial control panel

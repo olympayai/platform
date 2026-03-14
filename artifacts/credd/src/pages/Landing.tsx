@@ -18,13 +18,13 @@ const SANS = "'Inter', sans-serif";
 const MONO = "'JetBrains Mono', monospace";
 
 const NAV_LINKS = [
-  "Solutions",
-  "Payments",
-  "Banking",
-  "Plans",
-  "Workflows",
-  "Ledger",
-  "Developers",
+  "Agents",
+  "Transactions",
+  "Accounts",
+  "Cards",
+  "Policies",
+  "Audit Logs",
+  "API",
 ];
 
 const STEPS = [
@@ -43,7 +43,7 @@ const STEPS = [
   {
     n: "Step 03",
     title: "Real-time policy evaluation",
-    desc: "Credd evaluates the intent against your active policies in milliseconds and returns a verdict: ALLOW, DENY, or escalate to REVIEW.",
+    desc: "Olympay evaluates the intent against your active policies in milliseconds and returns a verdict: ALLOW, DENY, or escalate to REVIEW.",
     tag: "DECISION: ALLOW",
   },
   {
@@ -137,7 +137,7 @@ function DarkCard() {
             }}>
               <Activity size={13} color={C.goldLight} />
             </div>
-            <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 700, letterSpacing: "0.07em" }}>CREDD AI</span>
+            <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 700, letterSpacing: "0.07em" }}>OLYMPAY</span>
           </div>
           {/* Network circles (Mastercard-style) */}
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -310,7 +310,7 @@ export default function Landing() {
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <Activity size={14} color={C.goldLight} />
             <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 500, letterSpacing: "0.05em" }}>
-              CREDD AI
+              OLYMPAY
             </span>
           </div>
 
@@ -435,7 +435,7 @@ export default function Landing() {
             Designed for agents that operate with real money.
           </h2>
           <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginTop: "16px", maxWidth: "580px", lineHeight: 1.65 }}>
-            Your agent declares its intent. Credd validates it against your policy in real time. If it clears, a payment instrument is issued and constrained to that specific action. Nothing more.
+            Your agent declares its intent. Olympay validates it against your policy in real time. If it clears, a payment instrument is issued and constrained to that specific action. Nothing more.
           </p>
         </div>
 
@@ -637,10 +637,10 @@ export default function Landing() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Activity size={13} color={C.gold} />
-          <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>CREDD AI</span>
+          <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>OLYMPAY</span>
         </div>
         <p style={{ fontFamily: SANS, fontSize: "12px", color: C.muted }}>
-          Spend infrastructure for autonomous AI. Credd is not a bank.
+          Spend infrastructure for autonomous AI. Olympay is not a bank.
         </p>
         <div style={{ display: "flex", gap: "24px" }}>
           {["Privacy", "Terms", "Docs", "API"].map(l => (

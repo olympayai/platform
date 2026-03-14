@@ -62,7 +62,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             className="font-semibold text-sm tracking-tight"
             style={{ fontFamily: "'JetBrains Mono', monospace", color: "#c4923a", letterSpacing: "0.04em" }}
           >
-            CREDD AI
+            OLYMPAY
           </span>
         </Link>
 
@@ -169,7 +169,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         >
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm">
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", color: "#6a5040", letterSpacing: "0.06em", textTransform: "uppercase" }}>Credd AI</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", color: "#6a5040", letterSpacing: "0.06em", textTransform: "uppercase" }}>Olympay</span>
             <ChevronRight className="h-3.5 w-3.5" style={{ color: "#9a8878" }} />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", fontWeight: 600, color: "#0a0a08", letterSpacing: "0.06em", textTransform: "uppercase" }}>{title}</span>
           </div>
