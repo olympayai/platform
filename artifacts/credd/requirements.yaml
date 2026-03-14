@@ -1,0 +1,16 @@
+packages:
+  "recharts": "Data visualization for dashboard"
+  "framer-motion": "Animations and page transitions"
+  "date-fns": "Date formatting"
+  "lucide-react": "Icons"
+  "clsx": "Class merging utility"
+  "tailwind-merge": "Tailwind class merging utility"
+
+images:
+  - path: "artifacts/credd/public/images/fintech-bg.png"
+    description: "Abstract dark navy and electric blue gradient mesh with subtle geometric grid patterns, representing secure financial technology and AI nodes"
+    aspect_ratio: "16:9"
+
+notes:
+  - "Using generated React Query hooks directly from @workspace/api-client-react"
+  - "All currency amounts are handled in minor units (cents)"

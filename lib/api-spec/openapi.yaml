@@ -1,22 +1,36 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Credd AI - Financial infrastructure for autonomous AI agents
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: agents
+    description: AI agent management
+  - name: accounts
+    description: Agent account management
+  - name: cards
+    description: Virtual card management
+  - name: policies
+    description: Spending policy management
+  - name: transactions
+    description: Transaction processing
+  - name: approvals
+    description: Approval workflow management
+  - name: auditLogs
+    description: Audit log access
+  - name: monitoring
+    description: System monitoring
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +38,785 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /v1/agents:
+    get:
+      operationId: listAgents
+      tags: [agents]
+      summary: List all agents
+      responses:
+        "200":
+          description: List of agents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentListResponse"
+    post:
+      operationId: createAgent
+      tags: [agents]
+      summary: Create an agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAgentBody"
+      responses:
+        "201":
+          description: Created agent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentResponse"
+
+  /v1/agents/{id}:
+    get:
+      operationId: getAgent
+      tags: [agents]
+      summary: Get agent by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Agent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentResponse"
+
+  /v1/agents/{agentId}/accounts:
+    get:
+      operationId: listAgentAccounts
+      tags: [accounts]
+      summary: List accounts for an agent
+      parameters:
+        - name: agentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountListResponse"
+
+  /v1/agents/{agentId}/transactions:
+    get:
+      operationId: listAgentTransactions
+      tags: [transactions]
+      summary: List transactions for an agent
+      parameters:
+        - name: agentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionListResponse"
+
+  /v1/agents/{agentId}/policies:
+    get:
+      operationId: listAgentPolicies
+      tags: [policies]
+      summary: List policies for an agent
+      parameters:
+        - name: agentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyListResponse"
+
+  /v1/accounts:
+    get:
+      operationId: listAccounts
+      tags: [accounts]
+      summary: List all accounts
+      responses:
+        "200":
+          description: List of accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountListResponse"
+    post:
+      operationId: createAccount
+      tags: [accounts]
+      summary: Create an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccountBody"
+      responses:
+        "201":
+          description: Created account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+
+  /v1/accounts/{id}:
+    get:
+      operationId: getAccount
+      tags: [accounts]
+      summary: Get account by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+
+  /v1/accounts/{id}/status:
+    patch:
+      operationId: updateAccountStatus
+      tags: [accounts]
+      summary: Update account status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusBody"
+      responses:
+        "200":
+          description: Updated account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+
+  /v1/accounts/{accountId}/cards:
+    get:
+      operationId: listAccountCards
+      tags: [cards]
+      summary: List cards for an account
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of cards
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardListResponse"
+
+  /v1/accounts/{accountId}/transactions:
+    get:
+      operationId: listAccountTransactions
+      tags: [transactions]
+      summary: List transactions for an account
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionListResponse"
+
+  /v1/accounts/{accountId}/policies:
+    get:
+      operationId: listAccountPolicies
+      tags: [policies]
+      summary: List policies for an account
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyListResponse"
+
+  /v1/cards:
+    get:
+      operationId: listCards
+      tags: [cards]
+      summary: List all cards
+      responses:
+        "200":
+          description: List of cards
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardListResponse"
+    post:
+      operationId: createCard
+      tags: [cards]
+      summary: Create a card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCardBody"
+      responses:
+        "201":
+          description: Created card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+
+  /v1/cards/{id}:
+    get:
+      operationId: getCard
+      tags: [cards]
+      summary: Get card by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+
+  /v1/cards/{id}/status:
+    patch:
+      operationId: updateCardStatus
+      tags: [cards]
+      summary: Update card status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusBody"
+      responses:
+        "200":
+          description: Updated card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+
+  /v1/cards/{id}/spending:
+    patch:
+      operationId: toggleCardSpending
+      tags: [cards]
+      summary: Toggle card spending
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleSpendingBody"
+      responses:
+        "200":
+          description: Updated card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+
+  /v1/cards/{cardId}/policies:
+    get:
+      operationId: listCardPolicies
+      tags: [policies]
+      summary: List policies for a card
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyListResponse"
+
+  /v1/policies:
+    get:
+      operationId: listPolicies
+      tags: [policies]
+      summary: List all policies
+      responses:
+        "200":
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyListResponse"
+    post:
+      operationId: createPolicy
+      tags: [policies]
+      summary: Create a policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePolicyBody"
+      responses:
+        "201":
+          description: Created policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyResponse"
+
+  /v1/policies/{id}:
+    get:
+      operationId: getPolicy
+      tags: [policies]
+      summary: Get policy by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyResponse"
+
+  /v1/policies/{id}/status:
+    patch:
+      operationId: updatePolicyStatus
+      tags: [policies]
+      summary: Update policy status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusBody"
+      responses:
+        "200":
+          description: Updated policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyResponse"
+
+  /v1/policies/{id}/assignments:
+    get:
+      operationId: listPolicyAssignments
+      tags: [policies]
+      summary: List assignments for a policy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of assignments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyAssignmentListResponse"
+
+  /v1/policy-assignments:
+    get:
+      operationId: listAllPolicyAssignments
+      tags: [policies]
+      summary: List all policy assignments
+      responses:
+        "200":
+          description: List of assignments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyAssignmentListResponse"
+    post:
+      operationId: createPolicyAssignment
+      tags: [policies]
+      summary: Assign a policy to a target
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePolicyAssignmentBody"
+      responses:
+        "201":
+          description: Created assignment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyAssignmentResponse"
+
+  /v1/transactions:
+    get:
+      operationId: listTransactions
+      tags: [transactions]
+      summary: List all transactions
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionListResponse"
+
+  /v1/transactions/attempt:
+    post:
+      operationId: attemptTransaction
+      tags: [transactions]
+      summary: Attempt a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttemptTransactionBody"
+      responses:
+        "200":
+          description: Transaction attempt result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionAttemptResponse"
+
+  /v1/transactions/{id}:
+    get:
+      operationId: getTransaction
+      tags: [transactions]
+      summary: Get transaction by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+
+  /v1/transactions/{id}/approval:
+    get:
+      operationId: getTransactionApproval
+      tags: [approvals]
+      summary: Get approval for a transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approval request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalResponse"
+
+  /v1/approvals:
+    get:
+      operationId: listApprovals
+      tags: [approvals]
+      summary: List all approval requests
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of approval requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalListResponse"
+
+  /v1/approvals/{id}:
+    get:
+      operationId: getApproval
+      tags: [approvals]
+      summary: Get approval by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approval request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalResponse"
+
+  /v1/approvals/{id}/approve:
+    post:
+      operationId: approveRequest
+      tags: [approvals]
+      summary: Approve an approval request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApproveDeclineBody"
+      responses:
+        "200":
+          description: Approval result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalDecisionResponse"
+
+  /v1/approvals/{id}/decline:
+    post:
+      operationId: declineRequest
+      tags: [approvals]
+      summary: Decline an approval request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApproveDeclineBody"
+      responses:
+        "200":
+          description: Decline result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalDecisionResponse"
+
+  /v1/audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [auditLogs]
+      summary: List audit logs
+      parameters:
+        - name: entityType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: entityId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: action
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of audit logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogListResponse"
+
+  /v1/audit-logs/{id}:
+    get:
+      operationId: getAuditLog
+      tags: [auditLogs]
+      summary: Get audit log by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Audit log
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogResponse"
+
+  /v1/entities/{entityType}/{entityId}/audit-logs:
+    get:
+      operationId: listEntityAuditLogs
+      tags: [auditLogs]
+      summary: List audit logs for an entity
+      parameters:
+        - name: entityType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entityId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of audit logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogListResponse"
+
+  /v1/monitoring/overview:
+    get:
+      operationId: getMonitoringOverview
+      tags: [monitoring]
+      summary: Get monitoring overview
+      responses:
+        "200":
+          description: Monitoring overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonitoringOverviewResponse"
+
+  /v1/monitoring/transactions/summary:
+    get:
+      operationId: getTransactionsSummary
+      tags: [monitoring]
+      summary: Get transactions summary
+      responses:
+        "200":
+          description: Transactions summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionSummaryResponse"
+
+  /v1/monitoring/approvals/summary:
+    get:
+      operationId: getApprovalsSummary
+      tags: [monitoring]
+      summary: Get approvals summary
+      responses:
+        "200":
+          description: Approvals summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalsSummaryResponse"
+
+  /v1/monitoring/agents/activity:
+    get:
+      operationId: getAgentsActivity
+      tags: [monitoring]
+      summary: Get agents activity
+      responses:
+        "200":
+          description: Agents activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentsActivityResponse"
+
+  /v1/monitoring/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [monitoring]
+      summary: Get recent activity
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecentActivityResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +827,860 @@ components:
       required:
         - status
 
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, suspended, pending]
+        description:
+          type: string
+          nullable: true
+        externalRef:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - status
+        - createdAt
+        - updatedAt
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        agentId:
+          type: string
+        name:
+          type: string
+        accountRef:
+          type: string
+          nullable: true
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [active, frozen, closed]
+        balanceMinor:
+          type: integer
+        availableBalanceMinor:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - agentId
+        - name
+        - currency
+        - status
+        - balanceMinor
+        - availableBalanceMinor
+        - createdAt
+        - updatedAt
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: string
+        agentId:
+          type: string
+        accountId:
+          type: string
+        cardRef:
+          type: string
+          nullable: true
+        last4:
+          type: string
+          nullable: true
+        brand:
+          type: string
+          nullable: true
+        network:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, frozen, terminated]
+        spendingEnabled:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - agentId
+        - accountId
+        - status
+        - spendingEnabled
+        - createdAt
+        - updatedAt
+
+    Policy:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [SPEND_LIMIT, MERCHANT_ALLOWLIST, MERCHANT_BLOCKLIST, APPROVAL_REQUIRED, TIME_WINDOW]
+        status:
+          type: string
+          enum: [active, disabled]
+        configJson:
+          type: object
+        description:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - type
+        - status
+        - configJson
+        - createdAt
+        - updatedAt
+
+    PolicyAssignment:
+      type: object
+      properties:
+        id:
+          type: string
+        policyId:
+          type: string
+        targetType:
+          type: string
+          enum: [AGENT, ACCOUNT, CARD]
+        targetId:
+          type: string
+        priority:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - policyId
+        - targetType
+        - targetId
+        - priority
+        - createdAt
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        agentId:
+          type: string
+        accountId:
+          type: string
+        cardId:
+          type: string
+          nullable: true
+        merchantId:
+          type: string
+          nullable: true
+        direction:
+          type: string
+          enum: [DEBIT, CREDIT]
+        amountMinor:
+          type: integer
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [attempted, pending, approved, declined, settled, reversed]
+        decision:
+          type: string
+          enum: [ALLOW, DENY, REVIEW, NONE]
+        approvalStatus:
+          type: string
+          enum: [NOT_REQUIRED, PENDING, APPROVED, DECLINED]
+        declinedReason:
+          type: string
+          nullable: true
+        requestedAt:
+          type: string
+        processedAt:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - agentId
+        - accountId
+        - direction
+        - amountMinor
+        - currency
+        - status
+        - decision
+        - approvalStatus
+        - requestedAt
+        - createdAt
+        - updatedAt
+
+    ApprovalRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        transactionId:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, APPROVED, DECLINED, EXPIRED]
+        requestedByType:
+          type: string
+        requestedReason:
+          type: string
+          nullable: true
+        reviewerId:
+          type: string
+          nullable: true
+        reviewedAt:
+          type: string
+          nullable: true
+        decisionReason:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - transactionId
+        - status
+        - requestedByType
+        - createdAt
+        - updatedAt
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        action:
+          type: string
+        actorType:
+          type: string
+        actorId:
+          type: string
+          nullable: true
+        traceId:
+          type: string
+          nullable: true
+        payloadJson:
+          type: object
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - entityType
+        - entityId
+        - action
+        - actorType
+        - createdAt
+
+    MonitoringOverview:
+      type: object
+      properties:
+        totalAgents:
+          type: integer
+        activeAgents:
+          type: integer
+        totalAccounts:
+          type: integer
+        activeAccounts:
+          type: integer
+        totalCards:
+          type: integer
+        activeCards:
+          type: integer
+        totalPolicies:
+          type: integer
+        activePolicies:
+          type: integer
+        totalTransactions:
+          type: integer
+        pendingApprovals:
+          type: integer
+      required:
+        - totalAgents
+        - activeAgents
+        - totalAccounts
+        - activeAccounts
+        - totalCards
+        - activeCards
+        - totalPolicies
+        - activePolicies
+        - totalTransactions
+        - pendingApprovals
+
+    TransactionSummary:
+      type: object
+      properties:
+        totalTransactions:
+          type: integer
+        approvedTransactions:
+          type: integer
+        declinedTransactions:
+          type: integer
+        pendingTransactions:
+          type: integer
+        reviewPendingTransactions:
+          type: integer
+      required:
+        - totalTransactions
+        - approvedTransactions
+        - declinedTransactions
+        - pendingTransactions
+        - reviewPendingTransactions
+
+    ApprovalsSummary:
+      type: object
+      properties:
+        totalApprovalRequests:
+          type: integer
+        pendingApprovalRequests:
+          type: integer
+        approvedApprovalRequests:
+          type: integer
+        declinedApprovalRequests:
+          type: integer
+      required:
+        - totalApprovalRequests
+        - pendingApprovalRequests
+        - approvedApprovalRequests
+        - declinedApprovalRequests
+
+    AgentActivity:
+      type: object
+      properties:
+        agentId:
+          type: string
+        agentName:
+          type: string
+        status:
+          type: string
+        accountCount:
+          type: integer
+        cardCount:
+          type: integer
+        transactionCount:
+          type: integer
+      required:
+        - agentId
+        - agentName
+        - status
+        - accountCount
+        - cardCount
+        - transactionCount
+
+    RecentActivityItem:
+      type: object
+      properties:
+        id:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        action:
+          type: string
+        actorType:
+          type: string
+        actorId:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - entityType
+        - entityId
+        - action
+        - actorType
+        - createdAt
+
+    MatchedPolicy:
+      type: object
+      properties:
+        policyId:
+          type: string
+        policyType:
+          type: string
+        outcome:
+          type: string
+          enum: [ALLOW, DENY, REVIEW]
+      required:
+        - policyId
+        - policyType
+        - outcome
+
+    TransactionDecisionResult:
+      type: object
+      properties:
+        result:
+          type: string
+          enum: [ALLOW, DENY, REVIEW]
+        reason:
+          type: string
+        matchedPolicies:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatchedPolicy"
+      required:
+        - result
+        - reason
+        - matchedPolicies
+
+    # Request bodies
+    CreateAgentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, suspended, pending]
+        description:
+          type: string
+      required:
+        - name
+
+    CreateAccountBody:
+      type: object
+      properties:
+        agentId:
+          type: string
+        name:
+          type: string
+        currency:
+          type: string
+        accountRef:
+          type: string
+      required:
+        - agentId
+        - name
+
+    CreateCardBody:
+      type: object
+      properties:
+        agentId:
+          type: string
+        accountId:
+          type: string
+        last4:
+          type: string
+        brand:
+          type: string
+        network:
+          type: string
+        cardRef:
+          type: string
+      required:
+        - agentId
+        - accountId
+
+    CreatePolicyBody:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [SPEND_LIMIT, MERCHANT_ALLOWLIST, MERCHANT_BLOCKLIST, APPROVAL_REQUIRED, TIME_WINDOW]
+        configJson:
+          type: object
+        description:
+          type: string
+      required:
+        - name
+        - type
+        - configJson
+
+    CreatePolicyAssignmentBody:
+      type: object
+      properties:
+        policyId:
+          type: string
+        targetType:
+          type: string
+          enum: [AGENT, ACCOUNT, CARD]
+        targetId:
+          type: string
+        priority:
+          type: integer
+      required:
+        - policyId
+        - targetType
+        - targetId
+
+    AttemptTransactionBody:
+      type: object
+      properties:
+        agentId:
+          type: string
+        accountId:
+          type: string
+        cardId:
+          type: string
+        merchantId:
+          type: string
+        amountMinor:
+          type: integer
+        currency:
+          type: string
+        direction:
+          type: string
+          enum: [DEBIT, CREDIT]
+      required:
+        - agentId
+        - accountId
+        - amountMinor
+        - currency
+
+    UpdateStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ToggleSpendingBody:
+      type: object
+      properties:
+        spendingEnabled:
+          type: boolean
+      required:
+        - spendingEnabled
+
+    ApproveDeclineBody:
+      type: object
+      properties:
+        reviewerId:
+          type: string
+        decisionReason:
+          type: string
+
+    # Response wrappers
+    AgentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Agent"
+      required:
+        - success
+        - data
+
+    AgentListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Agent"
+      required:
+        - success
+        - data
+
+    AccountResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Account"
+      required:
+        - success
+        - data
+
+    AccountListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+      required:
+        - success
+        - data
+
+    CardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Card"
+      required:
+        - success
+        - data
+
+    CardListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Card"
+      required:
+        - success
+        - data
+
+    PolicyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Policy"
+      required:
+        - success
+        - data
+
+    PolicyListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Policy"
+      required:
+        - success
+        - data
+
+    PolicyAssignmentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/PolicyAssignment"
+      required:
+        - success
+        - data
+
+    PolicyAssignmentListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolicyAssignment"
+      required:
+        - success
+        - data
+
+    TransactionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/Transaction"
+      required:
+        - success
+        - data
+
+    TransactionListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"
+      required:
+        - success
+        - data
+
+    TransactionAttemptResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            transaction:
+              $ref: "#/components/schemas/Transaction"
+            decision:
+              $ref: "#/components/schemas/TransactionDecisionResult"
+            approvalRequest:
+              $ref: "#/components/schemas/ApprovalRequest"
+              nullable: true
+          required:
+            - transaction
+            - decision
+      required:
+        - success
+        - data
+
+    ApprovalResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/ApprovalRequest"
+      required:
+        - success
+        - data
+
+    ApprovalListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApprovalRequest"
+      required:
+        - success
+        - data
+
+    ApprovalDecisionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            approval:
+              $ref: "#/components/schemas/ApprovalRequest"
+            transaction:
+              $ref: "#/components/schemas/Transaction"
+          required:
+            - approval
+            - transaction
+      required:
+        - success
+        - data
+
+    AuditLogResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/AuditLog"
+      required:
+        - success
+        - data
+
+    AuditLogListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+      required:
+        - success
+        - data
+
+    MonitoringOverviewResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/MonitoringOverview"
+      required:
+        - success
+        - data
+
+    TransactionSummaryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/TransactionSummary"
+      required:
+        - success
+        - data
+
+    ApprovalsSummaryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: "#/components/schemas/ApprovalsSummary"
+      required:
+        - success
+        - data
+
+    AgentsActivityResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentActivity"
+      required:
+        - success
+        - data
+
+    RecentActivityResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecentActivityItem"
+      required:
+        - success
+        - data
