@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
+import { usePrivy } from "@privy-io/react-auth";
 import {
   LayoutDashboard,
   Users,
@@ -14,6 +15,7 @@ import {
   Activity,
   Search,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +40,9 @@ function pageTitle(path: string): string {
 export function AppLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const title = pageTitle(location);
+  const { user, logout } = usePrivy();
+
+  const userEmail = user?.email?.address ?? "";
 
   return (
     <div className="min-h-screen flex" style={{ background: "#f7f2e9" }}>
@@ -71,9 +76,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 href={item.href}
                 className={cn(
                   "flex items-center px-3 py-2 text-[12px] gap-2.5 rounded transition-colors duration-150",
-                  isActive
-                    ? "font-medium"
-                    : "font-normal"
+                  isActive ? "font-medium" : "font-normal"
                 )}
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
@@ -83,8 +86,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 }}
                 onMouseEnter={e => {
                   if (!isActive) {
-                    (e.currentTarget as HTMLElement).style.color = "rgba(229,220,200,0.85)";
-                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                    (e.currentTarget as HTMLElement).style.color = "#e5dcc8";
+                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
                   }
                 }}
                 onMouseLeave={e => {
@@ -101,7 +104,49 @@ export function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* Bottom status */}
+        {/* User + logout */}
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+          {userEmail && (
+            <div style={{ padding: "10px 12px 0" }}>
+              <p style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: "9px",
+                color: "rgba(229,220,200,0.45)",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                marginBottom: "2px",
+              }}>Signed in as</p>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "11px",
+                color: "rgba(229,220,200,0.85)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}>{userEmail}</p>
+            </div>
+          )}
+
+          <button
+            onClick={logout}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", gap: "8px",
+              padding: "10px 12px 12px",
+              background: "none", border: "none", cursor: "pointer",
+              color: "rgba(229,220,200,0.45)",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase",
+              transition: "color 0.15s",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#e05c5c"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(229,220,200,0.45)"; }}
+          >
+            <LogOut size={11} />
+            Sign out
+          </button>
+        </div>
+
+        {/* Status */}
         <div
           className="p-3 text-center"
           style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
@@ -120,10 +165,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         {/* Top bar */}
         <header
           className="h-12 flex items-center justify-between px-6 flex-shrink-0"
-          style={{
-            background: "#fff",
-            borderBottom: "1px solid #d5cbbf",
-          }}
+          style={{ background: "#fff", borderBottom: "1px solid #d5cbbf" }}
         >
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm">
@@ -135,10 +177,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           {/* Search */}
           <div
             className="flex items-center gap-2 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors"
-            style={{
-              background: "#f7f2e9",
-              border: "1px solid #d5cbbf",
-            }}
+            style={{ background: "#f7f2e9", border: "1px solid #d5cbbf" }}
           >
             <Search className="h-3.5 w-3.5" style={{ color: "#6a5040" }} />
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#6a5040" }}>Search...</span>

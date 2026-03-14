@@ -271,7 +271,7 @@ export default function Landing() {
           </div>
 
           {/* CTA */}
-          <button onClick={() => navigate("/dashboard")} style={{
+          <button onClick={() => navigate("/login")} style={{
             background: C.gold, border: "none", cursor: "pointer",
             padding: "8px 18px",
             fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em",
@@ -319,7 +319,7 @@ export default function Landing() {
               Set spend limits, lock them to the right merchants, and watch every transaction in real time. No risk to your own accounts.
             </p>
 
-            <button onClick={() => navigate("/dashboard")} style={{
+            <button onClick={() => navigate("/login")} style={{
               display: "inline-flex", alignItems: "center", justifyContent: "center",
               padding: "14px 32px", width: "fit-content",
               fontFamily: MONO, fontSize: "11px", letterSpacing: "0.15em",
@@ -549,7 +549,7 @@ export default function Landing() {
         }}>
           <h3 style={{ fontFamily: SERIF, fontSize: "28px", fontWeight: 400, marginBottom: "8px" }}>Ready to get started?</h3>
           <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginBottom: "28px" }}>Up and running in minutes.</p>
-          <button onClick={() => navigate("/dashboard")} style={{
+          <button onClick={() => navigate("/login")} style={{
             display: "inline-flex", alignItems: "center", gap: "8px",
             padding: "13px 28px",
             fontFamily: MONO, fontSize: "11px", letterSpacing: "0.12em",

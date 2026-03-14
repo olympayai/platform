@@ -1,10 +1,13 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PrivyProvider } from "@privy-io/react-auth";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AppLayout } from "@/components/layout/AppLayout";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Agents from "@/pages/Agents";
 import Accounts from "@/pages/Accounts";
@@ -26,22 +29,26 @@ const queryClient = new QueryClient({
   },
 });
 
+const PRIVY_APP_ID = import.meta.env.VITE_PRIVY_APP_ID as string;
+
 function DashboardRouter() {
   return (
-    <AppLayout>
-      <Switch>
-        <Route path="/dashboard" component={Dashboard} />
-        <Route path="/agents" component={Agents} />
-        <Route path="/accounts" component={Accounts} />
-        <Route path="/cards" component={Cards} />
-        <Route path="/policies" component={Policies} />
-        <Route path="/transactions" component={Transactions} />
-        <Route path="/approvals" component={Approvals} />
-        <Route path="/merchants" component={Merchants} />
-        <Route path="/audit-logs" component={AuditLogs} />
-        <Route path="/settings" component={Settings} />
-      </Switch>
-    </AppLayout>
+    <AuthGuard>
+      <AppLayout>
+        <Switch>
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/agents" component={Agents} />
+          <Route path="/accounts" component={Accounts} />
+          <Route path="/cards" component={Cards} />
+          <Route path="/policies" component={Policies} />
+          <Route path="/transactions" component={Transactions} />
+          <Route path="/approvals" component={Approvals} />
+          <Route path="/merchants" component={Merchants} />
+          <Route path="/audit-logs" component={AuditLogs} />
+          <Route path="/settings" component={Settings} />
+        </Switch>
+      </AppLayout>
+    </AuthGuard>
   );
 }
 
@@ -49,6 +56,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/login" component={Login} />
       <Route path="/dashboard" component={DashboardRouter} />
       <Route path="/agents" component={DashboardRouter} />
       <Route path="/accounts" component={DashboardRouter} />
@@ -66,14 +74,25 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <PrivyProvider
+      appId={PRIVY_APP_ID}
+      config={{
+        loginMethods: ["email"],
+        appearance: {
+          theme: "light",
+          accentColor: "#c4923a",
+        },
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </PrivyProvider>
   );
 }
 
