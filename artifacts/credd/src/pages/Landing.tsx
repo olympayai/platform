@@ -33,7 +33,7 @@ const NAV_SCROLL_MAP: Record<string, string> = {
   "Accounts":     "feature-accounts",
   "Cards":        "section-cards",
   "Policies":     "section-policies",
-  "Audit Logs":   "feature-audit",
+  "Audit Logs":   "section-audit",
   "API":          "integration",
 };
 
@@ -908,6 +908,172 @@ export default function Landing() {
             >
               VIEW POLICY DOCS <ArrowRight size={12} />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AUDIT LOGS ── */}
+      <section id="section-audit" style={{ borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "600px" }}>
+
+          {/* Left: copy */}
+          <div style={{
+            padding: "72px 72px",
+            borderRight: `1px solid ${C.border}`,
+            display: "flex", flexDirection: "column", justifyContent: "center",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ width: "24px", height: "2px", background: C.gold }} />
+              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Audit Logs</span>
+            </div>
+
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", maxWidth: "420px" }}>
+              Every decision recorded. Every cent accounted for.
+            </h2>
+            <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, lineHeight: 1.7, marginBottom: "36px", maxWidth: "400px" }}>
+              An immutable event stream captures every action taken by agents, policies, and humans. Query any transaction, replicate any decision, and prove compliance in seconds.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {[
+                {
+                  tag: "IMMUTABLE",
+                  desc: "Log entries are append-only and cryptographically sealed. No retroactive edits, ever.",
+                },
+                {
+                  tag: "REAL_TIME",
+                  desc: "Events stream to your dashboard within milliseconds of each agent action.",
+                },
+                {
+                  tag: "QUERYABLE",
+                  desc: "Filter by agent, card, policy, verdict, or time window via API or dashboard.",
+                },
+                {
+                  tag: "EXPORTABLE",
+                  desc: "Download full CSV exports for any date range to satisfy audit or compliance requirements.",
+                },
+              ].map(item => (
+                <div key={item.tag} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: C.gold, background: `${C.gold}12`, border: `1px solid ${C.gold}35`,
+                    borderRadius: "2px", padding: "2px 6px", whiteSpace: "nowrap", marginTop: "2px",
+                    flexShrink: 0,
+                  }}>{item.tag}</span>
+                  <span style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.6 }}>{item.desc}</span>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => {}} style={{
+              marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
+              width: "fit-content", padding: "11px 24px",
+              fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
+              fontWeight: 600, textTransform: "uppercase",
+              background: "transparent", color: C.black,
+              border: `1px solid ${C.border}`, borderRadius: "3px", cursor: "pointer",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = C.gold; (e.currentTarget as HTMLElement).style.color = C.gold; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = C.border; (e.currentTarget as HTMLElement).style.color = C.black; }}
+            >
+              VIEW LOG SCHEMA <ArrowRight size={12} />
+            </button>
+          </div>
+
+          {/* Right: live audit log feed mockup */}
+          <div style={{
+            padding: "48px 56px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: C.cream,
+          }}>
+            <div style={{
+              width: "100%", maxWidth: "520px",
+              background: "#fff", border: `1px solid ${C.border}`,
+              borderRadius: "8px", overflow: "hidden",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+            }}>
+              {/* Mock topbar */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "14px 20px", borderBottom: `1px solid ${C.border}`,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#f87171" }} />
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#fbbf24" }} />
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#4ade80" }} />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }} />
+                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em" }}>AUDIT LOG — LIVE</span>
+                </div>
+                <span style={{
+                  fontFamily: MONO, fontSize: "8px", color: C.muted,
+                  background: C.cream, border: `1px solid ${C.border}`,
+                  borderRadius: "3px", padding: "2px 8px",
+                }}>EXPORT CSV</span>
+              </div>
+
+              {/* Column headers */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "80px 1fr 120px 100px",
+                padding: "8px 20px",
+                background: C.cream, borderBottom: `1px solid ${C.border}`,
+              }}>
+                {["Time", "Action", "Entity", "Actor"].map(h => (
+                  <span key={h} style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</span>
+                ))}
+              </div>
+
+              {/* Log rows */}
+              {[
+                { time: "14:22:01", action: "CARD_ISSUED",      actionColor: "#16a34a", actionBg: "#f0fdf4", actionBorder: "#bbf7d0", entity: "card · ••7842",   actor: "PROCUREMENT-BOT" },
+                { time: "14:22:03", action: "POLICY_ATTACHED",  actionColor: "#1d4ed8", actionBg: "#eff6ff", actionBorder: "#bfdbfe", entity: "policy · CONTRACTORS", actor: "SYSTEM" },
+                { time: "14:22:48", action: "TXN_ALLOWED",      actionColor: "#16a34a", actionBg: "#f0fdf4", actionBorder: "#bbf7d0", entity: "txn · t_92xk",    actor: "PROCUREMENT-BOT" },
+                { time: "14:31:17", action: "TXN_DENIED",       actionColor: "#b91c1c", actionBg: "#fef2f2", actionBorder: "#fecaca", entity: "txn · t_08mz",    actor: "RESEARCH-AGENT" },
+                { time: "14:35:50", action: "APPROVAL_SENT",    actionColor: "#7c3aed", actionBg: "#f5f3ff", actionBorder: "#ddd6fe", entity: "txn · t_44qr",    actor: "ANALYTICS-AI" },
+                { time: "14:36:12", action: "CARD_PAUSED",      actionColor: "#92400e", actionBg: "#fffbeb", actionBorder: "#fde68a", entity: "card · ••5544",   actor: "user@olympay.io" },
+              ].map((row, ri) => (
+                <div key={row.time + ri} style={{
+                  display: "grid", gridTemplateColumns: "80px 1fr 120px 100px",
+                  padding: "10px 20px", alignItems: "center",
+                  borderBottom: ri < 5 ? `1px solid ${C.border}` : "none",
+                  background: ri % 2 === 0 ? "transparent" : `${C.cream}60`,
+                }}>
+                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted }}>{row.time}</span>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700, letterSpacing: "0.04em",
+                    color: row.actionColor, background: row.actionBg, border: `1px solid ${row.actionBorder}`,
+                    borderRadius: "3px", padding: "2px 6px", display: "inline-block",
+                  }}>{row.action}</span>
+                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.03em" }}>{row.entity}</span>
+                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.actor}</span>
+                </div>
+              ))}
+
+              {/* Footer stats */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+                borderTop: `1px solid ${C.border}`,
+                background: C.cream,
+              }}>
+                {[
+                  { label: "Events Today",  val: "12.4K" },
+                  { label: "Retention",     val: "5 Yrs" },
+                  { label: "Avg Latency",   val: "< 20ms" },
+                ].map((stat, si) => (
+                  <div key={stat.label} style={{
+                    padding: "14px 20px",
+                    borderRight: si < 2 ? `1px solid ${C.border}` : "none",
+                    textAlign: "center",
+                  }}>
+                    <div style={{ fontFamily: MONO, fontSize: "14px", fontWeight: 700, color: C.black }}>{stat.val}</div>
+                    <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.08em", marginTop: "3px", textTransform: "uppercase" }}>{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
