@@ -1474,7 +1474,7 @@ export default function Landing() {
                 { time: "14:22:48", action: "TXN_ALLOWED",      actionColor: "#16a34a", actionBg: "#f0fdf4", actionBorder: "#bbf7d0", entity: "txn · t_92xk",    actor: "PROCUREMENT-BOT" },
                 { time: "14:31:17", action: "TXN_DENIED",       actionColor: "#b91c1c", actionBg: "#fef2f2", actionBorder: "#fecaca", entity: "txn · t_08mz",    actor: "RESEARCH-AGENT" },
                 { time: "14:35:50", action: "APPROVAL_SENT",    actionColor: "#7c3aed", actionBg: "#f5f3ff", actionBorder: "#ddd6fe", entity: "txn · t_44qr",    actor: "ANALYTICS-AI" },
-                { time: "14:36:12", action: "CARD_PAUSED",      actionColor: "#92400e", actionBg: "#fffbeb", actionBorder: "#fde68a", entity: "card · ••5544",   actor: "user@olympay.io" },
+                { time: "14:36:12", action: "CARD_PAUSED",      actionColor: "#92400e", actionBg: "#fffbeb", actionBorder: "#fde68a", entity: "card · ••5544",   actor: "user@olympay.tech" },
               ].map((row, ri) => (
                 <div key={row.time + ri} style={{
                   display: "grid", gridTemplateColumns: "80px 1fr 120px 100px",

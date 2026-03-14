@@ -5,7 +5,7 @@ import {
   MONO, SANS, SERIF, CREAM, BORDER, GOLD, BLACK, MUTED,
 } from "@/components/ui/page-shell";
 
-const BASE_URL = "https://api.olympay.io/v1";
+const BASE_URL = "https://api.olympay.tech/v1";
 
 const ENDPOINTS = [
   {
@@ -64,7 +64,7 @@ const METHOD_COLORS: Record<string, { bg: string; color: string; border: string 
 };
 
 const EXAMPLE_REQUEST = `curl -X POST ${BASE_URL}/transactions/evaluate \\
-  -H "Authorization: Bearer sk_live_••••••••••••••" \\
+  -H "Authorization: Bearer olympay_live_••••••••••••••" \\
   -H "Content-Type: application/json" \\
   -d '{
     "agentId": "agt_01j9k2...",
@@ -200,16 +200,16 @@ export default function Api() {
 
           <ApiKeyRow
             label="Live Secret Key"
-            value="sk_live_p3rXn8Kq2mT9vLwA1sZ5dYcE7fOiUjBh"
+            value="olympay_live_p3rXn8Kq2mT9vLwA1sZ5dYcE7fOiUjBh"
             masked
           />
           <ApiKeyRow
             label="Live Publishable Key"
-            value="pk_live_2vFxNmQrKsD8wLtP"
+            value="olympay_pub_2vFxNmQrKsD8wLtP"
           />
           <ApiKeyRow
             label="Workspace ID"
-            value="ws_01j8a1x9k2mn3p4q5r"
+            value="olympay_ws_01j8a1x9k2mn3p4q5r"
           />
 
           <div style={{
@@ -218,7 +218,7 @@ export default function Api() {
           }}>
             <p style={{ fontFamily: SANS, fontSize: "12px", color: MUTED, lineHeight: 1.6, margin: 0 }}>
               Keep your secret key confidential. Rotate it immediately if exposed. All API requests must include{" "}
-              <code style={{ fontFamily: MONO, fontSize: "11px", color: GOLD }}>Authorization: Bearer sk_live_...</code>
+              <code style={{ fontFamily: MONO, fontSize: "11px", color: GOLD }}>Authorization: Bearer olympay_live_...</code>
             </p>
           </div>
         </div>
