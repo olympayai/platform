@@ -1067,7 +1067,7 @@ export default function Landing() {
               ))}
             </div>
 
-            <button onClick={() => {}} style={{
+            <button onClick={() => { navigate("/docs#api-reference"); window.scrollTo(0,0); }} style={{
               marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
               width: "fit-content", padding: "11px 24px",
               fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
@@ -1388,7 +1388,7 @@ export default function Landing() {
               ))}
             </div>
 
-            <button onClick={() => {}} style={{
+            <button onClick={() => { navigate("/docs#policy-docs"); window.scrollTo(0,0); }} style={{
               marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
               width: "fit-content", padding: "11px 24px",
               fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
@@ -1461,7 +1461,7 @@ export default function Landing() {
               ))}
             </div>
 
-            <button onClick={() => {}} style={{
+            <button onClick={() => { navigate("/docs#log-schema"); window.scrollTo(0,0); }} style={{
               marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
               width: "fit-content", padding: "11px 24px",
               fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",

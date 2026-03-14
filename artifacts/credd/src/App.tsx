@@ -19,6 +19,7 @@ import Merchants from "@/pages/Merchants";
 import AuditLogs from "@/pages/AuditLogs";
 import Api from "@/pages/Api";
 import Settings from "@/pages/Settings";
+import Docs from "@/pages/Docs";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -59,6 +60,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
+      <Route path="/docs" component={Docs} />
       <Route path="/:rest*" component={DashboardRouter} />
       <Route component={NotFound} />
     </Switch>
