@@ -145,11 +145,39 @@ const USE_CASES = [
 
 /* ─── Dark virtual card component ─── */
 function DarkCard() {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const [pressed, setPressed] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    setTilt({ x: (py - 0.5) * -22, y: (px - 0.5) * 22 });
+    setGlare({ x: px * 100, y: py * 100, opacity: 0.18 });
+  };
+  const onMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+    setGlare(g => ({ ...g, opacity: 0 }));
+    setPressed(false);
+  };
+
+  const isResting = tilt.x === 0 && tilt.y === 0;
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "14px", width: "380px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "14px", width: "380px", perspective: "900px" }}>
 
       {/* ── Physical card ── */}
-      <div style={{
+      <div
+        ref={cardRef}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        onMouseDown={() => setPressed(true)}
+        onMouseUp={() => setPressed(false)}
+        style={{
         width: "100%",
         aspectRatio: "1.586",
         background: "linear-gradient(145deg, #1c1c19 0%, #0d0d0b 55%, #1e190f 100%)",
@@ -157,13 +185,32 @@ function DarkCard() {
         padding: "26px 28px",
         boxSizing: "border-box",
         border: "1px solid rgba(196,146,58,0.18)",
-        boxShadow: "0 24px 56px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)",
+        boxShadow: pressed
+          ? "0 8px 24px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)"
+          : "0 24px 56px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)",
         position: "relative",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        cursor: "pointer",
+        transformStyle: "preserve-3d",
+        transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${pressed ? 0.96 : 1})`,
+        transition: isResting
+          ? "transform 0.55s cubic-bezier(0.23,1,0.32,1), box-shadow 0.55s ease"
+          : "transform 0.08s linear, box-shadow 0.08s linear",
+        willChange: "transform",
       }}>
+        {/* 3D glare overlay */}
+        <div style={{
+          position: "absolute", inset: 0, borderRadius: "18px",
+          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255,255,255,0.22) 0%, rgba(196,146,58,0.08) 40%, transparent 70%)`,
+          opacity: glare.opacity,
+          pointerEvents: "none",
+          transition: "opacity 0.3s ease",
+          zIndex: 10,
+        }} />
+
         {/* Decorative radial glows */}
         <div style={{
           position: "absolute", top: "-80px", right: "-80px",
