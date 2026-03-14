@@ -36,7 +36,7 @@ export default function Login() {
         background: BLACK, borderBottom: `1px solid rgba(255,255,255,0.07)`,
       }}>
         <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-          <img src={olympayLogo} alt="Olympay" style={{ width: "20px", height: "20px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
+          <img src={olympayLogo} alt="Olympay" style={{ width: "28px", height: "28px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
           <span style={{ fontFamily: MONO, fontSize: "13px", color: GOLD, fontWeight: 600, letterSpacing: "0.04em" }}>
             OLYMPAY
           </span>
@@ -65,7 +65,7 @@ export default function Login() {
               width: "44px", height: "44px",
               background: BLACK, borderRadius: "8px", marginBottom: "16px",
             }}>
-              <img src={olympayLogo} alt="Olympay" style={{ width: "24px", height: "24px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
+              <img src={olympayLogo} alt="Olympay" style={{ width: "34px", height: "34px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
             </div>
             <h1 style={{
               fontFamily: SERIF, fontSize: "24px", fontWeight: 400,

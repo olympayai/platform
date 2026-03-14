@@ -24,7 +24,7 @@ export function AuthGuard({ children }: { children: ReactNode }) {
         flexDirection: "column",
         gap: "12px",
       }}>
-        <img src={olympayLogo} alt="Olympay" style={{ width: "28px", height: "28px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
+        <img src={olympayLogo} alt="Olympay" style={{ width: "40px", height: "40px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
         <span style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: "10px",
