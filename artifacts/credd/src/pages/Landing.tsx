@@ -32,7 +32,7 @@ const NAV_SCROLL_MAP: Record<string, string> = {
   "Transactions": "how-it-works",
   "Accounts":     "feature-accounts",
   "Cards":        "section-cards",
-  "Policies":     "feature-policies",
+  "Policies":     "section-policies",
   "Audit Logs":   "feature-audit",
   "API":          "integration",
 };
@@ -714,6 +714,200 @@ export default function Landing() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── POLICIES ── */}
+      <section id="section-policies" style={{ borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "600px" }}>
+
+          {/* Right: mockup first (mirrored layout vs Cards) */}
+          <div style={{
+            padding: "48px 56px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: C.cream,
+            borderRight: `1px solid ${C.border}`,
+          }}>
+            <div style={{
+              width: "100%", maxWidth: "520px",
+              background: "#fff", border: `1px solid ${C.border}`,
+              borderRadius: "8px", overflow: "hidden",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+            }}>
+              {/* Mock topbar */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "14px 20px", borderBottom: `1px solid ${C.border}`,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#f87171" }} />
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#fbbf24" }} />
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#4ade80" }} />
+                </div>
+                <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em" }}>SPEND POLICIES</span>
+                <span style={{
+                  fontFamily: MONO, fontSize: "8px", color: C.gold,
+                  background: `${C.gold}12`, border: `1px solid ${C.gold}35`,
+                  borderRadius: "3px", padding: "2px 8px",
+                }}>+ CREATE POLICY</span>
+              </div>
+
+              {/* Column headers */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "1fr 110px 60px 130px",
+                padding: "8px 20px",
+                background: C.cream, borderBottom: `1px solid ${C.border}`,
+              }}>
+                {["Policy Name", "Type", "Status", "Configuration"].map(h => (
+                  <span key={h} style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</span>
+                ))}
+              </div>
+
+              {/* Policy rows */}
+              {[
+                {
+                  name: "Daily $500 Limit",   desc: "Procurement agents",
+                  type: "SPEND_LIMIT",         typeColor: "#c2410c", typeBg: "#fff7ed", typeBorder: "#fed7aa",
+                  status: "ACTIVE",
+                  config: '{ "max": 50000,\n  "window": "daily" }',
+                },
+                {
+                  name: "SaaS Vendors Only",   desc: "Software subscriptions",
+                  type: "MERCHANT_ALLOWLIST",  typeColor: "#1d4ed8", typeBg: "#eff6ff", typeBorder: "#bfdbfe",
+                  status: "ACTIVE",
+                  config: '{ "ids": ["stripe",\n  "aws", "gh"] }',
+                },
+                {
+                  name: "High Value Approval", desc: "> $1,000 requires sign-off",
+                  type: "APPROVAL_REQUIRED",   typeColor: "#7c3aed", typeBg: "#f5f3ff", typeBorder: "#ddd6fe",
+                  status: "ACTIVE",
+                  config: '{ "threshold":\n  100000 }',
+                },
+                {
+                  name: "Monthly Travel Cap",  desc: "Travel and hotels",
+                  type: "SPEND_LIMIT",         typeColor: "#c2410c", typeBg: "#fff7ed", typeBorder: "#fed7aa",
+                  status: "INACTIVE",
+                  config: '{ "max": 200000,\n  "window": "monthly" }',
+                },
+              ].map((pol, pi) => (
+                <div key={pol.name} style={{
+                  display: "grid", gridTemplateColumns: "1fr 110px 60px 130px",
+                  padding: "11px 20px", alignItems: "center",
+                  borderBottom: pi < 3 ? `1px solid ${C.border}` : "none",
+                  background: pi % 2 === 0 ? "transparent" : `${C.cream}60`,
+                }}>
+                  <div>
+                    <div style={{ fontFamily: SANS, fontSize: "12px", fontWeight: 500, color: C.black }}>{pol.name}</div>
+                    <div style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, marginTop: "2px" }}>{pol.desc}</div>
+                  </div>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "7px", fontWeight: 700, letterSpacing: "0.04em",
+                    color: pol.typeColor, background: pol.typeBg, border: `1px solid ${pol.typeBorder}`,
+                    borderRadius: "3px", padding: "2px 5px", display: "inline-block",
+                  }}>{pol.type}</span>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    color: pol.status === "ACTIVE" ? "#16a34a" : "#78716c",
+                    background: pol.status === "ACTIVE" ? "#f0fdf4" : "#f5f5f4",
+                    border: `1px solid ${pol.status === "ACTIVE" ? "#bbf7d0" : "#d6d3d1"}`,
+                    borderRadius: "3px", padding: "2px 6px", display: "inline-block",
+                  }}>{pol.status}</span>
+                  <pre style={{
+                    fontFamily: MONO, fontSize: "8px", color: C.muted,
+                    background: C.cream, border: `1px solid ${C.border}`,
+                    borderRadius: "3px", padding: "5px 7px",
+                    margin: 0, lineHeight: 1.5,
+                  }}>{pol.config}</pre>
+                </div>
+              ))}
+
+              {/* Footer stats */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+                borderTop: `1px solid ${C.border}`,
+                background: C.cream,
+              }}>
+                {[
+                  { label: "Active Policies", val: "18" },
+                  { label: "Verdicts / Day",  val: "4.3K" },
+                  { label: "Deny Rate",       val: "2.1%" },
+                ].map((stat, si) => (
+                  <div key={stat.label} style={{
+                    padding: "14px 20px",
+                    borderRight: si < 2 ? `1px solid ${C.border}` : "none",
+                    textAlign: "center",
+                  }}>
+                    <div style={{ fontFamily: MONO, fontSize: "14px", fontWeight: 700, color: C.black }}>{stat.val}</div>
+                    <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.08em", marginTop: "3px", textTransform: "uppercase" }}>{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Left: copy */}
+          <div style={{
+            padding: "72px 72px",
+            display: "flex", flexDirection: "column", justifyContent: "center",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ width: "24px", height: "2px", background: C.gold }} />
+              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Policies</span>
+            </div>
+
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", maxWidth: "420px" }}>
+              Rules that enforce themselves before a cent moves.
+            </h2>
+            <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, lineHeight: 1.7, marginBottom: "36px", maxWidth: "400px" }}>
+              Attach a policy to any agent or card and it runs automatically on every transaction. No middleware, no manual review unless you require it. Three types cover every control scenario.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {[
+                {
+                  type: "SPEND_LIMIT",
+                  color: "#c2410c", bg: "#fff7ed", border: "#fed7aa",
+                  desc: "Cap daily, weekly, or monthly spend per agent. Transactions that exceed the window are automatically denied.",
+                },
+                {
+                  type: "MERCHANT_ALLOWLIST",
+                  color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe",
+                  desc: "Restrict charges to a pre-approved list of merchant IDs. Any unknown vendor is blocked before authorization.",
+                },
+                {
+                  type: "APPROVAL_REQUIRED",
+                  color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe",
+                  desc: "Escalate any transaction above a threshold to a human reviewer. Funds are held until approved or rejected.",
+                },
+              ].map(item => (
+                <div key={item.type} style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    letterSpacing: "0.06em", textTransform: "uppercase",
+                    color: item.color, background: item.bg, border: `1px solid ${item.border}`,
+                    borderRadius: "3px", padding: "3px 7px", whiteSpace: "nowrap", marginTop: "2px",
+                    flexShrink: 0,
+                  }}>{item.type}</span>
+                  <span style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.65 }}>{item.desc}</span>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => {}} style={{
+              marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
+              width: "fit-content", padding: "11px 24px",
+              fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
+              fontWeight: 600, textTransform: "uppercase",
+              background: "transparent", color: C.black,
+              border: `1px solid ${C.border}`, borderRadius: "3px", cursor: "pointer",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = C.gold; (e.currentTarget as HTMLElement).style.color = C.gold; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = C.border; (e.currentTarget as HTMLElement).style.color = C.black; }}
+            >
+              VIEW POLICY DOCS <ArrowRight size={12} />
+            </button>
           </div>
         </div>
       </section>
