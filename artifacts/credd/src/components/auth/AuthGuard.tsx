@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { useLocation } from "wouter";
 import { usePrivy } from "@privy-io/react-auth";
-import { Activity } from "lucide-react";
+import olympayLogo from "@/assets/logo.png";
 
 export function AuthGuard({ children }: { children: ReactNode }) {
   const { ready, authenticated } = usePrivy();
@@ -24,7 +24,7 @@ export function AuthGuard({ children }: { children: ReactNode }) {
         flexDirection: "column",
         gap: "12px",
       }}>
-        <Activity size={20} color="#c4923a" />
+        <img src={olympayLogo} alt="Olympay" style={{ width: "28px", height: "28px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)" }} />
         <span style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: "10px",

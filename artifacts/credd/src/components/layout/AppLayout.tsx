@@ -1,5 +1,6 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import olympayLogo from "@/assets/logo.png";
 import { usePrivy } from "@privy-io/react-auth";
 import {
   LayoutDashboard,
@@ -12,7 +13,6 @@ import {
   FileTerminal,
   Store,
   Settings,
-  Activity,
   Search,
   ChevronRight,
   LogOut,
@@ -71,7 +71,7 @@ function SidebarContent({
         className="h-12 flex items-center px-4 gap-2 flex-shrink-0"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
       >
-        <Activity className="h-3.5 w-3.5 flex-shrink-0" style={{ color: "#c4923a" }} />
+        <img src={olympayLogo} alt="Olympay" style={{ width: "18px", height: "18px", filter: "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)", flexShrink: 0 }} />
         <span
           className="font-semibold text-sm tracking-tight"
           style={{ fontFamily: "'JetBrains Mono', monospace", color: "#c4923a", letterSpacing: "0.04em" }}

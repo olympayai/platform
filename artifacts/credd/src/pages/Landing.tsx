@@ -1,6 +1,10 @@
 import { useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
-import { Activity, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+import olympayLogo from "@/assets/logo.png";
+const LOGO_GOLD = "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)";
+const LOGO_WHITE = "brightness(0) invert(1)";
+const LOGO_BLACK = "brightness(0)";
 
 /* ─── Responsive hook ─── */
 function useWindowWidth() {
@@ -183,7 +187,7 @@ function DarkCard() {
               border: "1px solid rgba(196,146,58,0.28)",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-              <Activity size={13} color={C.goldLight} />
+              <img src={olympayLogo} alt="Olympay" style={{ width: "16px", height: "16px", filter: LOGO_GOLD }} />
             </div>
             <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 700, letterSpacing: "0.07em" }}>OLYMPAY</span>
           </div>
@@ -255,7 +259,7 @@ function DarkCard() {
           borderBottom: `1px solid ${C.border}`,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-            <Activity size={11} color={C.gold} />
+            <img src={olympayLogo} alt="Olympay" style={{ width: "13px", height: "13px", filter: LOGO_GOLD }} />
             <span style={{ fontFamily: MONO, fontSize: "9px", color: C.black, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Virtual Account</span>
           </div>
           <span style={{
@@ -399,7 +403,7 @@ export default function Landing() {
         }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Activity size={14} color={C.goldLight} />
+            <img src={olympayLogo} alt="Olympay" style={{ width: "18px", height: "18px", filter: LOGO_GOLD }} />
             <span style={{ fontFamily: MONO, fontSize: "12px", color: C.goldLight, fontWeight: 500, letterSpacing: "0.05em" }}>
               OLYMPAY
             </span>
@@ -1629,7 +1633,7 @@ export default function Landing() {
         gap: isMobile ? "16px" : "0",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Activity size={13} color={C.gold} />
+          <img src={olympayLogo} alt="Olympay" style={{ width: "16px", height: "16px", filter: LOGO_GOLD }} />
           <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>OLYMPAY</span>
         </div>
         <p style={{ fontFamily: SANS, fontSize: "12px", color: C.muted }}>
