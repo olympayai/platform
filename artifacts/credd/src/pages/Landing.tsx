@@ -18,77 +18,77 @@ const SANS = "'Inter', sans-serif";
 const MONO = "'JetBrains Mono', monospace";
 
 const NAV_LINKS = [
-  "Use Cases",
-  "Cards",
-  "Virtual Accounts",
-  "Pricing",
-  "Agents",
-  "Audit Logs",
-  "API",
+  "Solutions",
+  "Payments",
+  "Banking",
+  "Plans",
+  "Workflows",
+  "Ledger",
+  "Developers",
 ];
 
 const STEPS = [
   {
     n: "Step 01",
-    title: "Set your rules",
-    desc: "Define what your agent can spend on, where, how much, and how often. Merchant allowlists, spend limits, time windows — all configurable.",
-    tag: "POLICY_ENGINE",
+    title: "Define spending boundaries",
+    desc: "Specify exactly what each agent is permitted to buy, which merchants are allowed, daily caps, and recurring limits — all through a single policy object.",
+    tag: "POLICY_CONFIGURED",
   },
   {
     n: "Step 02",
-    title: "Agent requests access",
-    desc: "Before any transaction, your agent declares intent. The request is recorded and attached to the transaction permanently.",
-    tag: "AWAITING_APPROVAL",
+    title: "Agent submits intent",
+    desc: "Every spend attempt begins with a signed intent payload. The agent declares purpose, amount, and target before any funds move.",
+    tag: "INTENT_RECEIVED",
   },
   {
     n: "Step 03",
-    title: "Credd checks and issues",
-    desc: "If the request passes your rules, a decision is returned instantly: ALLOW, DENY, or escalate to human REVIEW.",
+    title: "Real-time policy evaluation",
+    desc: "Credd evaluates the intent against your active policies in milliseconds and returns a verdict: ALLOW, DENY, or escalate to REVIEW.",
     tag: "DECISION: ALLOW",
   },
   {
     n: "Step 04",
-    title: "Agent completes the transaction",
-    desc: "Your agent uses the issued card or account to complete the purchase within the locked constraints.",
-    tag: "PURCHASE_COMPLETE",
+    title: "Funds released under constraint",
+    desc: "Approved transactions are executed using the agent's dedicated card or account, locked to the exact scope that was approved.",
+    tag: "FUNDS_RELEASED",
   },
   {
     n: "Step 05",
-    title: "Automatic verification",
-    desc: "Every transaction is checked against the original request. Anything that doesn't match gets flagged immediately.",
-    tag: "VERIFIED: MATCHED",
+    title: "Instant reconciliation",
+    desc: "Settlement data is matched back to the original intent in real time. Any discrepancy triggers an immediate alert and hold.",
+    tag: "RECONCILED: OK",
   },
 ];
 
 const FEATURES = [
   {
     n: "01",
-    title: "Cards and Accounts That Match the Job",
-    desc: "Single-use cards for one-time purchases. Multi-use cards with velocity limits, active hours, and merchant locks. Virtual accounts for agents that receive payments. All issued instantly.",
+    title: "Precision Financial Instruments",
+    desc: "Disposable cards scoped to a single transaction. Persistent cards with velocity controls, time-of-day restrictions, and merchant locks. Dedicated accounts for agents that receive inbound payments.",
   },
   {
     n: "02",
-    title: "Spend Policies That Stick",
-    desc: "Set what each agent can buy or receive, where, and how much. Agents declare intent before every transaction. Violations freeze the card immediately.",
+    title: "Programmable Guardrails",
+    desc: "Attach a policy to any agent or card in seconds. Cap daily spend, restrict to approved merchant categories, and require human sign-off above a threshold. Rules enforce themselves.",
   },
   {
     n: "03",
-    title: "Live Transaction View",
-    desc: "See every authorization and settlement as it happens. Full audit trail per transaction. Pull compliance reports any time.",
+    title: "Continuous Transaction Visibility",
+    desc: "Stream every authorization and settlement to your dashboard the moment it happens. Filter by agent, policy, or outcome. Export to your data warehouse in one click.",
   },
   {
     n: "04",
-    title: "Built-in Dispute Evidence",
-    desc: "Every transaction comes with intent attestation and a full decision trail. If a charge gets questioned, you already have the proof.",
+    title: "Audit-Ready by Default",
+    desc: "Each transaction carries a signed intent record and a complete decision log. When a charge needs justification, you already hold the evidence before anyone asks.",
   },
 ];
 
 const USE_CASES = [
-  { n: "01", title: "AI Procurement Agents", cat: "Buying & Purchasing" },
-  { n: "02", title: "E-commerce Purchasing Agents", cat: "Shopping & Procurement" },
-  { n: "03", title: "SaaS Subscription Management", cat: "Recurring Payments" },
-  { n: "04", title: "Travel & Booking Automation", cat: "Flights, Hotels, Rentals" },
-  { n: "05", title: "Contractor & Freelancer Payments", cat: "Paying People" },
+  { n: "01", title: "Autonomous Procurement Pipelines", cat: "Sourcing & Purchasing" },
+  { n: "02", title: "Marketplace Buying Automation", cat: "E-commerce & Retail" },
+  { n: "03", title: "License & Subscription Control", cat: "Recurring Payments" },
+  { n: "04", title: "Itinerary & Logistics Agents", cat: "Travel, Hotels, Rentals" },
+  { n: "05", title: "Vendor & Supplier Disbursements", cat: "Outbound Payments" },
 ];
 
 /* ─── Dark virtual card component ─── */
@@ -302,21 +302,21 @@ export default function Landing() {
               color: C.muted, textTransform: "uppercase",
               border: `1px solid ${C.border}`, borderRadius: "2px",
               padding: "3px 8px", marginBottom: "32px", width: "fit-content",
-            }}>HOME</div>
+            }}>PLATFORM</div>
 
             <h1 style={{
               fontFamily: SERIF, fontSize: "clamp(40px, 4.5vw, 60px)",
               fontWeight: 400, lineHeight: 1.1,
               color: C.black, marginBottom: "24px",
             }}>
-              Give your AI agent its own card and bank account.
+              Full financial autonomy for every agent you deploy.
             </h1>
 
             <p style={{
               fontFamily: SANS, fontSize: "15px", lineHeight: 1.65,
               color: C.muted, marginBottom: "40px", maxWidth: "400px",
             }}>
-              Set spend limits, lock them to the right merchants, and watch every transaction in real time. No risk to your own accounts.
+              Issue dedicated cards and accounts to your AI agents. Define exactly what they can spend, where, and how much — then let them operate independently.
             </p>
 
             <button onClick={() => navigate("/login")} style={{
@@ -332,12 +332,12 @@ export default function Landing() {
               onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.black; }}
               onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.gold; }}
             >
-              GET STARTED FREE
+              OPEN YOUR ACCOUNT
             </button>
 
             {/* Logos */}
             <div style={{ display: "flex", alignItems: "center", gap: "32px", marginTop: "64px" }}>
-              {["Circle", "YC", "merlin", "Balancer"].map((logo) => (
+              {["Stripe", "OpenAI", "LangChain", "Anthropic"].map((logo) => (
                 <span key={logo} style={{
                   fontFamily: MONO, fontSize: "11px",
                   color: "rgba(10,10,8,0.25)", letterSpacing: "0.05em",
@@ -369,10 +369,10 @@ export default function Landing() {
             <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>How it works</span>
           </div>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(32px, 3.5vw, 48px)", fontWeight: 400, lineHeight: 1.15, maxWidth: "700px" }}>
-            Built for agents that spend and get paid.
+            Designed for agents that operate with real money.
           </h2>
           <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginTop: "16px", maxWidth: "580px", lineHeight: 1.65 }}>
-            Your agent says what it needs to buy or get paid for. Credd checks it against your rules. If it passes, a card or account is issued and locked to that exact transaction.
+            Your agent declares its intent. Credd validates it against your policy in real time. If it clears, a payment instrument is issued and constrained to that specific action — nothing more.
           </p>
         </div>
 
@@ -445,7 +445,7 @@ export default function Landing() {
             <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Features</span>
           </div>
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, maxWidth: "600px" }}>
-            Everything you need to trust your agents with real money.
+            Infrastructure built for agents that transact at scale.
           </h2>
         </div>
 
@@ -471,8 +471,8 @@ export default function Landing() {
             <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Use Cases</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>Agents in production.</h2>
-            <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>Agents in Production</span>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>Where teams are deploying this today.</h2>
+            <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>Live Deployments</span>
           </div>
         </div>
 
@@ -514,14 +514,14 @@ export default function Landing() {
             <ArrowRight size={12} color={C.muted} />
             <Tag label="LIVE" accent />
           </div>
-          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>Go live in minutes.</h2>
+          <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>From API key to first transaction in minutes.</h2>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
           {[
-            { n: "Step 01", title: "Create your account", items: ["Sign up and set up your workspace", "Get your API credentials and access tokens"] },
-            { n: "Step 02", title: "Set your policies", items: ["Define spending limits and merchant rules", "Fund your account and issue your first card"] },
-            { n: "Step 03", title: "Start spending", items: ["Agents start transacting autonomously", "Monitor every purchase in real-time"] },
+            { n: "Step 01", title: "Connect and configure", items: ["Register your workspace and retrieve API credentials", "Invite teammates and set permission levels"] },
+            { n: "Step 02", title: "Write your policies", items: ["Encode spending rules, merchant allowlists, and approval thresholds", "Link policies to specific agents or agent groups"] },
+            { n: "Step 03", title: "Deploy and monitor", items: ["Agents begin transacting within their defined boundaries", "Every decision streams to your dashboard in real time"] },
           ].map((step, i) => (
             <div key={step.n} style={{
               padding: "48px 40px",
@@ -547,8 +547,8 @@ export default function Landing() {
           borderTop: `1px solid ${C.border}`,
           display: "flex", flexDirection: "column", alignItems: "flex-start",
         }}>
-          <h3 style={{ fontFamily: SERIF, fontSize: "28px", fontWeight: 400, marginBottom: "8px" }}>Ready to get started?</h3>
-          <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginBottom: "28px" }}>Up and running in minutes.</p>
+          <h3 style={{ fontFamily: SERIF, fontSize: "28px", fontWeight: 400, marginBottom: "8px" }}>Your agents are ready. Is your spend infrastructure?</h3>
+          <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginBottom: "28px" }}>Connect your first agent and issue a card in under five minutes.</p>
           <button onClick={() => navigate("/login")} style={{
             display: "inline-flex", alignItems: "center", gap: "8px",
             padding: "13px 28px",
@@ -561,7 +561,7 @@ export default function Landing() {
             onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.color = C.black; }}
             onMouseLeave={e => { e.currentTarget.style.background = C.black; e.currentTarget.style.borderColor = C.black; e.currentTarget.style.color = C.cream; }}
           >
-            START ISSUING <ArrowRight size={13} />
+            GET ACCESS <ArrowRight size={13} />
           </button>
         </div>
       </section>
@@ -577,7 +577,7 @@ export default function Landing() {
           <span style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.08em" }}>CREDD AI</span>
         </div>
         <p style={{ fontFamily: SANS, fontSize: "12px", color: C.muted }}>
-          The financial OS for AI agents. Credd is not a bank.
+          Spend infrastructure for autonomous AI. Credd is not a bank.
         </p>
         <div style={{ display: "flex", gap: "24px" }}>
           {["Privacy", "Terms", "Docs", "API"].map(l => (
