@@ -1115,9 +1115,10 @@ export default function Landing() {
 
               {/* Column headers */}
               <div style={{
-                display: "grid", gridTemplateColumns: "140px 90px 70px 1fr 80px",
-                padding: "8px 20px",
+                display: "grid", gridTemplateColumns: "128px 1fr 68px 110px 84px",
+                padding: "7px 20px",
                 background: C.cream, borderBottom: `1px solid ${C.border}`,
+                gap: "8px",
               }}>
                 {["Card", "Agent", "Status", "Policy", "Spending"].map(h => (
                   <span key={h} style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</span>
@@ -1134,38 +1135,43 @@ export default function Landing() {
                 <div
                   key={card.last4}
                   style={{
-                    display: "grid", gridTemplateColumns: "140px 90px 70px 1fr 80px",
-                    padding: "12px 20px", alignItems: "center",
+                    display: "grid", gridTemplateColumns: "128px 1fr 68px 110px 84px",
+                    padding: "11px 20px", alignItems: "center", gap: "8px",
                     borderBottom: ci < 3 ? `1px solid ${C.border}` : "none",
-                    background: ci % 2 === 0 ? "transparent" : `${C.cream}60`,
+                    background: ci % 2 === 0 ? "transparent" : `${C.cream}55`,
                   }}
                 >
                   {/* Card number */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "7px", overflow: "hidden" }}>
                     <div style={{
-                      height: "22px", width: "34px", background: C.black, borderRadius: "2px",
+                      height: "20px", width: "32px", background: C.black, borderRadius: "3px",
                       display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                     }}>
-                      <span style={{ fontFamily: MONO, fontSize: "6px", color: C.gold, fontWeight: 700 }}>{card.brand}</span>
+                      <span style={{ fontFamily: MONO, fontSize: "7px", color: C.gold, fontWeight: 700, letterSpacing: "0.04em" }}>{card.brand}</span>
                     </div>
-                    <span style={{ fontFamily: MONO, fontSize: "11px", color: C.black }}>•••• {card.last4}</span>
+                    <span style={{ fontFamily: MONO, fontSize: "10px", color: C.black, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>••{card.last4}</span>
                   </div>
                   {/* Agent */}
-                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.04em" }}>{card.agent}</span>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "9px", color: C.black, letterSpacing: "0.03em",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block",
+                  }}>{card.agent}</span>
                   {/* Status */}
                   <span style={{
                     fontFamily: MONO, fontSize: "8px", fontWeight: 700,
                     color: card.status === "ACTIVE" ? "#16a34a" : "#92400e",
                     background: card.status === "ACTIVE" ? "#f0fdf4" : "#fffbeb",
                     border: `1px solid ${card.status === "ACTIVE" ? "#bbf7d0" : "#fde68a"}`,
-                    borderRadius: "3px", padding: "2px 6px", display: "inline-block",
+                    borderRadius: "3px", padding: "2px 6px",
+                    display: "inline-block", whiteSpace: "nowrap",
                   }}>{card.status}</span>
                   {/* Policy */}
                   <span style={{
-                    fontFamily: MONO, fontSize: "8px", color: C.gold,
+                    fontFamily: MONO, fontSize: "8px", color: C.gold, fontWeight: 600,
                     background: `${C.gold}10`, border: `1px solid ${C.gold}30`,
-                    borderRadius: "3px", padding: "2px 6px", display: "inline-block",
-                    letterSpacing: "0.04em",
+                    borderRadius: "3px", padding: "2px 6px",
+                    display: "inline-block", letterSpacing: "0.03em",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%",
                   }}>{card.policy}</span>
                   {/* Spending toggle */}
                   <span style={{
@@ -1173,7 +1179,8 @@ export default function Landing() {
                     color: card.enabled ? "#16a34a" : "#78716c",
                     background: card.enabled ? "#f0fdf4" : "#f5f5f4",
                     border: `1px solid ${card.enabled ? "#bbf7d0" : "#d6d3d1"}`,
-                    borderRadius: "3px", padding: "2px 8px", display: "inline-block",
+                    borderRadius: "3px", padding: "2px 6px",
+                    display: "inline-block", whiteSpace: "nowrap",
                   }}>{card.enabled ? "ENABLED" : "DISABLED"}</span>
                 </div>
               ))}
