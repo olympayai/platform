@@ -323,35 +323,6 @@ function Tag({ label, accent }: { label: string; accent?: boolean }) {
   );
 }
 
-/* ─── Count-up animation component ─── */
-function CountUp({ to, pad = 2, duration = 900 }: { to: number; pad?: number; duration?: number }) {
-  const [val, setVal] = React.useState(0);
-  const ref = React.useRef<HTMLSpanElement>(null);
-  const started = React.useRef(false);
-
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started.current) {
-        started.current = true;
-        const start = performance.now();
-        const tick = (now: number) => {
-          const t = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - t, 3);
-          setVal(Math.round(eased * to));
-          if (t < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      }
-    }, { threshold: 0.5 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [to, duration]);
-
-  return <span ref={ref}>{String(val).padStart(pad, "0")}</span>;
-}
-
 /* ─── Fade-section wrapper styles ─── */
 const fadeInit: React.CSSProperties = {
   opacity: 0,
@@ -694,7 +665,7 @@ export default function Landing() {
                   <span style={{
                     fontFamily: MONO, fontSize: "10px", fontWeight: 600,
                     color: i === 0 ? C.gold : C.muted,
-                  }}><CountUp to={i + 1} duration={700 + i * 120} /></span>
+                  }}>{String(i + 1).padStart(2, "0")}</span>
                 </div>
               </div>}
 
