@@ -1,6 +1,40 @@
 import { useLocation } from "wouter";
-import { useState, useEffect } from "react";
-import { Activity, ArrowRight, ArrowUpRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Activity, ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+
+/* ─── Responsive hook ─── */
+function useWindowWidth() {
+  const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 1280);
+  useEffect(() => {
+    const fn = () => setW(window.innerWidth);
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
+  }, []);
+  return w;
+}
+
+/* ─── Section fade-in hook ─── */
+function useFadeIn() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.style.opacity = "1";
+          el.style.filter = "blur(0px)";
+          el.style.transform = "translateY(0)";
+          obs.unobserve(el);
+        }
+      },
+      { threshold: 0.08 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
 
 /* ─── Color & font tokens (self-contained, no Tailwind theme) ─── */
 const C = {
@@ -289,10 +323,31 @@ function Tag({ label, accent }: { label: string; accent?: boolean }) {
   );
 }
 
+/* ─── Fade-section wrapper styles ─── */
+const fadeInit: React.CSSProperties = {
+  opacity: 0,
+  filter: "blur(6px)",
+  transform: "translateY(18px)",
+  transition: "opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease",
+};
+
 /* ─── Main component ─── */
 export default function Landing() {
   const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+  const isTablet = width < 1024;
+
+  /* section refs */
+  const refHowItWorks  = useFadeIn();
+  const refFeatures    = useFadeIn();
+  const refCards       = useFadeIn();
+  const refPolicies    = useFadeIn();
+  const refAudit       = useFadeIn();
+  const refUseCases    = useFadeIn();
+  const refIntegration = useFadeIn();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10);
@@ -300,8 +355,15 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
+  /* lock body scroll when mobile menu open */
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileOpen(false);
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }), mobileOpen ? 200 : 0);
   };
 
   return (
@@ -310,10 +372,11 @@ export default function Landing() {
       {/* ── NAVBAR ── */}
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? "rgba(10,10,8,0.97)" : C.black,
-        backdropFilter: "blur(12px)",
+        background: scrolled ? "rgba(10,10,8,0.80)" : "rgba(10,10,8,0.97)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
         borderBottom: `1px solid rgba(255,255,255,0.07)`,
-        transition: "background 0.2s",
+        transition: "background 0.35s ease",
       }}>
         <div style={{
           maxWidth: "1280px", margin: "0 auto",
@@ -328,49 +391,126 @@ export default function Landing() {
             </span>
           </div>
 
-          {/* Nav links */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
-            {NAV_LINKS.map((l, i) => (
-              <button key={l} onClick={() => scrollTo(NAV_SCROLL_MAP[l])}
-                style={{
-                  background: "none", border: "none", cursor: "pointer",
-                  padding: "0 14px", height: "48px",
-                  fontFamily: MONO, fontSize: "10px", letterSpacing: "0.08em",
-                  color: "rgba(229,220,200,0.55)",
-                  borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.07)" : "none",
-                  textTransform: "uppercase",
-                  transition: "color 0.15s",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = C.goldLight)}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(229,220,200,0.55)")}
-              >{l}</button>
-            ))}
-          </div>
+          {/* Nav links — desktop only */}
+          {!isMobile && (
+            <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
+              {NAV_LINKS.map((l, i) => (
+                <button key={l} onClick={() => scrollTo(NAV_SCROLL_MAP[l])}
+                  style={{
+                    background: "none", border: "none", cursor: "pointer",
+                    padding: isTablet ? "0 10px" : "0 14px", height: "48px",
+                    fontFamily: MONO, fontSize: "10px", letterSpacing: "0.08em",
+                    color: "rgba(229,220,200,0.55)",
+                    borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.07)" : "none",
+                    textTransform: "uppercase",
+                    transition: "color 0.15s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = C.goldLight)}
+                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(229,220,200,0.55)")}
+                >{l}</button>
+              ))}
+            </div>
+          )}
 
-          {/* CTA */}
-          <button onClick={() => navigate("/login")} style={{
-            background: C.gold, border: "none", cursor: "pointer",
-            padding: "8px 18px",
-            fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em",
-            color: C.black, fontWeight: 600, textTransform: "uppercase",
-            borderRadius: "4px",
-            transition: "background 0.15s",
-          }}
-            onMouseEnter={e => (e.currentTarget.style.background = C.goldLight)}
-            onMouseLeave={e => (e.currentTarget.style.background = C.gold)}
-          >
-            DASHBOARD →
-          </button>
+          {/* Right: CTA + hamburger */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {!isMobile && (
+              <button onClick={() => navigate("/login")} style={{
+                background: C.gold, border: "none", cursor: "pointer",
+                padding: "8px 18px",
+                fontFamily: MONO, fontSize: "10px", letterSpacing: "0.1em",
+                color: C.black, fontWeight: 600, textTransform: "uppercase",
+                borderRadius: "4px",
+                transition: "background 0.15s",
+              }}
+                onMouseEnter={e => (e.currentTarget.style.background = C.goldLight)}
+                onMouseLeave={e => (e.currentTarget.style.background = C.gold)}
+              >
+                DASHBOARD →
+              </button>
+            )}
+            {isMobile && (
+              <button onClick={() => setMobileOpen(v => !v)} style={{
+                background: "none", border: "none", cursor: "pointer",
+                color: "rgba(229,220,200,0.8)", padding: "4px",
+                display: "flex", alignItems: "center",
+              }}>
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 
+      {/* ── MOBILE DRAWER ── */}
+      {isMobile && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 99,
+          pointerEvents: mobileOpen ? "auto" : "none",
+        }}>
+          {/* Backdrop blur overlay */}
+          <div
+            onClick={() => setMobileOpen(false)}
+            style={{
+              position: "absolute", inset: 0,
+              background: "rgba(10,10,8,0.55)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              opacity: mobileOpen ? 1 : 0,
+              transition: "opacity 0.25s ease",
+            }}
+          />
+          {/* Drawer panel */}
+          <div style={{
+            position: "absolute", top: "48px", left: 0, right: 0,
+            background: "rgba(14,14,11,0.96)",
+            backdropFilter: "blur(24px) saturate(160%)",
+            WebkitBackdropFilter: "blur(24px) saturate(160%)",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
+            transform: mobileOpen ? "translateY(0)" : "translateY(-8px)",
+            opacity: mobileOpen ? 1 : 0,
+            transition: "transform 0.25s ease, opacity 0.25s ease",
+            padding: "16px 0 24px",
+          }}>
+            {NAV_LINKS.map((l) => (
+              <button key={l} onClick={() => scrollTo(NAV_SCROLL_MAP[l])}
+                style={{
+                  display: "block", width: "100%", textAlign: "left",
+                  background: "none", border: "none", cursor: "pointer",
+                  padding: "14px 24px",
+                  fontFamily: MONO, fontSize: "11px", letterSpacing: "0.1em",
+                  color: "rgba(229,220,200,0.7)",
+                  textTransform: "uppercase",
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = C.goldLight)}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(229,220,200,0.7)")}
+              >{l}</button>
+            ))}
+            <div style={{ padding: "20px 24px 0" }}>
+              <button onClick={() => navigate("/login")} style={{
+                width: "100%", background: C.gold, border: "none", cursor: "pointer",
+                padding: "12px 18px",
+                fontFamily: MONO, fontSize: "11px", letterSpacing: "0.1em",
+                color: C.black, fontWeight: 600, textTransform: "uppercase",
+                borderRadius: "4px",
+              }}>
+                OPEN DASHBOARD →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── HERO ── */}
       <section style={{ paddingTop: "48px", borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "calc(100vh - 48px)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? "auto" : "calc(100vh - 48px)" }}>
           {/* Left */}
           <div style={{
-            padding: "64px 72px",
-            borderRight: `1px solid ${C.border}`,
+            padding: isMobile ? "48px 24px 40px" : "64px 72px",
+            borderRight: isMobile ? "none" : `1px solid ${C.border}`,
+            borderBottom: isMobile ? `1px solid ${C.border}` : "none",
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
             <div style={{
@@ -423,22 +563,24 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Right */}
-          <div style={{
-            padding: "64px 72px",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            background: C.cream,
-          }}>
-            <DarkCard />
-          </div>
+          {/* Right — hidden on mobile */}
+          {!isMobile && (
+            <div style={{
+              padding: "64px 72px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: C.cream,
+            }}>
+              <DarkCard />
+            </div>
+          )}
         </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" style={{ borderBottom: `1px solid ${C.border}` }}>
+      <section ref={refHowItWorks} id="how-it-works" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
         {/* Header */}
         <div style={{
-          padding: "64px 72px 48px",
+          padding: isMobile ? "40px 24px 28px" : "64px 72px 48px",
           borderBottom: `1px solid ${C.border}`,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
@@ -457,22 +599,23 @@ export default function Landing() {
         <div>
           {STEPS.map((step, i) => (
             <div key={step.n} style={{
-              display: "grid", gridTemplateColumns: "280px 1fr 200px",
+              display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr 200px",
               borderBottom: i < STEPS.length - 1 ? `1px solid ${C.border}` : "none",
-              minHeight: "120px",
+              minHeight: isMobile ? "auto" : "120px",
             }}>
               {/* Step text */}
               <div style={{
-                padding: "32px 40px",
-                borderRight: `1px solid ${C.border}`,
+                padding: isMobile ? "20px 24px 16px" : "32px 40px",
+                borderRight: isMobile ? "none" : `1px solid ${C.border}`,
+                borderBottom: isMobile ? `1px solid ${C.border}` : "none",
               }}>
                 <div style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.12em", marginBottom: "10px" }}>{step.n}</div>
                 <div style={{ fontFamily: SANS, fontSize: "14px", fontWeight: 600, color: C.black, marginBottom: "8px" }}>{step.title}</div>
                 <div style={{ fontFamily: SANS, fontSize: "12px", color: C.muted, lineHeight: 1.65 }}>{step.desc}</div>
               </div>
 
-              {/* Center visual */}
-              <div style={{
+              {/* Center visual — desktop only */}
+              {!isMobile && <div style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
                 padding: "32px",
                 borderRight: `1px solid ${C.border}`,
@@ -500,23 +643,23 @@ export default function Landing() {
                     color: i === 0 ? C.gold : C.muted,
                   }}>{String(i + 1).padStart(2, "0")}</span>
                 </div>
-              </div>
+              </div>}
 
-              {/* Tag */}
-              <div style={{
+              {/* Tag — desktop only */}
+              {!isMobile && <div style={{
                 padding: "32px 24px",
                 display: "flex", alignItems: "center", justifyContent: "flex-start",
               }}>
                 <Tag label={step.tag} accent={i === 2} />
-              </div>
+              </div>}
             </div>
           ))}
         </div>
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="features" style={{ borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ padding: "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
+      <section ref={refFeatures} id="features" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: isMobile ? "40px 24px 28px" : "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
             <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
             <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Features</span>
@@ -526,11 +669,12 @@ export default function Landing() {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)" }}>
           {FEATURES.map((f, i) => (
             <div key={f.n} id={f.id} style={{
-              padding: "40px 32px",
-              borderRight: i < FEATURES.length - 1 ? `1px solid ${C.border}` : "none",
+              padding: isMobile ? "24px 20px" : "40px 32px",
+              borderRight: isMobile ? (i % 2 === 0 ? `1px solid ${C.border}` : "none") : (i < FEATURES.length - 1 ? `1px solid ${C.border}` : "none"),
+              borderBottom: isMobile && i < 2 ? `1px solid ${C.border}` : "none",
             }}>
               <div style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, marginBottom: "20px" }}>{f.n}</div>
               <h3 style={{ fontFamily: SANS, fontSize: "14px", fontWeight: 600, color: C.black, lineHeight: 1.4, marginBottom: "12px" }}>{f.title}</h3>
@@ -541,13 +685,14 @@ export default function Landing() {
       </section>
 
       {/* ── CARDS ── */}
-      <section id="section-cards" style={{ borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "600px" }}>
+      <section ref={refCards} id="section-cards" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? "auto" : "600px" }}>
 
           {/* Left: copy */}
           <div style={{
-            padding: "72px 72px",
-            borderRight: `1px solid ${C.border}`,
+            padding: isMobile ? "40px 24px" : "72px 72px",
+            borderRight: isMobile ? "none" : `1px solid ${C.border}`,
+            borderBottom: isMobile ? `1px solid ${C.border}` : "none",
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
@@ -599,7 +744,7 @@ export default function Landing() {
 
           {/* Right: dashboard mockup */}
           <div style={{
-            padding: "48px 56px",
+            padding: isMobile ? "32px 24px" : "48px 56px",
             display: "flex", alignItems: "center", justifyContent: "center",
             background: C.cream,
           }}>
@@ -719,15 +864,16 @@ export default function Landing() {
       </section>
 
       {/* ── POLICIES ── */}
-      <section id="section-policies" style={{ borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "600px" }}>
+      <section ref={refPolicies} id="section-policies" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? "auto" : "600px" }}>
 
           {/* Right: mockup first (mirrored layout vs Cards) */}
           <div style={{
-            padding: "48px 56px",
+            padding: isMobile ? "32px 24px" : "48px 56px",
             display: "flex", alignItems: "center", justifyContent: "center",
             background: C.cream,
-            borderRight: `1px solid ${C.border}`,
+            borderRight: isMobile ? "none" : `1px solid ${C.border}`,
+            borderBottom: isMobile ? `1px solid ${C.border}` : "none",
           }}>
             <div style={{
               width: "100%", maxWidth: "520px",
@@ -848,7 +994,7 @@ export default function Landing() {
 
           {/* Left: copy */}
           <div style={{
-            padding: "72px 72px",
+            padding: isMobile ? "40px 24px" : "72px 72px",
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
@@ -913,13 +1059,14 @@ export default function Landing() {
       </section>
 
       {/* ── AUDIT LOGS ── */}
-      <section id="section-audit" style={{ borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "600px" }}>
+      <section ref={refAudit} id="section-audit" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? "auto" : "600px" }}>
 
           {/* Left: copy */}
           <div style={{
-            padding: "72px 72px",
-            borderRight: `1px solid ${C.border}`,
+            padding: isMobile ? "40px 24px" : "72px 72px",
+            borderRight: isMobile ? "none" : `1px solid ${C.border}`,
+            borderBottom: isMobile ? `1px solid ${C.border}` : "none",
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
@@ -984,7 +1131,7 @@ export default function Landing() {
 
           {/* Right: live audit log feed mockup */}
           <div style={{
-            padding: "48px 56px",
+            padding: isMobile ? "32px 24px" : "48px 56px",
             display: "flex", alignItems: "center", justifyContent: "center",
             background: C.cream,
           }}>
@@ -1079,8 +1226,8 @@ export default function Landing() {
       </section>
 
       {/* ── USE CASES ── */}
-      <section id="use-cases" style={{ borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ padding: "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
+      <section ref={refUseCases} id="use-cases" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: isMobile ? "40px 24px 28px" : "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
             <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
             <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Agents</span>
@@ -1095,8 +1242,8 @@ export default function Landing() {
           {USE_CASES.map((uc, i) => (
             <div key={uc.n}
               style={{
-                display: "grid", gridTemplateColumns: "80px 1fr 60px",
-                padding: "28px 80px",
+                display: "grid", gridTemplateColumns: isMobile ? "1fr auto" : "80px 1fr 60px",
+                padding: isMobile ? "20px 24px" : "28px 80px",
                 borderBottom: i < USE_CASES.length - 1 ? `1px solid ${C.border}` : "none",
                 cursor: "pointer", transition: "background 0.15s",
                 alignItems: "center",
@@ -1104,9 +1251,9 @@ export default function Landing() {
               onMouseEnter={e => (e.currentTarget.style.background = "rgba(196,146,58,0.04)")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
             >
-              <span style={{ fontFamily: MONO, fontSize: "11px", color: C.muted }}>{uc.n}</span>
+              {!isMobile && <span style={{ fontFamily: MONO, fontSize: "11px", color: C.muted }}>{uc.n}</span>}
               <div>
-                <div style={{ fontFamily: SANS, fontSize: "17px", fontWeight: 500, color: C.black, marginBottom: "3px" }}>{uc.title}</div>
+                <div style={{ fontFamily: SANS, fontSize: isMobile ? "15px" : "17px", fontWeight: 500, color: C.black, marginBottom: "3px" }}>{uc.title}</div>
                 <div style={{ fontFamily: MONO, fontSize: "10px", color: C.muted, letterSpacing: "0.06em" }}>{uc.cat}</div>
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -1118,8 +1265,8 @@ export default function Landing() {
       </section>
 
       {/* ── INTEGRATION ── */}
-      <section id="integration" style={{ borderBottom: `1px solid ${C.border}` }}>
-        <div style={{ padding: "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
+      <section ref={refIntegration} id="integration" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ padding: isMobile ? "40px 24px 28px" : "64px 80px 48px", borderBottom: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
             <div style={{ width: "24px", height: "2px", background: C.gold }}></div>
             <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>API</span>
@@ -1132,15 +1279,16 @@ export default function Landing() {
           <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 400 }}>From API key to first transaction in minutes.</h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)" }}>
           {[
             { n: "Step 01", title: "Connect and configure", items: ["Register your workspace and retrieve API credentials", "Invite teammates and set permission levels"] },
             { n: "Step 02", title: "Write your policies", items: ["Encode spending rules, merchant allowlists, and approval thresholds", "Link policies to specific agents or agent groups"] },
             { n: "Step 03", title: "Deploy and monitor", items: ["Agents begin transacting within their defined boundaries", "Every decision streams to your dashboard in real time"] },
           ].map((step, i) => (
             <div key={step.n} style={{
-              padding: "48px 40px",
-              borderRight: i < 2 ? `1px solid ${C.border}` : "none",
+              padding: isMobile ? "28px 24px" : "48px 40px",
+              borderRight: isMobile ? "none" : (i < 2 ? `1px solid ${C.border}` : "none"),
+              borderBottom: isMobile && i < 2 ? `1px solid ${C.border}` : "none",
             }}>
               <div style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.12em", marginBottom: "16px" }}>{step.n}</div>
               <h3 style={{ fontFamily: SANS, fontSize: "16px", fontWeight: 600, color: C.black, marginBottom: "20px" }}>{step.title}</h3>
@@ -1158,7 +1306,7 @@ export default function Landing() {
 
         {/* Ready CTA */}
         <div style={{
-          padding: "64px 80px",
+          padding: isMobile ? "40px 24px" : "64px 80px",
           borderTop: `1px solid ${C.border}`,
           display: "flex", flexDirection: "column", alignItems: "flex-start",
         }}>
@@ -1183,9 +1331,12 @@ export default function Landing() {
 
       {/* ── FOOTER ── */}
       <footer style={{
-        padding: "32px 80px",
+        padding: isMobile ? "24px 24px" : "32px 80px",
         borderTop: `1px solid ${C.border}`,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
+        display: "flex", flexDirection: isMobile ? "column" : "row",
+        alignItems: isMobile ? "flex-start" : "center",
+        justifyContent: "space-between",
+        gap: isMobile ? "16px" : "0",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Activity size={13} color={C.gold} />
