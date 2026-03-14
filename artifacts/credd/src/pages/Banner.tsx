@@ -304,43 +304,92 @@ export default function BannerPage() {
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
-          padding: "40px 40px 40px 40px",
+          padding: "40px 32px",
           position: "relative",
           overflow: "hidden",
         }}>
-          {/* Background glow */}
+          {/* Subtle center glow */}
           <div style={{
-            position: "absolute", top: "10%", left: "30%",
-            width: "300px", height: "300px",
-            background: `radial-gradient(circle, ${GOLD2}18 0%, transparent 65%)`,
-            pointerEvents: "none",
-          }} />
-          <div style={{
-            position: "absolute", bottom: "5%", right: "10%",
-            width: "200px", height: "200px",
-            background: `radial-gradient(circle, ${GOLD2}10 0%, transparent 65%)`,
+            position: "absolute", top: "50%", left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "400px", height: "400px",
+            background: `radial-gradient(circle, ${GOLD2}0f 0%, transparent 70%)`,
             pointerEvents: "none",
           }} />
 
           {/* Top label */}
           <div style={{
-            position: "absolute", top: "28px", left: "40px",
+            position: "absolute", top: "28px", left: "36px",
             display: "flex", alignItems: "center", gap: "8px",
           }}>
-            <div style={{ width: "16px", height: "1px", background: `${GOLD2}55` }} />
-            <span style={{ fontFamily: MONO, fontSize: "8px", color: `${GOLD2}88`, letterSpacing: "0.14em" }}>PRODUCT PREVIEW</span>
+            <div style={{ width: "16px", height: "1px", background: `${GOLD2}44` }} />
+            <span style={{ fontFamily: MONO, fontSize: "8px", color: `${GOLD2}66`, letterSpacing: "0.14em" }}>ASCII · LOGO</span>
           </div>
 
-          {/* Cards stack */}
-          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <CardMockup />
-            <AccountPanel />
-          </div>
+          {/* ASCII ART — semi-transparent */}
+          <pre style={{
+            fontFamily: MONO,
+            fontSize: "10.5px",
+            lineHeight: 1.35,
+            color: GOLD2,
+            opacity: 0.18,
+            letterSpacing: "0.02em",
+            userSelect: "none",
+            pointerEvents: "none",
+            whiteSpace: "pre",
+            margin: 0,
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}>{`
+ ██████╗ ██╗      ██╗   ██╗███╗   ███╗██████╗  █████╗ ██╗   ██╗
+██╔═══██╗██║      ╚██╗ ██╔╝████╗ ████║██╔══██╗██╔══██╗╚██╗ ██╔╝
+██║   ██║██║       ╚████╔╝ ██╔████╔██║██████╔╝███████║ ╚████╔╝ 
+██║   ██║██║        ╚██╔╝  ██║╚██╔╝██║██╔═══╝ ██╔══██║  ╚██╔╝  
+╚██████╔╝███████╗   ██║   ██║ ╚═╝ ██║██║     ██║  ██║   ██║   
+ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝   `}</pre>
+
+          {/* ASCII icon symbol — center, slightly more visible */}
+          <pre style={{
+            fontFamily: MONO,
+            fontSize: "12px",
+            lineHeight: 1.4,
+            color: GOLD2,
+            opacity: 0.32,
+            letterSpacing: "0.04em",
+            userSelect: "none",
+            pointerEvents: "none",
+            whiteSpace: "pre",
+            margin: 0,
+            position: "relative",
+            zIndex: 1,
+            textAlign: "center",
+          }}>{`
+        · · · · · · · · ·
+      ·                   ·
+    ·   ╔═══════════════╗   ·
+    ·   ║               ║   ·
+    ·   ║   ╔═══════╗   ║   ·
+    ·   ║   ║ ◈ ◈ ◈ ║   ║   ·
+    ·   ║   ║       ║   ║   ·
+    ·   ║   ╚═══════╝   ║   ·
+    ·   ║               ║   ·
+    ·   ╚═══════════════╝   ·
+      ·                   ·
+        · · · · · · · · ·
+
+          [ OLYMPAY ]
+      ── ── ── ── ── ── ──
+      FINANCIAL  PLATFORM
+      FOR  AUTONOMOUS  AI
+      ── ── ── ── ── ── ──
+      v1.0  ·  PRODUCTION`}</pre>
 
           {/* Bottom label */}
           <div style={{
             position: "absolute", bottom: "28px", right: "40px",
-            fontFamily: MONO, fontSize: "8px", color: `rgba(229,220,200,0.25)`,
+            fontFamily: MONO, fontSize: "8px", color: `rgba(229,220,200,0.2)`,
             letterSpacing: "0.1em",
           }}>
             OLYMPAY · FINTECH INFRA
