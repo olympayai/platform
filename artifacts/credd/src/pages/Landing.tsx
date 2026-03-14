@@ -31,7 +31,7 @@ const NAV_SCROLL_MAP: Record<string, string> = {
   "Agents":       "use-cases",
   "Transactions": "how-it-works",
   "Accounts":     "feature-accounts",
-  "Cards":        "feature-cards",
+  "Cards":        "section-cards",
   "Policies":     "feature-policies",
   "Audit Logs":   "feature-audit",
   "API":          "integration",
@@ -537,6 +537,184 @@ export default function Landing() {
               <p style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── CARDS ── */}
+      <section id="section-cards" style={{ borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "600px" }}>
+
+          {/* Left: copy */}
+          <div style={{
+            padding: "72px 72px",
+            borderRight: `1px solid ${C.border}`,
+            display: "flex", flexDirection: "column", justifyContent: "center",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ width: "24px", height: "2px", background: C.gold }} />
+              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Cards</span>
+            </div>
+
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", maxWidth: "420px" }}>
+              Every agent gets its own card. Scoped, trackable, revocable.
+            </h2>
+            <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, lineHeight: 1.7, marginBottom: "36px", maxWidth: "400px" }}>
+              Issue virtual cards to any agent in milliseconds via API. Each card carries its own spend policy, merchant restrictions, and velocity controls. Enable or disable spending without touching the agent.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              {[
+                { tag: "DISPOSABLE",   desc: "One-time cards that expire immediately after a single approved transaction." },
+                { tag: "PERSISTENT",   desc: "Long-lived cards with daily limits, time windows, and merchant locks." },
+                { tag: "INSTANT_REVOKE", desc: "Kill spending on any card in one API call. No lag, no partial charges." },
+                { tag: "AUDIT_TRAIL",  desc: "Every authorization logged against the original intent record." },
+              ].map(item => (
+                <div key={item.tag} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: C.gold, background: `${C.gold}12`, border: `1px solid ${C.gold}35`,
+                    borderRadius: "2px", padding: "2px 6px", whiteSpace: "nowrap", marginTop: "2px",
+                  }}>{item.tag}</span>
+                  <span style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.6 }}>{item.desc}</span>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => {}} style={{
+              marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
+              width: "fit-content", padding: "11px 24px",
+              fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
+              fontWeight: 600, textTransform: "uppercase",
+              background: "transparent", color: C.black,
+              border: `1px solid ${C.border}`, borderRadius: "3px", cursor: "pointer",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = C.gold; (e.currentTarget as HTMLElement).style.color = C.gold; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = C.border; (e.currentTarget as HTMLElement).style.color = C.black; }}
+            >
+              VIEW API REFERENCE <ArrowRight size={12} />
+            </button>
+          </div>
+
+          {/* Right: dashboard mockup */}
+          <div style={{
+            padding: "48px 56px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: C.cream,
+          }}>
+            <div style={{
+              width: "100%", maxWidth: "520px",
+              background: "#fff", border: `1px solid ${C.border}`,
+              borderRadius: "8px", overflow: "hidden",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+            }}>
+              {/* Mock topbar */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "14px 20px", borderBottom: `1px solid ${C.border}`,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#f87171" }} />
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#fbbf24" }} />
+                  <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#4ade80" }} />
+                </div>
+                <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em" }}>VIRTUAL CARDS</span>
+                <span style={{
+                  fontFamily: MONO, fontSize: "8px", color: C.gold,
+                  background: `${C.gold}12`, border: `1px solid ${C.gold}35`,
+                  borderRadius: "3px", padding: "2px 8px",
+                }}>+ ISSUE CARD</span>
+              </div>
+
+              {/* Column headers */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "140px 90px 70px 1fr 80px",
+                padding: "8px 20px",
+                background: C.cream, borderBottom: `1px solid ${C.border}`,
+              }}>
+                {["Card", "Agent", "Status", "Policy", "Spending"].map(h => (
+                  <span key={h} style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.1em", textTransform: "uppercase" }}>{h}</span>
+                ))}
+              </div>
+
+              {/* Card rows */}
+              {[
+                { last4: "7842", brand: "MC",    agent: "PROCUREMENT-BOT", status: "ACTIVE",  policy: "CONTRACTORS",  enabled: true  },
+                { last4: "3291", brand: "VISA",  agent: "RESEARCH-AGENT",  status: "ACTIVE",  policy: "SAAS_SPEND",   enabled: true  },
+                { last4: "5544", brand: "MC",    agent: "TRAVEL-BOT",      status: "PAUSED",  policy: "TRAVEL_LIMIT", enabled: false },
+                { last4: "8810", brand: "VISA",  agent: "ANALYTICS-AI",    status: "ACTIVE",  policy: "MONTHLY_CAP",  enabled: true  },
+              ].map((card, ci) => (
+                <div
+                  key={card.last4}
+                  style={{
+                    display: "grid", gridTemplateColumns: "140px 90px 70px 1fr 80px",
+                    padding: "12px 20px", alignItems: "center",
+                    borderBottom: ci < 3 ? `1px solid ${C.border}` : "none",
+                    background: ci % 2 === 0 ? "transparent" : `${C.cream}60`,
+                  }}
+                >
+                  {/* Card number */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{
+                      height: "22px", width: "34px", background: C.black, borderRadius: "2px",
+                      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                    }}>
+                      <span style={{ fontFamily: MONO, fontSize: "6px", color: C.gold, fontWeight: 700 }}>{card.brand}</span>
+                    </div>
+                    <span style={{ fontFamily: MONO, fontSize: "11px", color: C.black }}>•••• {card.last4}</span>
+                  </div>
+                  {/* Agent */}
+                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.04em" }}>{card.agent}</span>
+                  {/* Status */}
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    color: card.status === "ACTIVE" ? "#16a34a" : "#92400e",
+                    background: card.status === "ACTIVE" ? "#f0fdf4" : "#fffbeb",
+                    border: `1px solid ${card.status === "ACTIVE" ? "#bbf7d0" : "#fde68a"}`,
+                    borderRadius: "3px", padding: "2px 6px", display: "inline-block",
+                  }}>{card.status}</span>
+                  {/* Policy */}
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", color: C.gold,
+                    background: `${C.gold}10`, border: `1px solid ${C.gold}30`,
+                    borderRadius: "3px", padding: "2px 6px", display: "inline-block",
+                    letterSpacing: "0.04em",
+                  }}>{card.policy}</span>
+                  {/* Spending toggle */}
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    color: card.enabled ? "#16a34a" : "#78716c",
+                    background: card.enabled ? "#f0fdf4" : "#f5f5f4",
+                    border: `1px solid ${card.enabled ? "#bbf7d0" : "#d6d3d1"}`,
+                    borderRadius: "3px", padding: "2px 8px", display: "inline-block",
+                  }}>{card.enabled ? "ENABLED" : "DISABLED"}</span>
+                </div>
+              ))}
+
+              {/* Footer stats */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+                borderTop: `1px solid ${C.border}`,
+                background: C.cream,
+              }}>
+                {[
+                  { label: "Cards Issued",    val: "247" },
+                  { label: "Spend Controlled", val: "$1.2M" },
+                  { label: "Fraud Blocked",   val: "100%" },
+                ].map((stat, si) => (
+                  <div key={stat.label} style={{
+                    padding: "14px 20px",
+                    borderRight: si < 2 ? `1px solid ${C.border}` : "none",
+                    textAlign: "center",
+                  }}>
+                    <div style={{ fontFamily: MONO, fontSize: "14px", fontWeight: 700, color: C.black }}>{stat.val}</div>
+                    <div style={{ fontFamily: MONO, fontSize: "8px", color: C.muted, letterSpacing: "0.08em", marginTop: "3px", textTransform: "uppercase" }}>{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
