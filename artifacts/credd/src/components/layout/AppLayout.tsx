@@ -77,7 +77,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 )}
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
-                  color: isActive ? "#c4923a" : "rgba(229,220,200,0.5)",
+                  color: isActive ? "#c4923a" : "rgba(229,220,200,0.85)",
                   background: isActive ? "rgba(196,146,58,0.1)" : "transparent",
                   borderLeft: isActive ? "2px solid #c4923a" : "2px solid transparent",
                 }}
@@ -89,7 +89,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 }}
                 onMouseLeave={e => {
                   if (!isActive) {
-                    (e.currentTarget as HTMLElement).style.color = "rgba(229,220,200,0.5)";
+                    (e.currentTarget as HTMLElement).style.color = "rgba(229,220,200,0.85)";
                     (e.currentTarget as HTMLElement).style.background = "transparent";
                   }
                 }}
@@ -108,7 +108,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         >
           <div className="flex items-center justify-center gap-1.5">
             <div className="h-1.5 w-1.5 rounded-full" style={{ background: "#4ade80" }} />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "9px", color: "rgba(229,220,200,0.35)", letterSpacing: "0.1em" }}>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "9px", color: "rgba(229,220,200,0.7)", letterSpacing: "0.1em" }}>
               PRODUCTION
             </span>
           </div>
@@ -127,8 +127,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
         >
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-sm">
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", color: "#b0a090", letterSpacing: "0.06em", textTransform: "uppercase" }}>Credd AI</span>
-            <ChevronRight className="h-3.5 w-3.5" style={{ color: "#c4bcb0" }} />
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", color: "#6a5040", letterSpacing: "0.06em", textTransform: "uppercase" }}>Credd AI</span>
+            <ChevronRight className="h-3.5 w-3.5" style={{ color: "#9a8878" }} />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", fontWeight: 600, color: "#0a0a08", letterSpacing: "0.06em", textTransform: "uppercase" }}>{title}</span>
           </div>
 
@@ -140,12 +140,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
               border: "1px solid #d5cbbf",
             }}
           >
-            <Search className="h-3.5 w-3.5" style={{ color: "#a09080" }} />
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#a09080" }}>Search...</span>
+            <Search className="h-3.5 w-3.5" style={{ color: "#6a5040" }} />
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#6a5040" }}>Search...</span>
             <kbd style={{
               fontFamily: "'JetBrains Mono', monospace", fontSize: "9px",
               background: "#ede8df", border: "1px solid #d5cbbf",
-              borderRadius: "3px", padding: "1px 5px", color: "#a09080", marginLeft: "8px",
+              borderRadius: "3px", padding: "1px 5px", color: "#6a5040", marginLeft: "8px",
             }}>⌘K</kbd>
           </div>
         </header>
