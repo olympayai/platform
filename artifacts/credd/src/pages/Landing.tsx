@@ -64,7 +64,7 @@ const NAV_LINKS = [
 const NAV_SCROLL_MAP: Record<string, string> = {
   "Agents":       "use-cases",
   "Transactions": "how-it-works",
-  "Accounts":     "feature-accounts",
+  "Accounts":     "section-accounts",
   "Cards":        "section-cards",
   "Policies":     "section-policies",
   "Audit Logs":   "section-audit",
@@ -343,6 +343,7 @@ export default function Landing() {
   /* section refs */
   const refHowItWorks  = useFadeIn();
   const refFeatures    = useFadeIn();
+  const refAccounts    = useFadeIn();
   const refCards       = useFadeIn();
   const refPolicies    = useFadeIn();
   const refAudit       = useFadeIn();
@@ -704,6 +705,229 @@ export default function Landing() {
               <p style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── ACCOUNTS ── */}
+      <section ref={refAccounts} id="section-accounts" style={{ ...fadeInit, borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", minHeight: isMobile ? "auto" : "640px" }}>
+
+          {/* Left: copy */}
+          <div style={{
+            padding: isMobile ? "40px 24px" : "72px 72px",
+            borderRight: isMobile ? "none" : `1px solid ${C.border}`,
+            borderBottom: isMobile ? `1px solid ${C.border}` : "none",
+            display: "flex", flexDirection: "column", justifyContent: "center",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ width: "24px", height: "2px", background: C.gold }} />
+              <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Accounts</span>
+            </div>
+
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", maxWidth: "420px" }}>
+              One SDK. Full control over every agent account.
+            </h2>
+            <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, lineHeight: 1.7, marginBottom: "36px", maxWidth: "400px" }}>
+              Provision accounts, rotate keys, assign agents, and adjust spending permissions from your terminal or inside your application code. Everything runs under a single API key prefixed with <code style={{ fontFamily: MONO, fontSize: "12px", color: C.gold, background: `${C.gold}10`, padding: "1px 5px", borderRadius: "2px" }}>olympay</code>.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "36px" }}>
+              {[
+                { tag: "SDK",  desc: "Install @olympay/sdk and start provisioning accounts in under two minutes." },
+                { tag: "CLI",  desc: "The olympay CLI lets you inspect, create, and manage accounts without writing code." },
+                { tag: "KEYS", desc: "API keys are scoped to environments. Rotate them any time without downtime." },
+                { tag: "RBAC", desc: "Assign roles to agents: read-only observers, spenders, or full account controllers." },
+              ].map(item => (
+                <div key={item.tag} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
+                    letterSpacing: "0.08em", textTransform: "uppercase",
+                    color: C.gold, background: `${C.gold}12`, border: `1px solid ${C.gold}35`,
+                    borderRadius: "2px", padding: "2px 6px", whiteSpace: "nowrap", marginTop: "2px",
+                  }}>{item.tag}</span>
+                  <span style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.6 }}>{item.desc}</span>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => {}} style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              width: "fit-content", padding: "11px 24px",
+              fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
+              fontWeight: 600, textTransform: "uppercase",
+              background: "transparent", color: C.black,
+              border: `1px solid ${C.border}`, borderRadius: "3px", cursor: "pointer",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = C.gold; (e.currentTarget as HTMLElement).style.color = C.gold; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = C.border; (e.currentTarget as HTMLElement).style.color = C.black; }}
+            >
+              VIEW SDK DOCS <ArrowRight size={12} />
+            </button>
+          </div>
+
+          {/* Right: code panel mockup */}
+          <div style={{
+            padding: isMobile ? "32px 24px" : "48px 56px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: C.cream,
+          }}>
+            <div style={{
+              width: "100%", maxWidth: "540px",
+              background: "#0e0e0c", border: `1px solid rgba(255,255,255,0.08)`,
+              borderRadius: "8px", overflow: "hidden",
+              boxShadow: "0 4px 32px rgba(0,0,0,0.18)",
+            }}>
+              {/* Terminal topbar */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "12px 18px", borderBottom: "1px solid rgba(255,255,255,0.07)",
+                background: "#161614",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                  <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#f87171" }} />
+                  <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#fbbf24" }} />
+                  <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#4ade80" }} />
+                </div>
+                <span style={{ fontFamily: MONO, fontSize: "9px", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>OLYMPAY SDK</span>
+                <span style={{ fontFamily: MONO, fontSize: "8px", color: `${C.gold}99`, letterSpacing: "0.06em" }}>v1.0.0</span>
+              </div>
+
+              {/* Tab row */}
+              <div style={{
+                display: "flex", borderBottom: "1px solid rgba(255,255,255,0.07)",
+                background: "#161614",
+              }}>
+                {["install.sh", "accounts.ts", "cli.sh"].map((tab, ti) => (
+                  <div key={tab} style={{
+                    padding: "8px 16px",
+                    fontFamily: MONO, fontSize: "9px", letterSpacing: "0.06em",
+                    color: ti === 1 ? C.gold : "rgba(255,255,255,0.3)",
+                    borderBottom: ti === 1 ? `2px solid ${C.gold}` : "2px solid transparent",
+                    cursor: "pointer",
+                  }}>{tab}</div>
+                ))}
+              </div>
+
+              {/* Code body */}
+              <div style={{ padding: "20px 24px", fontFamily: MONO, fontSize: "12px", lineHeight: 1.75, overflowX: "auto" }}>
+
+                {/* install comment */}
+                <div style={{ marginBottom: "16px" }}>
+                  <span style={{ color: "rgba(255,255,255,0.22)" }}>{"// 1. install"}</span>
+                  <br />
+                  <span style={{ color: "#4ade80" }}>$</span>{" "}
+                  <span style={{ color: "rgba(229,220,200,0.85)" }}>npm install </span>
+                  <span style={{ color: C.gold }}>@olympay/sdk</span>
+                </div>
+
+                {/* init */}
+                <div style={{ marginBottom: "16px" }}>
+                  <span style={{ color: "rgba(255,255,255,0.22)" }}>{"// 2. initialise client"}</span>
+                  <br />
+                  <span style={{ color: "#93c5fd" }}>import</span>{" "}
+                  <span style={{ color: "rgba(229,220,200,0.85)" }}>{"{ Olympay }"}</span>{" "}
+                  <span style={{ color: "#93c5fd" }}>from</span>{" "}
+                  <span style={{ color: "#86efac" }}>'@olympay/sdk'</span>
+                  <br />
+                  <br />
+                  <span style={{ color: "#c4b5fd" }}>const</span>{" "}
+                  <span style={{ color: C.gold }}>olympay</span>{" "}
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>=</span>{" "}
+                  <span style={{ color: "#93c5fd" }}>new</span>{" "}
+                  <span style={{ color: "#fde68a" }}>Olympay</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>{"({"}</span>
+                  <br />
+                  <span style={{ color: "rgba(229,220,200,0.4)" }}>{"  "}</span>
+                  <span style={{ color: "#f9a8d4" }}>apiKey</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>: </span>
+                  <span style={{ color: "#86efac" }}>process.env.</span>
+                  <span style={{ color: C.gold }}>OLYMPAY_API_KEY</span>
+                  <br />
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>{"});"}</span>
+                </div>
+
+                {/* create account */}
+                <div style={{ marginBottom: "16px" }}>
+                  <span style={{ color: "rgba(255,255,255,0.22)" }}>{"// 3. provision an agent account"}</span>
+                  <br />
+                  <span style={{ color: "#c4b5fd" }}>const</span>{" "}
+                  <span style={{ color: "#fde68a" }}>account</span>{" "}
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>=</span>{" "}
+                  <span style={{ color: "#93c5fd" }}>await</span>{" "}
+                  <span style={{ color: C.gold }}>olympay</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>.</span>
+                  <span style={{ color: "#f9a8d4" }}>accounts</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>.</span>
+                  <span style={{ color: "#fde68a" }}>create</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>{"({"}</span>
+                  <br />
+                  <span style={{ color: "#f9a8d4" }}>{"  agentId"}</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>: </span>
+                  <span style={{ color: "#86efac" }}>'agent_procurement_01'</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>,</span>
+                  <br />
+                  <span style={{ color: "#f9a8d4" }}>{"  name"}</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>:    </span>
+                  <span style={{ color: "#86efac" }}>'Procurement Bot'</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>,</span>
+                  <br />
+                  <span style={{ color: "#f9a8d4" }}>{"  currency"}</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>: </span>
+                  <span style={{ color: "#86efac" }}>'USD'</span>
+                  <br />
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>{"});"}</span>
+                </div>
+
+                {/* assign policy */}
+                <div>
+                  <span style={{ color: "rgba(255,255,255,0.22)" }}>{"// 4. attach spending policy"}</span>
+                  <br />
+                  <span style={{ color: "#93c5fd" }}>await</span>{" "}
+                  <span style={{ color: C.gold }}>olympay</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>.</span>
+                  <span style={{ color: "#f9a8d4" }}>accounts</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>.</span>
+                  <span style={{ color: "#fde68a" }}>attachPolicy</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>{"({"}</span>
+                  <br />
+                  <span style={{ color: "#f9a8d4" }}>{"  accountId"}</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>: </span>
+                  <span style={{ color: "#fde68a" }}>account</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>.</span>
+                  <span style={{ color: "#f9a8d4" }}>id</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>,</span>
+                  <br />
+                  <span style={{ color: "#f9a8d4" }}>{"  policyId"}</span>
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>: </span>
+                  <span style={{ color: "#86efac" }}>'pol_daily_500'</span>
+                  <br />
+                  <span style={{ color: "rgba(229,220,200,0.6)" }}>{"});"}</span>
+                </div>
+              </div>
+
+              {/* CLI strip at bottom */}
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "#161614", padding: "12px 24px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {[
+                    { prompt: "$", cmd: "olympay accounts list", out: null },
+                    { prompt: " ", cmd: null, out: "acct_01  Procurement Bot  ACTIVE  USD" },
+                    { prompt: " ", cmd: null, out: "acct_02  Research Agent   ACTIVE  USD" },
+                    { prompt: "$", cmd: "olympay agents status agent_procurement_01", out: null },
+                    { prompt: " ", cmd: null, out: "status: ACTIVE   policy: pol_daily_500" },
+                  ].map((line, li) => (
+                    <div key={li} style={{ display: "flex", gap: "8px", fontFamily: MONO, fontSize: "10px" }}>
+                      <span style={{ color: line.prompt === "$" ? "#4ade80" : "transparent", userSelect: "none" }}>$</span>
+                      {line.cmd
+                        ? <span><span style={{ color: C.gold }}>olympay</span><span style={{ color: "rgba(229,220,200,0.7)" }}>{line.cmd.slice("olympay".length)}</span></span>
+                        : <span style={{ color: "rgba(255,255,255,0.35)" }}>{line.out}</span>
+                      }
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
