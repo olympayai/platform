@@ -31,7 +31,7 @@ const STEPS = [
   {
     n: "Step 01",
     title: "Define spending boundaries",
-    desc: "Specify exactly what each agent is permitted to buy, which merchants are allowed, daily caps, and recurring limits — all through a single policy object.",
+    desc: "Specify exactly what each agent is permitted to buy, which merchants are allowed, daily caps, and recurring limits, all through a single policy object.",
     tag: "POLICY_CONFIGURED",
   },
   {
@@ -316,7 +316,7 @@ export default function Landing() {
               fontFamily: SANS, fontSize: "15px", lineHeight: 1.65,
               color: C.muted, marginBottom: "40px", maxWidth: "400px",
             }}>
-              Issue dedicated cards and accounts to your AI agents. Define exactly what they can spend, where, and how much — then let them operate independently.
+              Issue dedicated cards and accounts to your AI agents. Define exactly what they can spend, where, and how much, then let them operate independently.
             </p>
 
             <button onClick={() => navigate("/login")} style={{
@@ -372,7 +372,7 @@ export default function Landing() {
             Designed for agents that operate with real money.
           </h2>
           <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, marginTop: "16px", maxWidth: "580px", lineHeight: 1.65 }}>
-            Your agent declares its intent. Credd validates it against your policy in real time. If it clears, a payment instrument is issued and constrained to that specific action — nothing more.
+            Your agent declares its intent. Credd validates it against your policy in real time. If it clears, a payment instrument is issued and constrained to that specific action. Nothing more.
           </p>
         </div>
 
