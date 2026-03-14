@@ -27,6 +27,16 @@ const NAV_LINKS = [
   "API",
 ];
 
+const NAV_SCROLL_MAP: Record<string, string> = {
+  "Agents":       "use-cases",
+  "Transactions": "how-it-works",
+  "Accounts":     "feature-accounts",
+  "Cards":        "feature-cards",
+  "Policies":     "feature-policies",
+  "Audit Logs":   "feature-audit",
+  "API":          "integration",
+};
+
 const STEPS = [
   {
     n: "Step 01",
@@ -62,23 +72,27 @@ const STEPS = [
 
 const FEATURES = [
   {
+    id: "feature-accounts",
     n: "01",
-    title: "Precision Financial Instruments",
-    desc: "Disposable cards scoped to a single transaction. Persistent cards with velocity controls, time-of-day restrictions, and merchant locks. Dedicated accounts for agents that receive inbound payments.",
+    title: "Dedicated Agent Accounts",
+    desc: "Every agent gets its own account with a unique routing number. Receive inbound payments, hold balances, and issue cards from a single account object scoped to that agent.",
   },
   {
+    id: "feature-cards",
     n: "02",
-    title: "Programmable Guardrails",
+    title: "Precision Virtual Cards",
+    desc: "Disposable cards scoped to a single transaction. Persistent cards with velocity controls, time-of-day restrictions, and merchant locks. Generated on demand via API in milliseconds.",
+  },
+  {
+    id: "feature-policies",
+    n: "03",
+    title: "Programmable Spend Policies",
     desc: "Attach a policy to any agent or card in seconds. Cap daily spend, restrict to approved merchant categories, and require human sign-off above a threshold. Rules enforce themselves.",
   },
   {
-    n: "03",
-    title: "Continuous Transaction Visibility",
-    desc: "Stream every authorization and settlement to your dashboard the moment it happens. Filter by agent, policy, or outcome. Export to your data warehouse in one click.",
-  },
-  {
+    id: "feature-audit",
     n: "04",
-    title: "Audit-Ready by Default",
+    title: "Audit Logs by Default",
     desc: "Each transaction carries a signed intent record and a complete decision log. When a charge needs justification, you already hold the evidence before anyone asks.",
   },
 ];
@@ -317,7 +331,7 @@ export default function Landing() {
           {/* Nav links */}
           <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
             {NAV_LINKS.map((l, i) => (
-              <button key={l} onClick={() => scrollTo(i === 0 ? "use-cases" : i === 1 ? "features" : "integration")}
+              <button key={l} onClick={() => scrollTo(NAV_SCROLL_MAP[l])}
                 style={{
                   background: "none", border: "none", cursor: "pointer",
                   padding: "0 14px", height: "48px",
@@ -514,7 +528,7 @@ export default function Landing() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
           {FEATURES.map((f, i) => (
-            <div key={f.n} style={{
+            <div key={f.n} id={f.id} style={{
               padding: "40px 32px",
               borderRight: i < FEATURES.length - 1 ? `1px solid ${C.border}` : "none",
             }}>
