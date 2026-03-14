@@ -1,49 +1,47 @@
-import { cn } from "@/lib/utils";
+const variants: Record<string, { bg: string; color: string; border: string }> = {
+  success: { bg: "#f0fdf4", color: "#16a34a", border: "#bbf7d0" },
+  warning: { bg: "#fffbeb", color: "#d97706", border: "#fde68a" },
+  danger:  { bg: "#fff1f2", color: "#dc2626", border: "#fecdd3" },
+  neutral: { bg: "#f5f5f4", color: "#78716c", border: "#d6d3d1" },
+  default: { bg: "#fef9ec", color: "#c4923a", border: "#f3d99c" },
+  blue:    { bg: "#eff6ff", color: "#2563eb", border: "#bfdbfe" },
+};
 
-type StatusType = 
-  | 'active' | 'APPROVED' | 'ALLOW' | 'COMPLETED' | 'settled'
-  | 'pending' | 'PENDING' | 'REVIEW' | 'attempted'
-  | 'inactive' | 'closed' | 'terminated' | 'NONE' | 'disabled' | 'NOT_REQUIRED'
-  | 'suspended' | 'frozen' | 'declined' | 'DECLINED' | 'DENY' | 'failed' | 'reversed' | 'EXPIRED';
+function getVariant(status: string) {
+  const s = status.toLowerCase();
+  if (["active", "approved", "allow", "completed", "settled"].includes(s)) return "success";
+  if (["pending", "review", "attempted"].includes(s)) return "warning";
+  if (["suspended", "frozen", "declined", "deny", "failed", "reversed", "expired"].includes(s)) return "danger";
+  if (["inactive", "closed", "terminated", "none", "disabled", "not_required"].includes(s)) return "neutral";
+  return "default";
+}
 
-export function StatusBadge({ status, className }: { status: string; className?: string }) {
-  const normalizedStatus = status.toLowerCase();
-  
-  let variant = 'default';
-  
-  if (['active', 'approved', 'allow', 'completed', 'settled'].includes(normalizedStatus)) {
-    variant = 'success';
-  } else if (['pending', 'review', 'attempted'].includes(normalizedStatus)) {
-    variant = 'warning';
-  } else if (['suspended', 'frozen', 'declined', 'deny', 'failed', 'reversed', 'expired'].includes(normalizedStatus)) {
-    variant = 'danger';
-  } else if (['inactive', 'closed', 'terminated', 'none', 'disabled', 'not_required'].includes(normalizedStatus)) {
-    variant = 'neutral';
-  }
-
-  const variants = {
-    success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    warning: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    danger: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-    neutral: "bg-slate-500/10 text-slate-400 border-slate-500/20",
-    default: "bg-primary/10 text-primary border-primary/20",
-  };
-
+export function StatusBadge({ status }: { status: string }) {
+  const v = variants[getVariant(status)];
   return (
-    <span className={cn(
-      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border backdrop-blur-sm uppercase tracking-wider",
-      variants[variant as keyof typeof variants],
-      className
-    )}>
-      {status.replace(/_/g, ' ')}
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      padding: "2px 8px", borderRadius: "3px",
+      fontFamily: "'JetBrains Mono', monospace", fontSize: "9px",
+      fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+      background: v.bg, color: v.color, border: `1px solid ${v.border}`,
+    }}>
+      {status.replace(/_/g, " ")}
     </span>
   );
 }
 
 export function PolicyTypeBadge({ type }: { type: string }) {
+  const v = variants["blue"];
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 backdrop-blur-sm">
-      {type.replace(/_/g, ' ')}
+    <span style={{
+      display: "inline-flex", alignItems: "center",
+      padding: "2px 8px", borderRadius: "3px",
+      fontFamily: "'JetBrains Mono', monospace", fontSize: "9px",
+      fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+      background: v.bg, color: v.color, border: `1px solid ${v.border}`,
+    }}>
+      {type.replace(/_/g, " ")}
     </span>
   );
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -61,55 +61,55 @@
 }
 
 :root {
-  /* Enforce Dark Mode for Fintech App */
-  --background: 222 47% 5%;
-  --foreground: 210 40% 98%;
+  /* Cream / Gold theme — matches landing page */
+  --background: 38 35% 93%;        /* #f7f2e9 cream */
+  --foreground: 50 10% 6%;         /* #0f0e0b near-black */
 
-  --card: 222 47% 8%;
-  --card-foreground: 210 40% 98%;
+  --card: 0 0% 100%;               /* white */
+  --card-foreground: 50 10% 6%;
 
-  --popover: 222 47% 8%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 50 10% 6%;
 
-  --border: 217 32% 17%;
-  --input: 217 32% 17%;
-  --ring: 243 75% 59%;
+  --border: 35 22% 80%;            /* #d5cbbf warm border */
+  --input: 35 22% 80%;
+  --ring: 35 57% 49%;              /* gold */
 
-  --primary: 243 75% 59%;
-  --primary-foreground: 210 40% 98%;
+  --primary: 35 57% 49%;           /* #c4923a gold */
+  --primary-foreground: 50 10% 6%;
 
-  --secondary: 217 32% 17%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 38 28% 88%;         /* slightly darker cream */
+  --secondary-foreground: 50 10% 6%;
 
-  --muted: 217 32% 17%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 38 25% 87%;
+  --muted-foreground: 35 12% 44%;  /* #7a7060 warm muted */
 
-  --accent: 189 94% 43%; /* Electric Cyan */
-  --accent-foreground: 222 47% 5%;
+  --accent: 35 57% 49%;
+  --accent-foreground: 50 10% 6%;
 
-  --destructive: 350 89% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 0 75% 50%;
+  --destructive-foreground: 0 0% 100%;
 
-  --chart-1: 243 75% 59%;
-  --chart-2: 189 94% 43%;
-  --chart-3: 280 65% 60%;
-  --chart-4: 340 75% 55%;
-  --chart-5: 45 93% 47%;
+  --chart-1: 35 57% 49%;           /* gold */
+  --chart-2: 160 50% 40%;          /* green */
+  --chart-3: 25 80% 55%;           /* orange */
+  --chart-4: 200 60% 45%;          /* blue */
+  --chart-5: 0 65% 50%;            /* red */
 
-  --sidebar: 222 47% 6%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 217 32% 17%;
-  --sidebar-primary: 243 75% 59%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 217 32% 17%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 243 75% 59%;
+  --sidebar: 50 10% 6%;            /* black sidebar like landing nav */
+  --sidebar-foreground: 38 40% 85%;
+  --sidebar-border: 50 8% 14%;
+  --sidebar-primary: 35 57% 49%;
+  --sidebar-primary-foreground: 50 10% 6%;
+  --sidebar-accent: 50 8% 14%;
+  --sidebar-accent-foreground: 38 40% 85%;
+  --sidebar-ring: 35 57% 49%;
 
   --app-font-sans: 'DM Sans', sans-serif;
-  --app-font-display: 'Plus Jakarta Sans', sans-serif;
+  --app-font-display: 'Playfair Display', Georgia, serif;
   --app-font-mono: 'JetBrains Mono', monospace;
   
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 }
 
 @layer base {
@@ -119,32 +119,35 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    background-image: 
-      radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.04), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.04), transparent 25%);
-    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--app-font-display);
-    @apply font-bold tracking-tight;
+    @apply font-normal tracking-tight;
   }
 }
 
 @layer utilities {
+  /* Panel used inside the dark sidebar */
   .glass-panel {
-    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50;
+    @apply bg-card border border-border shadow-sm;
   }
   
   .glass-card {
-    @apply bg-white/[0.02] backdrop-blur-md border border-white/[0.05] hover:border-white/[0.1] hover:bg-white/[0.04] transition-all duration-300;
+    @apply bg-card border border-border hover:border-primary/30 transition-all duration-200;
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60;
   }
-  
+
   .text-gradient-primary {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70;
+  }
+
+  /* Ticker animation for landing page */
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
 }
