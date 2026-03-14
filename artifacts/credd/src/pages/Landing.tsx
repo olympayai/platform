@@ -336,6 +336,8 @@ export default function Landing() {
   const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [stepsVisible, setStepsVisible] = useState(false);
+  const refStepsContainer = useRef<HTMLDivElement>(null);
   const width = useWindowWidth();
   const isMobile = width < 768;
   const isTablet = width < 1024;
@@ -361,6 +363,17 @@ export default function Landing() {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
+
+  /* step circles become visible */
+  useEffect(() => {
+    const el = refStepsContainer.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setStepsVisible(true); obs.disconnect(); }
+    }, { threshold: 0.15 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const scrollTo = (id: string) => {
     setMobileOpen(false);
@@ -635,7 +648,17 @@ export default function Landing() {
         </div>
 
         {/* Steps */}
-        <div>
+        <style>{`
+          @keyframes circleIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to   { opacity: 1; transform: scale(1); }
+          }
+          @keyframes lineIn {
+            from { opacity: 0; transform: scaleY(0); }
+            to   { opacity: 1; transform: scaleY(1); }
+          }
+        `}</style>
+        <div ref={refStepsContainer}>
           {STEPS.map((step, i) => (
             <div key={step.n} style={{
               display: "grid", gridTemplateColumns: isMobile ? "1fr" : "280px 1fr 200px",
@@ -667,6 +690,9 @@ export default function Landing() {
                     width: "1px", height: "100%",
                     background: `linear-gradient(to bottom, ${C.border} 0%, transparent 100%)`,
                     zIndex: 0,
+                    transformOrigin: "top center",
+                    animation: stepsVisible ? `lineIn 0.5s ease ${i * 130 + 300}ms both` : "none",
+                    opacity: stepsVisible ? undefined : 0,
                   }} />
                 )}
                 <div style={{
@@ -676,6 +702,8 @@ export default function Landing() {
                   borderRadius: "50%",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   background: i === 0 ? `${C.gold}15` : C.cream,
+                  animation: stepsVisible ? `circleIn 0.45s cubic-bezier(0.34,1.56,0.64,1) ${i * 130}ms both` : "none",
+                  opacity: stepsVisible ? undefined : 0,
                 }}>
                   <span style={{
                     fontFamily: MONO, fontSize: "10px", fontWeight: 600,
