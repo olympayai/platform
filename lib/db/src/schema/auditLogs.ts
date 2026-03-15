@@ -2,6 +2,7 @@ import { pgTable, text, timestamp, jsonb } from "drizzle-orm/pg-core";
 
 export const auditLogsTable = pgTable("audit_logs", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
   entityType: text("entity_type").notNull(),
   entityId: text("entity_id").notNull(),
   action: text("action").notNull(),

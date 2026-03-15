@@ -8,6 +8,7 @@ export const cardStatusEnum = pgEnum("card_status", ["active", "frozen", "termin
 
 export const cardsTable = pgTable("cards", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
   agentId: text("agent_id").notNull().references(() => agentsTable.id, { onDelete: "cascade" }),
   accountId: text("account_id").notNull().references(() => accountsTable.id, { onDelete: "cascade" }),
   cardRef: text("card_ref").unique(),

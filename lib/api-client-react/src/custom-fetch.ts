@@ -2,6 +2,12 @@ export type CustomFetchOptions = RequestInit & {
   responseType?: "json" | "text" | "blob" | "auto";
 };
 
+let _tokenGetter: (() => Promise<string | null>) | null = null;
+
+export function setTokenGetter(fn: () => Promise<string | null>) {
+  _tokenGetter = fn;
+}
+
 export type ErrorType<T = unknown> = ApiError<T>;
 
 export type BodyType<T> = T;
@@ -284,6 +290,11 @@ export async function customFetch<T = unknown>(
   }
 
   const headers = mergeHeaders(isRequest(input) ? input.headers : undefined, headersInit);
+
+  if (_tokenGetter && !headers.has("authorization")) {
+    const token = await _tokenGetter().catch(() => null);
+    if (token) headers.set("authorization", `Bearer ${token}`);
+  }
 
   if (
     typeof init.body === "string" &&

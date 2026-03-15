@@ -5,6 +5,7 @@ export const approvalRequestStatusEnum = pgEnum("approval_request_status", ["PEN
 
 export const approvalRequestsTable = pgTable("approval_requests", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
   transactionId: text("transaction_id").notNull().references(() => transactionsTable.id),
   status: approvalRequestStatusEnum("status").notNull().default("PENDING"),
   requestedByType: text("requested_by_type").notNull().default("SYSTEM"),

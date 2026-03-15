@@ -6,6 +6,8 @@ export const agentStatusEnum = pgEnum("agent_status", ["active", "inactive", "su
 
 export const agentsTable = pgTable("agents", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
+  apiKey: text("api_key").unique(),
   name: text("name").notNull(),
   status: agentStatusEnum("status").notNull().default("pending"),
   externalRef: text("external_ref").unique(),

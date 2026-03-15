@@ -65,9 +65,13 @@ function resolveDecision(matched: { type: string; outcome: PolicyOutcome }[]): {
   return { result: "ALLOW", reason: "All policies allowed" };
 }
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    const txns = await db.select().from(transactionsTable).orderBy(desc(transactionsTable.requestedAt)).limit(200);
+    const workspaceId = (req as any).workspaceId as string;
+    const txns = await db.select().from(transactionsTable)
+      .where(eq(transactionsTable.workspaceId, workspaceId))
+      .orderBy(desc(transactionsTable.requestedAt))
+      .limit(200);
     return sendSuccess(res, txns);
   } catch (err) {
     next(err);
@@ -76,22 +80,26 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/attempt", async (req, res, next) => {
   try {
+    const workspaceId = (req as any).workspaceId as string;
     const parsed = attemptSchema.safeParse(req.body);
     if (!parsed.success) {
       return sendError(res, "VALIDATION_ERROR", parsed.error.errors.map(e => e.message).join("; "), 400);
     }
     const input = parsed.data;
 
-    const [agent] = await db.select().from(agentsTable).where(eq(agentsTable.id, input.agentId));
+    const [agent] = await db.select().from(agentsTable)
+      .where(and(eq(agentsTable.id, input.agentId), eq(agentsTable.workspaceId, workspaceId)));
     if (!agent) throw new NotFoundError(`Agent ${input.agentId} not found`);
 
-    const [account] = await db.select().from(accountsTable).where(eq(accountsTable.id, input.accountId));
+    const [account] = await db.select().from(accountsTable)
+      .where(and(eq(accountsTable.id, input.accountId), eq(accountsTable.workspaceId, workspaceId)));
     if (!account) throw new NotFoundError(`Account ${input.accountId} not found`);
     if (account.agentId !== input.agentId) throw new BadRequestError("Account does not belong to the provided agent");
     if (account.status !== "active") throw new BadRequestError("Account is not active");
 
     if (input.cardId) {
-      const [card] = await db.select().from(cardsTable).where(eq(cardsTable.id, input.cardId));
+      const [card] = await db.select().from(cardsTable)
+        .where(and(eq(cardsTable.id, input.cardId), eq(cardsTable.workspaceId, workspaceId)));
       if (!card) throw new NotFoundError(`Card ${input.cardId} not found`);
       if (card.accountId !== input.accountId) throw new BadRequestError("Card does not belong to the provided account");
       if (card.status !== "active") throw new BadRequestError("Card is not active");
@@ -111,11 +119,11 @@ router.post("/attempt", async (req, res, next) => {
     const matchedPolicies: { policyId: string; policyType: string; outcome: PolicyOutcome }[] = [];
     if (assignments.length > 0) {
       const policyIds = assignments.map(a => a.policyId);
-      const policies = await db.select().from(policiesTable).where(eq(policiesTable.id, policyIds[0]));
-      const allPolicies = policyIds.length > 1
-        ? await Promise.all(policyIds.map(pid => db.select().from(policiesTable).where(eq(policiesTable.id, pid)).then(r => r[0])))
-        : policies;
-
+      const allPolicies = await Promise.all(
+        policyIds.map(pid => db.select().from(policiesTable)
+          .where(and(eq(policiesTable.id, pid), eq(policiesTable.workspaceId, workspaceId)))
+          .then(r => r[0]))
+      );
       const ctx = { amountMinor: input.amountMinor, merchantId: input.merchantId ?? null, now: new Date() };
       for (const policy of allPolicies.filter(Boolean)) {
         if (policy.status !== "active") continue;
@@ -144,6 +152,7 @@ router.post("/attempt", async (req, res, next) => {
     }
 
     const [transaction] = await db.insert(transactionsTable).values({
+      workspaceId,
       agentId: input.agentId,
       accountId: input.accountId,
       cardId: input.cardId ?? null,
@@ -158,16 +167,17 @@ router.post("/attempt", async (req, res, next) => {
       processedAt: decisionResult !== "REVIEW" ? processedAt : null,
     }).returning();
 
-    await createAuditLog({ entityType: "TRANSACTION", entityId: transaction.id, action: "TRANSACTION_ATTEMPTED", payloadJson: { agentId: input.agentId, amountMinor: input.amountMinor, decision: decisionResult } });
+    await createAuditLog({ workspaceId, entityType: "TRANSACTION", entityId: transaction.id, action: "TRANSACTION_ATTEMPTED", payloadJson: { agentId: input.agentId, amountMinor: input.amountMinor, decision: decisionResult } });
 
     let approvalRequest = null;
     if (decisionResult === "REVIEW") {
       const [approval] = await db.insert(approvalRequestsTable).values({
+        workspaceId,
         transactionId: transaction.id,
         requestedByType: "SYSTEM",
         requestedReason: decisionReason,
       }).returning();
-      await createAuditLog({ entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_REQUESTED", payloadJson: { transactionId: transaction.id } });
+      await createAuditLog({ workspaceId, entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_REQUESTED", payloadJson: { transactionId: transaction.id } });
       approvalRequest = approval;
     }
 
@@ -187,7 +197,9 @@ router.post("/attempt", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const [txn] = await db.select().from(transactionsTable).where(eq(transactionsTable.id, req.params.id));
+    const workspaceId = (req as any).workspaceId as string;
+    const [txn] = await db.select().from(transactionsTable)
+      .where(and(eq(transactionsTable.id, req.params.id), eq(transactionsTable.workspaceId, workspaceId)));
     if (!txn) throw new NotFoundError(`Transaction ${req.params.id} not found`);
     return sendSuccess(res, txn);
   } catch (err) {
@@ -197,7 +209,12 @@ router.get("/:id", async (req, res, next) => {
 
 router.get("/:id/approval", async (req, res, next) => {
   try {
-    const [approval] = await db.select().from(approvalRequestsTable).where(eq(approvalRequestsTable.transactionId, req.params.id));
+    const workspaceId = (req as any).workspaceId as string;
+    const [approval] = await db.select().from(approvalRequestsTable)
+      .where(and(
+        eq(approvalRequestsTable.transactionId, req.params.id),
+        eq(approvalRequestsTable.workspaceId, workspaceId)
+      ));
     if (!approval) throw new NotFoundError(`No approval request found for transaction ${req.params.id}`);
     return sendSuccess(res, approval);
   } catch (err) {

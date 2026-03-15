@@ -10,6 +10,7 @@ export const transactionApprovalStatusEnum = pgEnum("transaction_approval_status
 
 export const transactionsTable = pgTable("transactions", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
   agentId: text("agent_id").notNull().references(() => agentsTable.id),
   accountId: text("account_id").notNull().references(() => accountsTable.id),
   cardId: text("card_id").references(() => cardsTable.id),

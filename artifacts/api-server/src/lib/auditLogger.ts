@@ -1,6 +1,7 @@
 import { db, auditLogsTable } from "@workspace/db";
 
 export async function createAuditLog(entry: {
+  workspaceId?: string;
   entityType: string;
   entityId: string;
   action: string;
@@ -11,6 +12,7 @@ export async function createAuditLog(entry: {
 }): Promise<void> {
   try {
     await db.insert(auditLogsTable).values({
+      workspaceId: entry.workspaceId ?? "",
       entityType: entry.entityType,
       entityId: entry.entityId,
       action: entry.action,

@@ -8,6 +8,7 @@ export const policyTargetTypeEnum = pgEnum("policy_target_type", ["AGENT", "ACCO
 
 export const policiesTable = pgTable("policies", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
   name: text("name").notNull(),
   type: policyTypeEnum("type").notNull(),
   status: policyStatusEnum("status").notNull().default("active"),

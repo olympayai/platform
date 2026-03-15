@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Copy, Check, Terminal, Key, BookOpen, Zap } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePrivy } from "@privy-io/react-auth";
+import { Copy, Check, Terminal, Key, BookOpen, Zap, Plus, Trash2 } from "lucide-react";
 import {
   PageHeader,
   MONO, SANS, CREAM, BORDER, GOLD, BLACK, MUTED,
@@ -144,6 +146,174 @@ function CodeBlock({ code, label }: { code: string; label?: string }) {
 }
 
 
+const API_BASE = (import.meta.env.VITE_API_URL as string) ?? "";
+
+interface WorkspaceKey {
+  id: string;
+  name: string;
+  key: string;
+  createdAt: string;
+}
+
+function WorkspaceKeysPanel() {
+  const { getAccessToken } = usePrivy();
+  const qc = useQueryClient();
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [newKeyData, setNewKeyData] = useState<WorkspaceKey | null>(null);
+
+  const { data: keys = [], isLoading } = useQuery<WorkspaceKey[]>({
+    queryKey: ["workspace-keys"],
+    queryFn: async () => {
+      const token = await getAccessToken();
+      const res = await fetch(`${API_BASE}/api/v1/workspace/keys`, {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch keys");
+      const json = await res.json();
+      return json.data ?? [];
+    },
+  });
+
+  const generate = useMutation({
+    mutationFn: async () => {
+      const token = await getAccessToken();
+      const res = await fetch(`${API_BASE}/api/v1/workspace/keys`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ name: "CLI Key" }),
+      });
+      if (!res.ok) throw new Error("Failed to generate key");
+      const json = await res.json();
+      return json.data as WorkspaceKey;
+    },
+    onSuccess: (data) => {
+      setNewKeyData(data);
+      qc.invalidateQueries({ queryKey: ["workspace-keys"] });
+    },
+  });
+
+  const revoke = useMutation({
+    mutationFn: async (id: string) => {
+      const token = await getAccessToken();
+      const res = await fetch(`${API_BASE}/api/v1/workspace/keys/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to revoke key");
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["workspace-keys"] });
+    },
+  });
+
+  const copyKey = (key: string, id: string) => {
+    navigator.clipboard.writeText(key).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1800);
+    });
+  };
+
+  return (
+    <div style={{ background: "#fff", border: `1px solid ${BORDER}`, borderRadius: "8px", padding: "24px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Key size={14} color={GOLD} />
+          <span style={{ fontFamily: MONO, fontSize: "11px", fontWeight: 700, color: BLACK, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            Workspace API Keys
+          </span>
+        </div>
+        <button
+          onClick={() => generate.mutate()}
+          disabled={generate.isPending}
+          style={{
+            display: "flex", alignItems: "center", gap: "6px",
+            background: GOLD, color: "#fff", border: "none", borderRadius: "4px",
+            padding: "6px 12px", cursor: "pointer",
+            fontFamily: MONO, fontSize: "10px", fontWeight: 700, letterSpacing: "0.06em",
+            opacity: generate.isPending ? 0.7 : 1,
+          }}
+        >
+          <Plus size={11} />
+          {generate.isPending ? "GENERATING..." : "GENERATE KEY"}
+        </button>
+      </div>
+
+      {newKeyData && (
+        <div style={{
+          marginBottom: "16px", padding: "12px 14px",
+          background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "6px",
+        }}>
+          <div style={{ fontFamily: SANS, fontSize: "12px", fontWeight: 600, color: "#15803d", marginBottom: "6px" }}>
+            Key generated - save it now, it will not be shown again in full:
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <code style={{ fontFamily: MONO, fontSize: "11px", color: BLACK, wordBreak: "break-all" }}>
+              {newKeyData.key}
+            </code>
+            <button
+              onClick={() => copyKey(newKeyData.key, "new")}
+              style={{ background: "none", border: "none", cursor: "pointer", color: copiedId === "new" ? GOLD : MUTED }}
+            >
+              {copiedId === "new" ? <Check size={12} /> : <Copy size={12} />}
+            </button>
+            <button
+              onClick={() => setNewKeyData(null)}
+              style={{ background: "none", border: "none", cursor: "pointer", color: MUTED, fontFamily: MONO, fontSize: "10px" }}
+            >
+              DISMISS
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div style={{ padding: "20px", textAlign: "center", color: MUTED, fontFamily: SANS, fontSize: "13px" }}>Loading...</div>
+      ) : keys.length === 0 ? (
+        <div style={{
+          padding: "32px", textAlign: "center", background: CREAM,
+          border: `1px solid ${BORDER}`, borderRadius: "6px",
+        }}>
+          <Key size={16} color={MUTED} style={{ marginBottom: "8px", opacity: 0.4 }} />
+          <p style={{ fontFamily: SANS, fontSize: "13px", color: MUTED, margin: 0 }}>
+            No keys yet. Generate one to authenticate the CLI.
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {keys.map((k) => (
+            <div key={k.id} style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "10px 12px", background: CREAM, borderRadius: "5px",
+              border: `1px solid ${BORDER}`,
+            }}>
+              <div>
+                <div style={{ fontFamily: SANS, fontSize: "12px", fontWeight: 500, color: BLACK }}>{k.name}</div>
+                <code style={{ fontFamily: MONO, fontSize: "10px", color: MUTED }}>{k.key}</code>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <button
+                  onClick={() => copyKey(k.key, k.id)}
+                  style={{ background: "none", border: "none", cursor: "pointer", color: copiedId === k.id ? GOLD : MUTED }}
+                  title="Copy key"
+                >
+                  {copiedId === k.id ? <Check size={12} /> : <Copy size={12} />}
+                </button>
+                <button
+                  onClick={() => revoke.mutate(k.id)}
+                  style={{ background: "none", border: "none", cursor: "pointer", color: "#e53e3e" }}
+                  title="Revoke key"
+                >
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Api() {
   return (
     <div>
@@ -154,42 +324,8 @@ export default function Api() {
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
 
-        {/* API Keys */}
-        <div style={{ background: "#fff", border: `1px solid ${BORDER}`, borderRadius: "8px", padding: "24px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
-            <Key size={14} color={GOLD} />
-            <span style={{ fontFamily: MONO, fontSize: "11px", fontWeight: 700, color: BLACK, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-              API Credentials
-            </span>
-          </div>
-
-          <div style={{
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            padding: "40px 24px", textAlign: "center",
-            background: CREAM, border: `1px solid ${BORDER}`,
-            borderRadius: "6px", gap: "12px",
-          }}>
-            <Key size={18} color={MUTED} style={{ opacity: 0.5 }} />
-            <div>
-              <p style={{ fontFamily: SANS, fontSize: "13px", fontWeight: 500, color: BLACK, marginBottom: "4px" }}>
-                No API credentials yet
-              </p>
-              <p style={{ fontFamily: SANS, fontSize: "12px", color: MUTED, lineHeight: 1.6, maxWidth: "280px" }}>
-                API key issuance is coming soon. Credentials will appear here once your workspace is provisioned.
-              </p>
-            </div>
-          </div>
-
-          <div style={{
-            marginTop: "12px", padding: "12px", borderRadius: "4px",
-            background: `${GOLD}10`, border: `1px solid ${GOLD}40`,
-          }}>
-            <p style={{ fontFamily: SANS, fontSize: "12px", color: MUTED, lineHeight: 1.6, margin: 0 }}>
-              Once issued, keep your secret key confidential. All API requests must include{" "}
-              <code style={{ fontFamily: MONO, fontSize: "11px", color: GOLD }}>Authorization: Bearer olympay_live_...</code>
-            </p>
-          </div>
-        </div>
+        {/* API Keys - live workspace key management */}
+        <WorkspaceKeysPanel />
 
         {/* Quick start */}
         <div style={{ background: "#fff", border: `1px solid ${BORDER}`, borderRadius: "8px", padding: "24px" }}>

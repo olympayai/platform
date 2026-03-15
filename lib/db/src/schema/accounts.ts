@@ -7,6 +7,7 @@ export const accountStatusEnum = pgEnum("account_status", ["active", "frozen", "
 
 export const accountsTable = pgTable("accounts", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  workspaceId: text("workspace_id").notNull().default(""),
   agentId: text("agent_id").notNull().references(() => agentsTable.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   accountRef: text("account_ref").unique(),

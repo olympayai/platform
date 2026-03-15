@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PrivyProvider } from "@privy-io/react-auth";
+import { PrivyProvider, usePrivy } from "@privy-io/react-auth";
+import { setTokenGetter } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -34,6 +36,14 @@ const queryClient = new QueryClient({
 });
 
 const PRIVY_APP_ID = import.meta.env.VITE_PRIVY_APP_ID as string;
+
+function TokenBridge() {
+  const { getAccessToken } = usePrivy();
+  useEffect(() => {
+    setTokenGetter(getAccessToken);
+  }, [getAccessToken]);
+  return null;
+}
 
 function DashboardRouter() {
   return (
@@ -88,6 +98,7 @@ function App() {
       }}
     >
       <QueryClientProvider client={queryClient}>
+        <TokenBridge />
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <Router />

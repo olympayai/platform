@@ -5,3 +5,4 @@ export * from "./policies";
 export * from "./transactions";
 export * from "./approvals";
 export * from "./auditLogs";
+export * from "./workspaceApiKeys";

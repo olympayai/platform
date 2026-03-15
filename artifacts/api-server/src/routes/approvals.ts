@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, approvalRequestsTable, transactionsTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { z } from "zod";
 import { sendSuccess, sendError } from "../lib/response.js";
 import { NotFoundError, BadRequestError } from "../lib/errors.js";
@@ -15,13 +15,15 @@ const decisionSchema = z.object({
 
 router.get("/", async (req, res, next) => {
   try {
+    const workspaceId = (req as any).workspaceId as string;
     const { status } = req.query;
-    let approvals;
+    const conditions = [eq(approvalRequestsTable.workspaceId, workspaceId)];
     if (status && typeof status === "string") {
-      approvals = await db.select().from(approvalRequestsTable).where(eq(approvalRequestsTable.status, status as any)).orderBy(desc(approvalRequestsTable.createdAt));
-    } else {
-      approvals = await db.select().from(approvalRequestsTable).orderBy(desc(approvalRequestsTable.createdAt));
+      conditions.push(eq(approvalRequestsTable.status, status as any));
     }
+    const approvals = await db.select().from(approvalRequestsTable)
+      .where(and(...conditions))
+      .orderBy(desc(approvalRequestsTable.createdAt));
     return sendSuccess(res, approvals);
   } catch (err) {
     next(err);
@@ -30,7 +32,9 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    const [approval] = await db.select().from(approvalRequestsTable).where(eq(approvalRequestsTable.id, req.params.id));
+    const workspaceId = (req as any).workspaceId as string;
+    const [approval] = await db.select().from(approvalRequestsTable)
+      .where(and(eq(approvalRequestsTable.id, req.params.id), eq(approvalRequestsTable.workspaceId, workspaceId)));
     if (!approval) throw new NotFoundError(`Approval request ${req.params.id} not found`);
     return sendSuccess(res, approval);
   } catch (err) {
@@ -40,11 +44,14 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/:id/approve", async (req, res, next) => {
   try {
-    const [approval] = await db.select().from(approvalRequestsTable).where(eq(approvalRequestsTable.id, req.params.id));
+    const workspaceId = (req as any).workspaceId as string;
+    const [approval] = await db.select().from(approvalRequestsTable)
+      .where(and(eq(approvalRequestsTable.id, req.params.id), eq(approvalRequestsTable.workspaceId, workspaceId)));
     if (!approval) throw new NotFoundError(`Approval request ${req.params.id} not found`);
     if (approval.status !== "PENDING") throw new BadRequestError(`Approval request is already ${approval.status}`);
 
-    const [transaction] = await db.select().from(transactionsTable).where(eq(transactionsTable.id, approval.transactionId));
+    const [transaction] = await db.select().from(transactionsTable)
+      .where(and(eq(transactionsTable.id, approval.transactionId), eq(transactionsTable.workspaceId, workspaceId)));
     if (!transaction) throw new NotFoundError(`Transaction ${approval.transactionId} not found`);
     if (transaction.approvalStatus !== "PENDING") throw new BadRequestError("Transaction is not pending approval");
 
@@ -57,17 +64,17 @@ router.post("/:id/approve", async (req, res, next) => {
       reviewedAt: now,
       decisionReason: parsed.data?.decisionReason ?? null,
       updatedAt: now,
-    }).where(eq(approvalRequestsTable.id, req.params.id)).returning();
+    }).where(and(eq(approvalRequestsTable.id, req.params.id), eq(approvalRequestsTable.workspaceId, workspaceId))).returning();
 
     const [updatedTransaction] = await db.update(transactionsTable).set({
       status: "approved",
       approvalStatus: "APPROVED",
       processedAt: now,
       updatedAt: now,
-    }).where(eq(transactionsTable.id, approval.transactionId)).returning();
+    }).where(and(eq(transactionsTable.id, approval.transactionId), eq(transactionsTable.workspaceId, workspaceId))).returning();
 
-    await createAuditLog({ entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_APPROVED", payloadJson: { transactionId: approval.transactionId } });
-    await createAuditLog({ entityType: "TRANSACTION", entityId: approval.transactionId, action: "TRANSACTION_APPROVED", payloadJson: {} });
+    await createAuditLog({ workspaceId, entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_APPROVED", payloadJson: { transactionId: approval.transactionId } });
+    await createAuditLog({ workspaceId, entityType: "TRANSACTION", entityId: approval.transactionId, action: "TRANSACTION_APPROVED", payloadJson: {} });
 
     return sendSuccess(res, { approval: updatedApproval, transaction: updatedTransaction });
   } catch (err) {
@@ -77,13 +84,15 @@ router.post("/:id/approve", async (req, res, next) => {
 
 router.post("/:id/decline", async (req, res, next) => {
   try {
-    const [approval] = await db.select().from(approvalRequestsTable).where(eq(approvalRequestsTable.id, req.params.id));
+    const workspaceId = (req as any).workspaceId as string;
+    const [approval] = await db.select().from(approvalRequestsTable)
+      .where(and(eq(approvalRequestsTable.id, req.params.id), eq(approvalRequestsTable.workspaceId, workspaceId)));
     if (!approval) throw new NotFoundError(`Approval request ${req.params.id} not found`);
     if (approval.status !== "PENDING") throw new BadRequestError(`Approval request is already ${approval.status}`);
 
-    const [transaction] = await db.select().from(transactionsTable).where(eq(transactionsTable.id, approval.transactionId));
+    const [transaction] = await db.select().from(transactionsTable)
+      .where(and(eq(transactionsTable.id, approval.transactionId), eq(transactionsTable.workspaceId, workspaceId)));
     if (!transaction) throw new NotFoundError(`Transaction ${approval.transactionId} not found`);
-    if (transaction.approvalStatus !== "PENDING") throw new BadRequestError("Transaction is not pending approval");
 
     const parsed = decisionSchema.safeParse(req.body);
     const now = new Date();
@@ -94,19 +103,17 @@ router.post("/:id/decline", async (req, res, next) => {
       reviewedAt: now,
       decisionReason: parsed.data?.decisionReason ?? null,
       updatedAt: now,
-    }).where(eq(approvalRequestsTable.id, req.params.id)).returning();
+    }).where(and(eq(approvalRequestsTable.id, req.params.id), eq(approvalRequestsTable.workspaceId, workspaceId))).returning();
 
-    const reason = parsed.data?.decisionReason ?? "Declined by reviewer";
     const [updatedTransaction] = await db.update(transactionsTable).set({
       status: "declined",
       approvalStatus: "DECLINED",
-      declinedReason: reason,
       processedAt: now,
       updatedAt: now,
-    }).where(eq(transactionsTable.id, approval.transactionId)).returning();
+    }).where(and(eq(transactionsTable.id, approval.transactionId), eq(transactionsTable.workspaceId, workspaceId))).returning();
 
-    await createAuditLog({ entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_DECLINED", payloadJson: { transactionId: approval.transactionId, reason } });
-    await createAuditLog({ entityType: "TRANSACTION", entityId: approval.transactionId, action: "TRANSACTION_DECLINED", payloadJson: { reason } });
+    await createAuditLog({ workspaceId, entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_DECLINED", payloadJson: { transactionId: approval.transactionId } });
+    await createAuditLog({ workspaceId, entityType: "TRANSACTION", entityId: approval.transactionId, action: "TRANSACTION_DECLINED", payloadJson: {} });
 
     return sendSuccess(res, { approval: updatedApproval, transaction: updatedTransaction });
   } catch (err) {
