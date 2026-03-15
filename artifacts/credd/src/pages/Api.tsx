@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Copy, Check, Terminal, Key, BookOpen, Zap } from "lucide-react";
 import {
   PageHeader,
-  MONO, SANS, SERIF, CREAM, BORDER, GOLD, BLACK, MUTED,
+  MONO, SANS, CREAM, BORDER, GOLD, BLACK, MUTED,
 } from "@/components/ui/page-shell";
 
 const BASE_URL = "https://api.olympay.tech/v1";
@@ -143,41 +143,6 @@ function CodeBlock({ code, label }: { code: string; label?: string }) {
   );
 }
 
-function ApiKeyRow({ label, value, masked }: { label: string; value: string; masked?: boolean }) {
-  const [revealed, setRevealed] = useState(false);
-  const display = masked && !revealed ? value.replace(/(?<=^.{8}).*(?=.{4}$)/s, "••••••••••••") : value;
-  return (
-    <div style={{
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "14px 16px",
-      background: CREAM, border: `1px solid ${BORDER}`, borderRadius: "6px",
-      marginBottom: "8px",
-    }}>
-      <div>
-        <div style={{ fontFamily: MONO, fontSize: "9px", color: MUTED, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>{label}</div>
-        <div style={{ fontFamily: MONO, fontSize: "13px", color: BLACK }}>{display}</div>
-      </div>
-      <div style={{ display: "flex", gap: "8px" }}>
-        {masked && (
-          <button
-            onClick={() => setRevealed(r => !r)}
-            style={{
-              fontFamily: MONO, fontSize: "10px", color: MUTED,
-              background: "none", border: `1px solid ${BORDER}`, borderRadius: "3px",
-              padding: "4px 10px", cursor: "pointer", letterSpacing: "0.06em",
-              transition: "color 0.15s, border-color 0.15s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = GOLD; (e.currentTarget as HTMLElement).style.borderColor = GOLD; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = MUTED; (e.currentTarget as HTMLElement).style.borderColor = BORDER; }}
-          >
-            {revealed ? "HIDE" : "REVEAL"}
-          </button>
-        )}
-        <CopyButton text={value} />
-      </div>
-    </div>
-  );
-}
 
 export default function Api() {
   return (
@@ -198,26 +163,29 @@ export default function Api() {
             </span>
           </div>
 
-          <ApiKeyRow
-            label="Live Secret Key"
-            value="olympay_live_p3rXn8Kq2mT9vLwA1sZ5dYcE7fOiUjBh"
-            masked
-          />
-          <ApiKeyRow
-            label="Live Publishable Key"
-            value="olympay_pub_2vFxNmQrKsD8wLtP"
-          />
-          <ApiKeyRow
-            label="Workspace ID"
-            value="olympay_ws_01j8a1x9k2mn3p4q5r"
-          />
+          <div style={{
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            padding: "40px 24px", textAlign: "center",
+            background: CREAM, border: `1px solid ${BORDER}`,
+            borderRadius: "6px", gap: "12px",
+          }}>
+            <Key size={18} color={MUTED} style={{ opacity: 0.5 }} />
+            <div>
+              <p style={{ fontFamily: SANS, fontSize: "13px", fontWeight: 500, color: BLACK, marginBottom: "4px" }}>
+                No API credentials yet
+              </p>
+              <p style={{ fontFamily: SANS, fontSize: "12px", color: MUTED, lineHeight: 1.6, maxWidth: "280px" }}>
+                API key issuance is coming soon. Credentials will appear here once your workspace is provisioned.
+              </p>
+            </div>
+          </div>
 
           <div style={{
-            marginTop: "16px", padding: "12px", borderRadius: "4px",
+            marginTop: "12px", padding: "12px", borderRadius: "4px",
             background: `${GOLD}10`, border: `1px solid ${GOLD}40`,
           }}>
             <p style={{ fontFamily: SANS, fontSize: "12px", color: MUTED, lineHeight: 1.6, margin: 0 }}>
-              Keep your secret key confidential. Rotate it immediately if exposed. All API requests must include{" "}
+              Once issued, keep your secret key confidential. All API requests must include{" "}
               <code style={{ fontFamily: MONO, fontSize: "11px", color: GOLD }}>Authorization: Bearer olympay_live_...</code>
             </p>
           </div>
@@ -301,7 +269,7 @@ export default function Api() {
               const mc = METHOD_COLORS[ep.method] || METHOD_COLORS.GET;
               return (
                 <div
-                  key={ep.path}
+                  key={`${group.group}-${ep.method}-${ep.path}`}
                   style={{
                     display: "grid", gridTemplateColumns: "72px 280px 1fr",
                     alignItems: "center",
