@@ -2,11 +2,17 @@
   "name": "olympay",
   "version": "0.1.0",
   "description": "CLI for Olympay - financial control for autonomous AI agents",
-  "keywords": ["olympay", "ai", "agents", "fintech", "cli"],
+  "keywords": [
+    "olympay",
+    "ai",
+    "agents",
+    "fintech",
+    "cli"
+  ],
   "license": "MIT",
   "type": "module",
   "bin": {
-    "olympay": "./dist/cli.js"
+    "olympay": "dist/cli.js"
   },
   "files": [
     "dist"
