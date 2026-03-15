@@ -3,6 +3,7 @@ import {
   useListApprovals, useApproveRequest, useDeclineRequest, getListApprovalsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePrivy } from "@privy-io/react-auth";
 import { CheckCircle, XCircle } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate } from "@/lib/utils";
@@ -20,6 +21,8 @@ export default function Approvals() {
   const [activeRequest, setActiveRequest] = useState<any>(null);
   const [decisionMode, setDecisionMode] = useState<"APPROVE" | "DECLINE" | null>(null);
   const queryClient = useQueryClient();
+  const { user } = usePrivy();
+  const reviewerId = user?.email?.address ?? user?.id ?? undefined;
 
   const { data: appRes, isLoading } = useListApprovals({ status: filter });
   const approvals = appRes?.data || [];
@@ -51,9 +54,9 @@ export default function Approvals() {
     const fd = new FormData(e.currentTarget);
     const reason = fd.get("reason") as string;
     if (decisionMode === "APPROVE") {
-      approve({ id: activeRequest.id, data: { decisionReason: reason, reviewerId: "admin_user" } });
+      approve({ id: activeRequest.id, data: { decisionReason: reason, reviewerId } });
     } else {
-      decline({ id: activeRequest.id, data: { decisionReason: reason, reviewerId: "admin_user" } });
+      decline({ id: activeRequest.id, data: { decisionReason: reason, reviewerId } });
     }
   };
 

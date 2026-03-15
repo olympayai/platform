@@ -52,7 +52,7 @@ export default function Transactions() {
         agentId: fd.get("agentId") as string,
         accountId: fd.get("accountId") as string,
         cardId: (fd.get("cardId") as string) || undefined,
-        merchantId: (fd.get("merchantId") as string) || "test_merchant",
+        merchantId: (fd.get("merchantId") as string) || undefined,
         amountMinor: parseInt(fd.get("amount") as string) * 100,
         currency: "USD",
         direction: "DEBIT",
@@ -186,7 +186,7 @@ export default function Transactions() {
                   <Input name="amount" type="number" required defaultValue="50" />
                 </Field>
                 <Field label="Merchant ID">
-                  <Input name="merchantId" defaultValue="aws_cloud" />
+                  <Input name="merchantId" placeholder="e.g. stripe, aws" />
                 </Field>
               </div>
               <ModalActions
