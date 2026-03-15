@@ -268,14 +268,122 @@ policyCmd
   .action(async () => {
     const policies = await apiCall("GET", "/policies");
     if (!policies.length) {
-      console.log(`${DIM}No policies found.${RESET}`);
+      console.log(`${DIM}No policies found.${RESET} Create one with: ${GOLD}olympay policy create --name "..." --type SPEND_LIMIT${RESET}`);
       return;
     }
     console.log(`\n${GOLD}${"ID".padEnd(38)} ${"NAME".padEnd(30)} ${"TYPE".padEnd(25)} STATUS${RESET}`);
     console.log(`${DIM}${"─".repeat(100)}${RESET}`);
     for (const p of policies) {
+      const status = p.status === "active" ? `${GREEN}${p.status}${RESET}` : `${DIM}${p.status}${RESET}`;
       console.log(`${p.id.padEnd(38)} ${p.name.padEnd(30)} ${p.type.padEnd(25)} ${p.status}`);
     }
+  });
+
+policyCmd
+  .command("create")
+  .description("Create a spending policy")
+  .requiredOption("--name <name>", "Policy name")
+  .requiredOption("--type <type>", "Policy type: SPEND_LIMIT | MERCHANT_ALLOWLIST | MERCHANT_BLOCKLIST | APPROVAL_REQUIRED | TIME_WINDOW")
+  .option("--config <json>", "Policy config as JSON string", "{}")
+  .option("--description <desc>", "Policy description")
+  .action(async (opts) => {
+    let configJson: Record<string, unknown>;
+    try {
+      configJson = JSON.parse(opts.config) as Record<string, unknown>;
+    } catch {
+      console.error(`${RED}Error:${RESET} --config must be valid JSON (e.g. '{"maxAmountMinor":10000}')`);
+      process.exit(1);
+    }
+    const validTypes = ["SPEND_LIMIT", "MERCHANT_ALLOWLIST", "MERCHANT_BLOCKLIST", "APPROVAL_REQUIRED", "TIME_WINDOW"];
+    if (!validTypes.includes(opts.type)) {
+      console.error(`${RED}Error:${RESET} Invalid type. Must be one of: ${validTypes.join(", ")}`);
+      process.exit(1);
+    }
+    const policy = await apiCall("POST", "/policies", {
+      name: opts.name,
+      type: opts.type,
+      configJson,
+      description: opts.description,
+    });
+    console.log(`\n${GREEN}Policy created!${RESET}`);
+    console.log(`${DIM}${"─".repeat(56)}${RESET}`);
+    console.log(`${GOLD}ID:          ${RESET} ${policy.id}`);
+    console.log(`${GOLD}Name:        ${RESET} ${policy.name}`);
+    console.log(`${GOLD}Type:        ${RESET} ${policy.type}`);
+    console.log(`${GOLD}Status:      ${RESET} ${policy.status}`);
+    console.log(`${GOLD}Config:      ${RESET} ${JSON.stringify(policy.configJson)}`);
+    console.log(`${DIM}${"─".repeat(56)}${RESET}`);
+  });
+
+policyCmd
+  .command("assign")
+  .description("Assign a policy to an agent, account, or card")
+  .requiredOption("--policy <policyId>", "Policy ID")
+  .requiredOption("--target-type <type>", "Target type: AGENT | ACCOUNT | CARD")
+  .requiredOption("--target <targetId>", "Target entity ID")
+  .option("--priority <n>", "Priority (lower = higher priority)", "100")
+  .action(async (opts) => {
+    const validTargets = ["AGENT", "ACCOUNT", "CARD"];
+    if (!validTargets.includes(opts.targetType)) {
+      console.error(`${RED}Error:${RESET} --target-type must be one of: ${validTargets.join(", ")}`);
+      process.exit(1);
+    }
+    const assignment = await apiCall("POST", "/policy-assignments", {
+      policyId: opts.policy,
+      targetType: opts.targetType,
+      targetId: opts.target,
+      priority: parseInt(opts.priority, 10),
+    });
+    console.log(`\n${GREEN}Policy assigned!${RESET}`);
+    console.log(`${GOLD}Assignment ID: ${RESET} ${assignment.id}`);
+    console.log(`${GOLD}Policy:        ${RESET} ${assignment.policyId}`);
+    console.log(`${GOLD}Target:        ${RESET} ${assignment.targetType} ${assignment.targetId}`);
+    console.log(`${GOLD}Priority:      ${RESET} ${assignment.priority}`);
+  });
+
+const txCmd = program.command("tx").description("Evaluate and inspect transactions");
+
+txCmd
+  .command("eval")
+  .description("Submit a transaction attempt for policy evaluation")
+  .requiredOption("--agent <agentId>", "Agent ID")
+  .requiredOption("--account <accountId>", "Account ID")
+  .requiredOption("--amount <minor>", "Amount in minor currency units (e.g. 1000 = $10.00)")
+  .option("--card <cardId>", "Card ID (optional)")
+  .option("--merchant <merchantId>", "Merchant identifier (optional)")
+  .option("--currency <currency>", "Currency code", "USD")
+  .option("--direction <direction>", "DEBIT or CREDIT", "DEBIT")
+  .action(async (opts) => {
+    const amountMinor = parseInt(opts.amount, 10);
+    if (isNaN(amountMinor) || amountMinor <= 0) {
+      console.error(`${RED}Error:${RESET} --amount must be a positive integer (minor units)`);
+      process.exit(1);
+    }
+    const result = await apiCall("POST", "/transactions/attempt", {
+      agentId: opts.agent,
+      accountId: opts.account,
+      cardId: opts.card,
+      merchantId: opts.merchant,
+      amountMinor,
+      currency: opts.currency,
+      direction: opts.direction,
+    });
+    const { transaction, decision, approvalRequest } = result;
+    const decColor = decision.result === "ALLOW" ? GREEN : decision.result === "DENY" ? RED : GOLD;
+    console.log(`\n${decColor}Transaction ${decision.result}${RESET}`);
+    console.log(`${DIM}${"─".repeat(56)}${RESET}`);
+    console.log(`${GOLD}Transaction ID: ${RESET} ${transaction.id}`);
+    console.log(`${GOLD}Amount:         ${RESET} ${(amountMinor / 100).toFixed(2)} ${opts.currency}`);
+    console.log(`${GOLD}Decision:       ${RESET} ${decColor}${decision.result}${RESET}`);
+    console.log(`${GOLD}Reason:         ${RESET} ${decision.reason}`);
+    if (decision.matchedPolicies?.length) {
+      console.log(`${GOLD}Policies:       ${RESET} ${decision.matchedPolicies.map((p: any) => `${p.policyType}=${p.outcome}`).join(", ")}`);
+    }
+    if (approvalRequest) {
+      console.log(`${GOLD}Approval ID:    ${RESET} ${approvalRequest.id}`);
+      console.log(`${DIM}Human approval required - review in dashboard${RESET}`);
+    }
+    console.log(`${DIM}${"─".repeat(56)}${RESET}`);
   });
 
 const wsCmd = program.command("workspace").description("Manage workspace settings and API keys");
@@ -309,6 +417,14 @@ wsCmd
     console.log(`${GOLD}Key:  ${RESET} ${BOLD}${key.key}${RESET}`);
     console.log(`${DIM}${"─".repeat(56)}${RESET}`);
     console.log(`${DIM}Use with:${RESET} ${GOLD}olympay login --key ${key.key}${RESET}`);
+  });
+
+wsCmd
+  .command("revoke <id>")
+  .description("Revoke a workspace API key by ID")
+  .action(async (id) => {
+    await apiCall("DELETE", `/workspace/keys/${id}`);
+    console.log(`${GREEN}Key ${id} revoked successfully.${RESET}`);
   });
 
 program.parse();

@@ -132,7 +132,7 @@ router.post("/attempt", async (req, res, next) => {
       }
     }
 
-    const { result: decisionResult, reason: decisionReason } = resolveDecision(matchedPolicies);
+    const { result: decisionResult, reason: decisionReason } = resolveDecision(matchedPolicies.map(m => ({ type: m.policyType, outcome: m.outcome })));
 
     let status: string;
     let approvalStatus: string;

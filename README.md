@@ -161,8 +161,23 @@ olympay card list
 ### Policies
 
 ```bash
+# Create a spending policy
+olympay policy create --name "daily-cap" --type SPEND_LIMIT --config '{"maxAmountMinor":10000}'
+
 # List all spending policies
 olympay policy list
+
+# Assign a policy to an agent, account, or card
+olympay policy assign --policy POLICY_ID --target-type AGENT --target AGENT_ID
+```
+
+### Transactions
+
+```bash
+# Submit a transaction attempt for policy evaluation
+olympay tx eval --agent AGENT_ID --account ACCOUNT_ID --amount 5000
+
+# Returns ALLOW, DENY, or REVIEW with matched policy breakdown
 ```
 
 ### Workspace Keys
@@ -173,6 +188,9 @@ olympay workspace generate-key --name "CI pipeline"
 
 # List all active keys
 olympay workspace keys
+
+# Revoke a key by ID
+olympay workspace revoke KEY_ID
 ```
 
 ---

@@ -443,7 +443,15 @@ export default function Api() {
             {
               label: "POLICIES",
               items: [
-                { cmd: "olympay policy list", desc: "List all spending policies" },
+                { cmd: "olympay policy create --name <n> --type <t>", desc: "Create a spending policy" },
+                { cmd: "olympay policy list",                         desc: "List all spending policies" },
+                { cmd: "olympay policy assign --policy <id> --target-type AGENT --target <id>", desc: "Assign policy to an agent, account, or card" },
+              ],
+            },
+            {
+              label: "TRANSACTIONS",
+              items: [
+                { cmd: "olympay tx eval --agent <id> --account <id> --amount <n>", desc: "Evaluate a transaction attempt against policies" },
               ],
             },
             {
@@ -451,6 +459,7 @@ export default function Api() {
               items: [
                 { cmd: "olympay workspace generate-key", desc: "Generate a new workspace API key" },
                 { cmd: "olympay workspace keys",         desc: "List active workspace API keys" },
+                { cmd: "olympay workspace revoke <id>",  desc: "Revoke a workspace API key" },
               ],
             },
           ].map((group) => (

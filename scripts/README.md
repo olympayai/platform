@@ -199,7 +199,83 @@ List all spending policies in your workspace.
 olympay policy list
 ```
 
-Policies are created and configured in the [Olympay dashboard](https://olympay.tech).
+---
+
+### `olympay policy create`
+
+Create a new spending policy.
+
+```bash
+olympay policy create --name "daily-cap" --type SPEND_LIMIT --config '{"maxAmountMinor":10000}'
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--name` | Yes | Policy name |
+| `--type` | Yes | Policy type (see [Policy Types](#policy-types)) |
+| `--config` | No | JSON config object (depends on policy type) |
+| `--description` | No | Optional description |
+
+**Config by type:**
+
+| Type | Config keys |
+|---|---|
+| `SPEND_LIMIT` | `maxAmountMinor` (integer, minor currency units) |
+| `MERCHANT_ALLOWLIST` | `merchantIds` (array of strings) |
+| `MERCHANT_BLOCKLIST` | `merchantIds` (array of strings) |
+| `APPROVAL_REQUIRED` | No config needed |
+| `TIME_WINDOW` | `startHour`, `endHour` (0-23, UTC) |
+
+---
+
+### `olympay policy assign`
+
+Assign a policy to an agent, account, or card.
+
+```bash
+olympay policy assign --policy POLICY_ID --target-type AGENT --target AGENT_ID
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--policy` | Yes | Policy ID |
+| `--target-type` | Yes | `AGENT`, `ACCOUNT`, or `CARD` |
+| `--target` | Yes | ID of the target entity |
+| `--priority` | No | Evaluation priority (lower = higher, default: `100`) |
+
+---
+
+### `olympay tx eval`
+
+Submit a transaction attempt for real-time policy evaluation. Returns the decision (`ALLOW`, `DENY`, or `REVIEW`) and the transaction record.
+
+```bash
+olympay tx eval --agent AGENT_ID --account ACCOUNT_ID --amount 5000
+```
+
+| Flag | Required | Description |
+|---|---|---|
+| `--agent` | Yes | Agent ID |
+| `--account` | Yes | Account ID |
+| `--amount` | Yes | Amount in minor units (e.g. `1000` = $10.00) |
+| `--card` | No | Card ID |
+| `--merchant` | No | Merchant identifier |
+| `--currency` | No | Currency code (default: `USD`) |
+| `--direction` | No | `DEBIT` or `CREDIT` (default: `DEBIT`) |
+
+**Output:**
+```
+Transaction DENY
+────────────────────────────────────────────────────────
+Transaction ID:  3cafac02-d2b9-4b1f-a210-ce38a64a01d6
+Amount:          200.00 USD
+Decision:        DENY
+Reason:          Denied by policy: SPEND_LIMIT
+Policies:        SPEND_LIMIT=DENY
+────────────────────────────────────────────────────────
+```
+
+If a policy of type `APPROVAL_REQUIRED` matches, the decision is `REVIEW` and an approval request is created — visible in the dashboard.
 
 ---
 
@@ -227,27 +303,60 @@ olympay workspace keys
 
 ---
 
+### `olympay workspace revoke`
+
+Revoke a workspace API key by its ID. Revoked keys are immediately rejected by the API.
+
+```bash
+olympay workspace revoke KEY_ID
+```
+
+Use `olympay workspace keys` to find the key ID first.
+
+---
+
 ## Full Workflow Example
 
 ```bash
-# Authenticate
+# 1. Authenticate
 olympay login --key olympay_ws_...
 
-# Spawn an agent for handling SaaS payments
+# 2. Spawn an agent for handling SaaS payments
 olympay agent create --name "saas-bot" --description "Manages SaaS subscriptions"
-# => ID: agt_abc123, API Key: olympay_agt_...
+# Output: ID: <AGENT_ID>, API Key: olympay_agt_...
 
-# Open a USD account for the agent
-olympay account create --agent agt_abc123 --name "saas-budget" --currency USD
-# => ID: acc_def456
+# 3. Open a USD account for the agent
+olympay account create --agent <AGENT_ID> --name "saas-budget" --currency USD
+# Output: ID: <ACCOUNT_ID>
 
-# Issue a virtual card for online purchases
-olympay card issue --agent agt_abc123 --account acc_def456
+# 4. Issue a virtual card
+olympay card issue --agent <AGENT_ID> --account <ACCOUNT_ID> --brand VISA
+# Output: ID: <CARD_ID>
 
-# Check everything is in order
+# 5. Create a spending limit policy (blocks transactions above $100)
+olympay policy create --name "100-cap" --type SPEND_LIMIT --config '{"maxAmountMinor":10000}'
+# Output: ID: <POLICY_ID>
+
+# 6. Assign the policy to the agent
+olympay policy assign --policy <POLICY_ID> --target-type AGENT --target <AGENT_ID>
+
+# 7. Evaluate a transaction attempt ($50 - should ALLOW)
+olympay tx eval --agent <AGENT_ID> --account <ACCOUNT_ID> --amount 5000
+
+# 8. Evaluate a transaction attempt ($200 - should DENY)
+olympay tx eval --agent <AGENT_ID> --account <ACCOUNT_ID> --amount 20000
+
+# 9. Emergency: suspend the agent
+olympay agent suspend <AGENT_ID>
+
+# 10. Resume after review
+olympay agent activate <AGENT_ID>
+
+# 11. List all resources
 olympay agent list
 olympay account list
 olympay card list
+olympay policy list
 ```
 
 ---
