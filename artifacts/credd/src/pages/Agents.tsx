@@ -68,7 +68,7 @@ export default function Agents() {
                   <div style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginTop: "2px" }}>{agent.id}</div>
                 </TD>
                 <TD><StatusBadge status={agent.status} /></TD>
-                <TD muted>{agent.description || "—"}</TD>
+                <TD muted>{agent.description || "-"}</TD>
                 <TD right muted>{formatDate(agent.createdAt)}</TD>
               </TR>
             ))

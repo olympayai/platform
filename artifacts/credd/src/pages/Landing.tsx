@@ -456,7 +456,7 @@ export default function Landing() {
             </span>
           </div>
 
-          {/* Nav links — desktop only */}
+          {/* Nav links - desktop only */}
           {!isMobile && (
             <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
               {NAV_LINKS.map((l, i) => (
@@ -618,7 +618,7 @@ export default function Landing() {
               OPEN YOUR ACCOUNT
             </button>
 
-            {/* Partner logos — scrolling ticker */}
+            {/* Partner logos - scrolling ticker */}
             <div style={{ marginTop: "56px" }}>
               <div style={{ fontFamily: MONO, fontSize: "8px", color: "rgba(10,10,8,0.3)", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "14px" }}>
                 Works with
@@ -664,7 +664,7 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* Right — visible on tablet+, hidden only on small mobile */}
+          {/* Right - visible on tablet+, hidden only on small mobile */}
           {!isMobile && (
             <div style={{
               padding: isTablet ? "40px 32px" : "56px 72px",
@@ -727,7 +727,7 @@ export default function Landing() {
                 <div style={{ fontFamily: SANS, fontSize: "12px", color: C.muted, lineHeight: 1.65 }}>{step.desc}</div>
               </div>
 
-              {/* Center visual — desktop only */}
+              {/* Center visual - desktop only */}
               {!isMobile && <div style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
                 padding: "32px",
@@ -763,7 +763,7 @@ export default function Landing() {
                 </div>
               </div>}
 
-              {/* Tag — desktop only */}
+              {/* Tag - desktop only */}
               {!isMobile && <div style={{
                 padding: "32px 24px",
                 display: "flex", alignItems: "center", justifyContent: "flex-start",
@@ -844,7 +844,7 @@ export default function Landing() {
               ))}
             </div>
 
-            <button onClick={() => {}} style={{
+            <button onClick={() => { navigate("/docs#sdk-js"); window.scrollTo(0,0); }} style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
               width: "fit-content", padding: "11px 24px",
               fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
@@ -1501,7 +1501,7 @@ export default function Landing() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                   <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#4ade80" }} />
-                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em" }}>AUDIT LOG — LIVE</span>
+                  <span style={{ fontFamily: MONO, fontSize: "9px", color: C.muted, letterSpacing: "0.1em" }}>AUDIT LOG - LIVE</span>
                 </div>
                 <span style={{
                   fontFamily: MONO, fontSize: "8px", color: C.muted,

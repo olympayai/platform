@@ -102,9 +102,9 @@ export default function Accounts() {
             </Field>
             <Field label="Currency">
               <Select name="currency">
-                <option value="USD">USD — US Dollar</option>
-                <option value="EUR">EUR — Euro</option>
-                <option value="GBP">GBP — British Pound</option>
+                <option value="USD">USD: US Dollar</option>
+                <option value="EUR">EUR: Euro</option>
+                <option value="GBP">GBP: British Pound</option>
               </Select>
             </Field>
             <ModalActions onCancel={() => setIsOpen(false)} submitLabel={isCreating ? "Creating..." : "Create Account"} disabled={isCreating} />

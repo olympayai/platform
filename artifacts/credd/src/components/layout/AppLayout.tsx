@@ -272,7 +272,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* Search — hidden on small mobile */}
+          {/* Search - hidden on small mobile */}
           {!isMobile && (
             <div
               className="flex items-center gap-2 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors"

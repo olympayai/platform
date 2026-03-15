@@ -201,11 +201,11 @@ const NAV = [
   {
     group: "Use Cases",
     items: [
-      { id: "use-case-01", label: "01 — Procurement Pipelines" },
-      { id: "use-case-02", label: "02 — Marketplace Automation" },
-      { id: "use-case-03", label: "03 — Subscription Control" },
-      { id: "use-case-04", label: "04 — Itinerary & Logistics" },
-      { id: "use-case-05", label: "05 — Vendor Disbursements" },
+      { id: "use-case-01", label: "01: Procurement Pipelines" },
+      { id: "use-case-02", label: "02: Marketplace Automation" },
+      { id: "use-case-03", label: "03: Subscription Control" },
+      { id: "use-case-04", label: "04: Itinerary & Logistics" },
+      { id: "use-case-05", label: "05: Vendor Disbursements" },
     ],
   },
 ];
@@ -412,7 +412,7 @@ export default function Docs() {
             <SectionLabel>Introduction</SectionLabel>
             <H2>Olympay Developer Documentation</H2>
             <P>
-              Olympay is a financial infrastructure platform purpose-built for autonomous AI agents. It provides every primitive you need to give your agents real spending power — virtual accounts, programmable cards, declarative spend policies, real-time transaction evaluation, human-in-the-loop approval flows, and a tamper-evident audit log — all available over a single REST API.
+              Olympay is a financial infrastructure platform purpose-built for autonomous AI agents. It provides every primitive you need to give your agents real spending power: virtual accounts, programmable cards, declarative spend policies, real-time transaction evaluation, human-in-the-loop approval flows, and a tamper-evident audit log, all available over a single REST API.
             </P>
             <P>
               This documentation covers the full Olympay surface area: the REST API, the official JavaScript and Python SDKs, the CLI, the policy engine, the log schema, and five reference use-case architectures that show how to wire Olympay into real agent workflows.
@@ -447,7 +447,7 @@ export default function Docs() {
             <SectionLabel>Introduction</SectionLabel>
             <H2>Authentication</H2>
             <P>
-              Olympay uses API keys to authenticate requests. All keys are scoped and must be kept secret — never expose them in client-side code or public repositories.
+              Olympay uses API keys to authenticate requests. All keys are scoped and must be kept secret; never expose them in client-side code or public repositories.
             </P>
 
             <H3>Key Types</H3>
@@ -512,7 +512,7 @@ export default function Docs() {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              API — AGENTS
+              API: AGENTS
           ════════════════════════════════════════════════ */}
           <section id="api-agents">
             <SectionLabel>REST API</SectionLabel>
@@ -527,7 +527,7 @@ export default function Docs() {
             <Endpoint method="GET"    path="/v1/agents/:id/cards"  desc="List all cards issued to this agent" />
             <Endpoint method="GET"    path="/v1/agents/:id/transactions" desc="List all transactions by this agent" />
 
-            <H3>Create an Agent — Request Body</H3>
+            <H3>Create an Agent: Request Body</H3>
             <ParamTable rows={[
               { name: "name",            type: "string",   req: true,  desc: "Human-readable identifier for the agent, e.g. 'procurement-bot'." },
               { name: "metadata",        type: "object",   req: false, desc: "Arbitrary key-value pairs (max 50 keys) for your own tracking." },
@@ -563,7 +563,7 @@ export default function Docs() {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              API — CARDS
+              API: CARDS
           ════════════════════════════════════════════════ */}
           <section id="api-cards">
             <SectionLabel>REST API</SectionLabel>
@@ -579,7 +579,7 @@ export default function Docs() {
             <Endpoint method="POST"   path="/v1/cards/:id/cancel"   desc="Permanently cancel a card" />
             <Endpoint method="GET"    path="/v1/cards/:id/sensitive" desc="Retrieve PAN, CVV, expiry (requires sensitive scope)" />
 
-            <H3>Issue a Card — Request Body</H3>
+            <H3>Issue a Card: Request Body</H3>
             <ParamTable rows={[
               { name: "agent_id",    type: "string",  req: true,  desc: "The agent this card is issued to." },
               { name: "type",        type: "enum",    req: false, desc: "'persistent' (default) or 'disposable'. Disposable cards expire after one approved transaction." },
@@ -620,7 +620,7 @@ export default function Docs() {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              API — ACCOUNTS
+              API: ACCOUNTS
           ════════════════════════════════════════════════ */}
           <section id="api-accounts">
             <SectionLabel>REST API</SectionLabel>
@@ -634,7 +634,7 @@ export default function Docs() {
             <Endpoint method="GET"  path="/v1/accounts/:id/transactions" desc="Transaction history for this account" />
             <Endpoint method="POST" path="/v1/accounts/:id/transfer"     desc="Initiate an outbound ACH or wire transfer" />
 
-            <H3>Create Account — Request Body</H3>
+            <H3>Create Account: Request Body</H3>
             <ParamTable rows={[
               { name: "agent_id",    type: "string", req: true,  desc: "The agent this account belongs to." },
               { name: "type",        type: "enum",   req: false, desc: "'checking' (default) or 'savings'." },
@@ -669,12 +669,12 @@ export default function Docs() {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              API — POLICIES
+              API: POLICIES
           ════════════════════════════════════════════════ */}
           <section id="api-policies">
             <SectionLabel>REST API</SectionLabel>
             <H2>Policy Engine</H2>
-            <P>Policies are reusable rule sets evaluated in real time on every transaction attempt. They run synchronously in the authorization path — if a policy denies a transaction, the card network authorization is declined within milliseconds.</P>
+            <P>Policies are reusable rule sets evaluated in real time on every transaction attempt. They run synchronously in the authorization path: if a policy denies a transaction, the card network authorization is declined within milliseconds.</P>
 
             <Endpoint method="GET"    path="/v1/policies"              desc="List all policies" />
             <Endpoint method="POST"   path="/v1/policies"              desc="Create a new policy" />
@@ -685,7 +685,7 @@ export default function Docs() {
             <Endpoint method="POST"   path="/v1/policies/:id/detach"   desc="Detach policy from a card or agent" />
             <Endpoint method="POST"   path="/v1/policies/evaluate"     desc="Dry-run a transaction against a policy" />
 
-            <H3>Create Policy — Request Body</H3>
+            <H3>Create Policy: Request Body</H3>
             <ParamTable rows={[
               { name: "name",   type: "string", req: true,  desc: "Human-readable policy name." },
               { name: "type",   type: "enum",   req: true,  desc: "'spend_limit', 'merchant_allowlist', or 'approval_required'. See Policy Reference for full schema." },
@@ -710,7 +710,7 @@ export default function Docs() {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              API — TRANSACTIONS
+              API: TRANSACTIONS
           ════════════════════════════════════════════════ */}
           <section id="api-transactions">
             <SectionLabel>REST API</SectionLabel>
@@ -763,7 +763,7 @@ export default function Docs() {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              API — WEBHOOKS
+              API: WEBHOOKS
           ════════════════════════════════════════════════ */}
           <section id="api-webhooks">
             <SectionLabel>REST API</SectionLabel>
@@ -816,7 +816,7 @@ function verifySignature(
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              SDK — JAVASCRIPT
+              SDK: JAVASCRIPT
           ════════════════════════════════════════════════ */}
           <section id="sdk-js">
             <SectionLabel>SDK</SectionLabel>
@@ -912,7 +912,7 @@ const verdict = await client.policies.evaluate({
   amount: 75_000,  // Would this $750 charge be allowed?
   merchantId: "stripe",
 });
-console.log(verdict.result); // "deny" — over daily limit`} />
+console.log(verdict.result); // "deny" - over daily limit`} />
 
             <H3>Webhooks</H3>
             <CodeBlock lang="typescript" code={`// Register a webhook
@@ -941,7 +941,7 @@ app.post("/olympay/events", express.raw({ type: "*/*" }), (req, res) => {
           <Divider />
 
           {/* ════════════════════════════════════════════════
-              SDK — PYTHON
+              SDK: PYTHON
           ════════════════════════════════════════════════ */}
           <section id="sdk-python">
             <SectionLabel>SDK</SectionLabel>
@@ -1186,7 +1186,7 @@ olympay logs export \\
             <ParamTable rows={[
               { name: "merchant_ids",  type: "array",   req: false, desc: "List of Olympay-normalized merchant identifiers (e.g. 'stripe', 'aws')." },
               { name: "mcc_codes",     type: "array",   req: false, desc: "List of 4-digit MCC codes to permit (e.g. ['7372', '5045'])." },
-              { name: "mode",          type: "enum",    req: false, desc: "'allowlist' (default) — only listed merchants pass. 'blocklist' — listed merchants are blocked." },
+              { name: "mode",          type: "enum",    req: false, desc: "'allowlist' (default): only listed merchants pass. 'blocklist': listed merchants are blocked." },
             ]} />
             <CodeBlock lang="json" code={`{
   "name": "SaaS Vendors Only",
@@ -1217,7 +1217,7 @@ olympay logs export \\
 }`} />
 
             <H3>Policy Chaining</H3>
-            <P>Multiple policies can be attached to a single card or agent. They are evaluated in the order they were attached. The first policy that returns <Code>deny</Code> short-circuits the chain. <Code>review</Code> verdicts are additive — if two policies both return <Code>review</Code>, only one approval is required.</P>
+            <P>Multiple policies can be attached to a single card or agent. They are evaluated in the order they were attached. The first policy that returns <Code>deny</Code> short-circuits the chain. <Code>review</Code> verdicts are additive: if two policies both return <Code>review</Code>, only one approval is required.</P>
             <CodeBlock lang="bash" code={`# Attach in order: spend limit first, then approval gate
 olympay policies attach pol_spend_limit --card card_01j5nr7p2xk
 olympay policies attach pol_approval    --card card_01j5nr7p2xk`} />
@@ -1231,7 +1231,7 @@ olympay policies attach pol_approval    --card card_01j5nr7p2xk`} />
           <section id="log-schema">
             <SectionLabel>Concepts</SectionLabel>
             <H2>Log Schema</H2>
-            <P>Every action taken by an agent, card, policy, or human is recorded as an immutable audit event. Events are append-only and cryptographically sealed — no log entry can be modified or deleted after it is written. The log is queryable via API, CLI, and the dashboard.</P>
+            <P>Every action taken by an agent, card, policy, or human is recorded as an immutable audit event. Events are append-only and cryptographically sealed; no log entry can be modified or deleted after it is written. The log is queryable via API, CLI, and the dashboard.</P>
 
             <H3>Event Object</H3>
             <CodeBlock lang="json" code={`{
@@ -1342,7 +1342,7 @@ curl "https://api.olympay.tech/v1/events?type=txn.declined&limit=50" \\
               </div>
             </div>
 
-            <P>A procurement agent monitors vendor catalogs, compares prices, verifies vendor approval status, and executes purchases — all without human involvement for transactions within policy bounds. High-value or off-policy purchases are automatically escalated.</P>
+            <P>A procurement agent monitors vendor catalogs, compares prices, verifies vendor approval status, and executes purchases with no human involvement for transactions within policy bounds. High-value or off-policy purchases are automatically escalated.</P>
 
             <H3>Architecture</H3>
             <P>Each procurement agent receives a <Code>persistent</Code> card with a <Code>spend_limit</Code> policy capping daily spend at an amount appropriate to the purchasing tier. A chained <Code>merchant_allowlist</Code> policy restricts charges to pre-approved vendor IDs. An <Code>approval_required</Code> policy is attached last to escalate any single transaction above $500.</P>
@@ -1526,7 +1526,7 @@ async function provisionSaasCards(agentId: string) {
               </div>
             </div>
 
-            <P>A travel agent books flights, hotels, ground transport, and meals for employees or contractors. It enforces travel policy automatically — no manual expense reports needed. Each trip gets a dedicated card with an MCC-scoped allowlist (airlines: 3000-3299, hotels: 7011, car rental: 7512) and a per-trip spend cap.</P>
+            <P>A travel agent books flights, hotels, ground transport, and meals for employees or contractors. It enforces travel policy automatically with no manual expense reports needed. Each trip gets a dedicated card with an MCC-scoped allowlist (airlines: 3000-3299, hotels: 7011, car rental: 7512) and a per-trip spend cap.</P>
 
             <CodeBlock lang="typescript" code={`async function createTripCard(agentId: string, tripBudgetCents: number) {
   const travelPolicy = await client.policies.create({
