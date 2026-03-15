@@ -20,6 +20,8 @@ import AuditLogs from "@/pages/AuditLogs";
 import Api from "@/pages/Api";
 import Settings from "@/pages/Settings";
 import Docs from "@/pages/Docs";
+import Privacy from "@/pages/Privacy";
+import Terms from "@/pages/Terms";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -61,6 +63,8 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
       <Route path="/docs" component={Docs} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/terms" component={Terms} />
       <Route path="/:rest*" component={DashboardRouter} />
       <Route component={NotFound} />
     </Switch>

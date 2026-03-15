@@ -1714,8 +1714,13 @@ export default function Landing() {
           <div style={{ width: "1px", height: "14px", background: C.border }} />
 
           {/* Text links */}
-          {["Privacy", "Terms", "Docs", "API"].map(l => (
-            <button key={l} style={{
+          {[
+            { label: "Privacy", to: "/privacy" },
+            { label: "Terms",   to: "/terms" },
+            { label: "Docs",    to: "/docs" },
+            { label: "API",     to: "/docs#overview" },
+          ].map(({ label, to }) => (
+            <button key={label} onClick={() => { navigate(to); window.scrollTo(0, 0); }} style={{
               background: "none", border: "none", cursor: "pointer",
               fontFamily: MONO, fontSize: "10px", color: C.muted,
               letterSpacing: "0.08em", textTransform: "uppercase",
@@ -1723,7 +1728,7 @@ export default function Landing() {
             }}
               onMouseEnter={e => (e.currentTarget.style.color = C.black)}
               onMouseLeave={e => (e.currentTarget.style.color = C.muted)}
-            >{l}</button>
+            >{label}</button>
           ))}
         </div>
       </footer>
