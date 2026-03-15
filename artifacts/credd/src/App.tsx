@@ -81,6 +81,10 @@ function App() {
           theme: "light",
           accentColor: "#c4923a",
         },
+        embeddedWallets: {
+          ethereum: { createOnLogin: "off" },
+          solana:   { createOnLogin: "off" },
+        },
       }}
     >
       <QueryClientProvider client={queryClient}>
