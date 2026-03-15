@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { Command } from "commander";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { homedir } from "os";
@@ -7,6 +6,24 @@ import { join } from "path";
 const CONFIG_DIR = join(homedir(), ".olympay");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
 const DEFAULT_API = "https://api.olympay.tech/v1";
+
+const RESET  = "\x1b[0m";
+const GOLD   = "\x1b[38;2;196;146;58m";
+const DIM    = "\x1b[2m";
+const BOLD   = "\x1b[1m";
+const GREEN  = "\x1b[32m";
+const RED    = "\x1b[31m";
+const CYAN   = "\x1b[36m";
+
+const ASCII_BANNER = `
+${GOLD} ██████╗ ██╗      ██╗   ██╗███╗   ███╗██████╗  █████╗ ██╗   ██╗${RESET}
+${GOLD}██╔═══██╗██║      ╚██╗ ██╔╝████╗ ████║██╔══██╗██╔══██╗╚██╗ ██╔╝${RESET}
+${GOLD}██║   ██║██║       ╚████╔╝ ██╔████╔██║██████╔╝███████║ ╚████╔╝ ${RESET}
+${GOLD}██║   ██║██║        ╚██╔╝  ██║╚██╔╝██║██╔═══╝ ██╔══██║  ╚██╔╝  ${RESET}
+${GOLD}╚██████╔╝███████╗   ██║   ██║ ╚═╝ ██║██║     ██║  ██║   ██║   ${RESET}
+${GOLD} ╚═════╝ ╚══════╝   ╚═╝   ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝   ${RESET}
+${DIM}  Financial control for autonomous AI agents  •  olympay.tech${RESET}
+`;
 
 interface Config {
   apiKey: string;
@@ -30,7 +47,7 @@ function saveConfig(cfg: Config) {
 function requireConfig(): Config {
   const cfg = loadConfig();
   if (!cfg?.apiKey) {
-    console.error("Not logged in. Run:  olympay login --key olympay_ws_...");
+    console.error(`${RED}Not logged in.${RESET} Run:  ${GOLD}olympay login --key olympay_ws_...${RESET}`);
     process.exit(1);
   }
   return cfg;
@@ -50,7 +67,7 @@ async function apiCall(method: string, path: string, body?: unknown): Promise<an
   const json = await res.json();
   if (!res.ok) {
     const msg = json?.error?.message ?? `HTTP ${res.status}`;
-    console.error(`Error: ${msg}`);
+    console.error(`${RED}Error:${RESET} ${msg}`);
     process.exit(1);
   }
   return json?.data ?? json;
@@ -61,7 +78,8 @@ const program = new Command();
 program
   .name("olympay")
   .description("Olympay CLI - spawn and manage AI agents with financial controls")
-  .version("0.1.0");
+  .version("0.1.0")
+  .addHelpText("before", ASCII_BANNER);
 
 program
   .command("login")
@@ -70,12 +88,18 @@ program
   .option("--api <url>", "API base URL", DEFAULT_API)
   .action((opts) => {
     if (!opts.key.startsWith("olympay_ws_")) {
-      console.error("Invalid key format. Expected: olympay_ws_...");
+      console.error(`${RED}Invalid key format.${RESET} Expected: ${GOLD}olympay_ws_...${RESET}`);
       process.exit(1);
     }
     saveConfig({ apiKey: opts.key, apiBase: opts.api });
-    console.log("Logged in successfully.");
-    console.log(`API base: ${opts.api}`);
+    console.log(ASCII_BANNER);
+    console.log(`${GREEN}Logged in successfully.${RESET}`);
+    console.log(`${DIM}API base:${RESET} ${opts.api}`);
+    console.log(`${DIM}Config:  ${RESET} ${CONFIG_FILE}`);
+    console.log(`\n${GOLD}Next steps:${RESET}`);
+    console.log(`  ${CYAN}olympay agent create --name "my-bot"${RESET}   Spawn your first agent`);
+    console.log(`  ${CYAN}olympay agent list${RESET}                      List all agents`);
+    console.log(`  ${CYAN}olympay account create --agent <id> --name "main"${RESET}`);
   });
 
 program
@@ -85,7 +109,7 @@ program
     if (existsSync(CONFIG_FILE)) {
       writeFileSync(CONFIG_FILE, "{}");
     }
-    console.log("Logged out.");
+    console.log(`${GREEN}Logged out.${RESET} Credentials removed from ${CONFIG_FILE}`);
   });
 
 program
@@ -94,11 +118,11 @@ program
   .action(() => {
     const cfg = loadConfig();
     if (!cfg?.apiKey) {
-      console.log("Not logged in.");
+      console.log(`${DIM}Not logged in.${RESET}`);
     } else {
       const masked = cfg.apiKey.slice(0, 18) + "..." + cfg.apiKey.slice(-4);
-      console.log(`API key: ${masked}`);
-      console.log(`API base: ${cfg.apiBase}`);
+      console.log(`${GOLD}API key:${RESET}  ${masked}`);
+      console.log(`${GOLD}API base:${RESET} ${cfg.apiBase}`);
     }
   });
 
@@ -115,14 +139,14 @@ agentCmd
       description: opts.description,
       status: "active",
     });
-    console.log("\nAgent spawned successfully!");
-    console.log("--------------------------------");
-    console.log(`ID:       ${agent.id}`);
-    console.log(`Name:     ${agent.name}`);
-    console.log(`API Key:  ${agent.apiKey}`);
-    console.log(`Status:   ${agent.status}`);
-    console.log("--------------------------------");
-    console.log("Keep this API key safe - use it to authenticate transactions.");
+    console.log(`\n${GREEN}Agent spawned successfully!${RESET}`);
+    console.log(`${DIM}${"─".repeat(48)}${RESET}`);
+    console.log(`${GOLD}ID:      ${RESET} ${agent.id}`);
+    console.log(`${GOLD}Name:    ${RESET} ${agent.name}`);
+    console.log(`${GOLD}API Key: ${RESET} ${BOLD}${agent.apiKey}${RESET}`);
+    console.log(`${GOLD}Status:  ${RESET} ${agent.status}`);
+    console.log(`${DIM}${"─".repeat(48)}${RESET}`);
+    console.log(`${DIM}Keep this API key safe - use it to authenticate transactions.${RESET}`);
   });
 
 agentCmd
@@ -131,34 +155,35 @@ agentCmd
   .action(async () => {
     const agents = await apiCall("GET", "/agents");
     if (!agents.length) {
-      console.log("No agents found.");
+      console.log(`${DIM}No agents found.${RESET} Create one with: ${GOLD}olympay agent create --name "..."${RESET}`);
       return;
     }
-    console.log(`\n${"ID".padEnd(38)} ${"Name".padEnd(25)} ${"Status".padEnd(12)} API Key`);
-    console.log("-".repeat(100));
+    console.log(`\n${GOLD}${"ID".padEnd(38)} ${"NAME".padEnd(25)} ${"STATUS".padEnd(12)} API KEY${RESET}`);
+    console.log(`${DIM}${"─".repeat(100)}${RESET}`);
     for (const a of agents) {
-      const key = a.apiKey ? a.apiKey.slice(0, 20) + "..." : "-";
+      const key = a.apiKey ? a.apiKey.slice(0, 20) + "..." : DIM + "-" + RESET;
+      const status = a.status === "active" ? `${GREEN}${a.status}${RESET}` : `${DIM}${a.status}${RESET}`;
       console.log(`${a.id.padEnd(38)} ${a.name.padEnd(25)} ${a.status.padEnd(12)} ${key}`);
     }
   });
 
 agentCmd
   .command("suspend <id>")
-  .description("Suspend an agent")
+  .description("Suspend an agent to block all transactions")
   .action(async (id) => {
     await apiCall("PATCH", `/agents/${id}/status`, { status: "suspended" });
-    console.log(`Agent ${id} suspended.`);
+    console.log(`${GREEN}Agent ${id} suspended.${RESET}`);
   });
 
 agentCmd
   .command("activate <id>")
-  .description("Activate an agent")
+  .description("Re-activate a suspended agent")
   .action(async (id) => {
     await apiCall("PATCH", `/agents/${id}/status`, { status: "active" });
-    console.log(`Agent ${id} activated.`);
+    console.log(`${GREEN}Agent ${id} activated.${RESET}`);
   });
 
-const accountCmd = program.command("account").description("Manage agent accounts");
+const accountCmd = program.command("account").description("Manage agent ledger accounts");
 
 accountCmd
   .command("create")
@@ -172,11 +197,11 @@ accountCmd
       name: opts.name,
       currency: opts.currency,
     });
-    console.log("\nAccount opened!");
-    console.log(`ID:       ${account.id}`);
-    console.log(`Name:     ${account.name}`);
-    console.log(`Currency: ${account.currency}`);
-    console.log(`Status:   ${account.status}`);
+    console.log(`\n${GREEN}Account opened!${RESET}`);
+    console.log(`${GOLD}ID:       ${RESET} ${account.id}`);
+    console.log(`${GOLD}Name:     ${RESET} ${account.name}`);
+    console.log(`${GOLD}Currency: ${RESET} ${account.currency}`);
+    console.log(`${GOLD}Status:   ${RESET} ${account.status}`);
   });
 
 accountCmd
@@ -184,9 +209,12 @@ accountCmd
   .description("List all accounts in your workspace")
   .action(async () => {
     const accounts = await apiCall("GET", "/accounts");
-    if (!accounts.length) { console.log("No accounts found."); return; }
-    console.log(`\n${"ID".padEnd(38)} ${"Name".padEnd(25)} ${"Agent".padEnd(38)} Balance`);
-    console.log("-".repeat(110));
+    if (!accounts.length) {
+      console.log(`${DIM}No accounts found.${RESET}`);
+      return;
+    }
+    console.log(`\n${GOLD}${"ID".padEnd(38)} ${"NAME".padEnd(25)} ${"AGENT".padEnd(38)} BALANCE${RESET}`);
+    console.log(`${DIM}${"─".repeat(110)}${RESET}`);
     for (const a of accounts) {
       const bal = `$${((a.balanceMinor ?? 0) / 100).toFixed(2)} ${a.currency}`;
       console.log(`${a.id.padEnd(38)} ${a.name.padEnd(25)} ${a.agentId.padEnd(38)} ${bal}`);
@@ -197,7 +225,7 @@ const cardCmd = program.command("card").description("Manage virtual cards");
 
 cardCmd
   .command("issue")
-  .description("Issue a virtual card to an agent account")
+  .description("Issue a virtual card linked to an agent account")
   .requiredOption("--agent <agentId>", "Agent ID")
   .requiredOption("--account <accountId>", "Account ID")
   .option("--brand <brand>", "Card brand (e.g. VISA)", "VISA")
@@ -209,21 +237,24 @@ cardCmd
       brand: opts.brand,
       last4: opts.last4,
     });
-    console.log("\nCard issued!");
-    console.log(`ID:      ${card.id}`);
-    console.log(`Brand:   ${card.brand ?? "VISA"}`);
-    console.log(`Last4:   ${card.last4 ?? "-"}`);
-    console.log(`Status:  ${card.status}`);
+    console.log(`\n${GREEN}Card issued!${RESET}`);
+    console.log(`${GOLD}ID:     ${RESET} ${card.id}`);
+    console.log(`${GOLD}Brand:  ${RESET} ${card.brand ?? "VISA"}`);
+    console.log(`${GOLD}Last4:  ${RESET} ${card.last4 ?? DIM + "-" + RESET}`);
+    console.log(`${GOLD}Status: ${RESET} ${card.status}`);
   });
 
 cardCmd
   .command("list")
-  .description("List all cards in your workspace")
+  .description("List all virtual cards in your workspace")
   .action(async () => {
     const cards = await apiCall("GET", "/cards");
-    if (!cards.length) { console.log("No cards found."); return; }
-    console.log(`\n${"ID".padEnd(38)} ${"Brand".padEnd(8)} ${"Last4".padEnd(6)} ${"Status".padEnd(12)} Agent`);
-    console.log("-".repeat(90));
+    if (!cards.length) {
+      console.log(`${DIM}No cards found.${RESET}`);
+      return;
+    }
+    console.log(`\n${GOLD}${"ID".padEnd(38)} ${"BRAND".padEnd(8)} ${"LAST4".padEnd(6)} ${"STATUS".padEnd(12)} AGENT${RESET}`);
+    console.log(`${DIM}${"─".repeat(90)}${RESET}`);
     for (const c of cards) {
       console.log(`${c.id.padEnd(38)} ${(c.brand ?? "-").padEnd(8)} ${(c.last4 ?? "-").padEnd(6)} ${c.status.padEnd(12)} ${c.agentId}`);
     }
@@ -233,27 +264,33 @@ const policyCmd = program.command("policy").description("Manage spending policie
 
 policyCmd
   .command("list")
-  .description("List all policies in your workspace")
+  .description("List all spending policies in your workspace")
   .action(async () => {
     const policies = await apiCall("GET", "/policies");
-    if (!policies.length) { console.log("No policies found."); return; }
-    console.log(`\n${"ID".padEnd(38)} ${"Name".padEnd(30)} ${"Type".padEnd(25)} Status`);
-    console.log("-".repeat(100));
+    if (!policies.length) {
+      console.log(`${DIM}No policies found.${RESET}`);
+      return;
+    }
+    console.log(`\n${GOLD}${"ID".padEnd(38)} ${"NAME".padEnd(30)} ${"TYPE".padEnd(25)} STATUS${RESET}`);
+    console.log(`${DIM}${"─".repeat(100)}${RESET}`);
     for (const p of policies) {
       console.log(`${p.id.padEnd(38)} ${p.name.padEnd(30)} ${p.type.padEnd(25)} ${p.status}`);
     }
   });
 
-const wsCmd = program.command("workspace").description("Manage workspace settings");
+const wsCmd = program.command("workspace").description("Manage workspace settings and API keys");
 
 wsCmd
   .command("keys")
   .description("List active workspace API keys")
   .action(async () => {
     const keys = await apiCall("GET", "/workspace/keys");
-    if (!keys.length) { console.log("No keys found."); return; }
-    console.log(`\n${"ID".padEnd(38)} ${"Name".padEnd(20)} Key`);
-    console.log("-".repeat(100));
+    if (!keys.length) {
+      console.log(`${DIM}No keys found.${RESET} Generate one with: ${GOLD}olympay workspace generate-key${RESET}`);
+      return;
+    }
+    console.log(`\n${GOLD}${"ID".padEnd(38)} ${"NAME".padEnd(20)} KEY${RESET}`);
+    console.log(`${DIM}${"─".repeat(100)}${RESET}`);
     for (const k of keys) {
       console.log(`${k.id.padEnd(38)} ${k.name.padEnd(20)} ${k.key}`);
     }
@@ -262,16 +299,16 @@ wsCmd
 wsCmd
   .command("generate-key")
   .description("Generate a new workspace API key")
-  .option("--name <name>", "Key name", "Default")
+  .option("--name <name>", "Key label", "CLI Key")
   .action(async (opts) => {
     const key = await apiCall("POST", "/workspace/keys", { name: opts.name });
-    console.log("\nNew workspace API key generated!");
-    console.log("--------------------------------");
-    console.log(`ID:   ${key.id}`);
-    console.log(`Name: ${key.name}`);
-    console.log(`Key:  ${key.key}`);
-    console.log("--------------------------------");
-    console.log("Use this key with: olympay login --key <key>");
+    console.log(`\n${GREEN}New workspace API key generated!${RESET}`);
+    console.log(`${DIM}${"─".repeat(56)}${RESET}`);
+    console.log(`${GOLD}ID:   ${RESET} ${key.id}`);
+    console.log(`${GOLD}Name: ${RESET} ${key.name}`);
+    console.log(`${GOLD}Key:  ${RESET} ${BOLD}${key.key}${RESET}`);
+    console.log(`${DIM}${"─".repeat(56)}${RESET}`);
+    console.log(`${DIM}Use with:${RESET} ${GOLD}olympay login --key ${key.key}${RESET}`);
   });
 
 program.parse();

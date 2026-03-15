@@ -374,6 +374,107 @@ export default function Api() {
         </div>
       </div>
 
+      {/* CLI & SDK */}
+      <div style={{ background: BLACK, border: `1px solid rgba(196,146,58,0.25)`, borderRadius: "8px", overflow: "hidden", marginBottom: "24px" }}>
+        <div style={{ padding: "20px 24px 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
+            <Terminal size={14} color={GOLD} />
+            <span style={{ fontFamily: MONO, fontSize: "11px", fontWeight: 700, color: GOLD, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              CLI & SDK
+            </span>
+            <span style={{
+              fontFamily: MONO, fontSize: "9px", background: `${GOLD}20`,
+              color: GOLD, border: `1px solid ${GOLD}50`, borderRadius: "3px",
+              padding: "1px 6px", letterSpacing: "0.08em",
+            }}>npm install -g olympay</span>
+          </div>
+
+          <pre style={{
+            margin: "0 0 20px",
+            fontFamily: MONO, fontSize: "11px", lineHeight: 1.55,
+            color: GOLD,
+            letterSpacing: "0.01em",
+            overflowX: "auto",
+          }}>{` ██████╗ ██╗      ██╗   ██╗███╗   ███╗██████╗  █████╗ ██╗   ██╗
+██╔═══██╗██║      ╚██╗ ██╔╝████╗ ████║██╔══██╗██╔══██╗╚██╗ ██╔╝
+██║   ██║██║       ╚████╔╝ ██╔████╔██║██████╔╝███████║ ╚████╔╝ 
+██║   ██║██║        ╚██╔╝  ██║╚██╔╝██║██╔═══╝ ██╔══██║  ╚██╔╝  
+╚██████╔╝███████╗   ██║   ██║ ╚═╝ ██║██║     ██║  ██║   ██║   
+ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝     ╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝   `}
+            <span style={{ color: "rgba(229,220,200,0.35)", fontSize: "10px" }}>
+              {`  Financial control for autonomous AI agents  •  olympay.tech`}
+            </span>
+          </pre>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0" }}>
+          {[
+            {
+              label: "AUTH",
+              items: [
+                { cmd: "olympay login --key <ws_key>", desc: "Authenticate with a workspace API key" },
+                { cmd: "olympay logout",               desc: "Remove stored credentials" },
+                { cmd: "olympay whoami",                desc: "Show current auth context" },
+              ],
+            },
+            {
+              label: "AGENTS",
+              items: [
+                { cmd: "olympay agent create --name <n>", desc: "Spawn a new agent, returns its API key" },
+                { cmd: "olympay agent list",               desc: "List all agents in your workspace" },
+                { cmd: "olympay agent suspend <id>",       desc: "Suspend agent (blocks all transactions)" },
+                { cmd: "olympay agent activate <id>",      desc: "Re-activate a suspended agent" },
+              ],
+            },
+            {
+              label: "ACCOUNTS",
+              items: [
+                { cmd: "olympay account create --agent <id> --name <n>", desc: "Open a ledger account for an agent" },
+                { cmd: "olympay account list",                            desc: "List all accounts" },
+              ],
+            },
+            {
+              label: "CARDS",
+              items: [
+                { cmd: "olympay card issue --agent <id> --account <id>", desc: "Issue a virtual card" },
+                { cmd: "olympay card list",                              desc: "List all virtual cards" },
+              ],
+            },
+            {
+              label: "POLICIES",
+              items: [
+                { cmd: "olympay policy list", desc: "List all spending policies" },
+              ],
+            },
+            {
+              label: "WORKSPACE",
+              items: [
+                { cmd: "olympay workspace generate-key", desc: "Generate a new workspace API key" },
+                { cmd: "olympay workspace keys",         desc: "List active workspace API keys" },
+              ],
+            },
+          ].map((group) => (
+            <div key={group.label} style={{ borderRight: "1px solid rgba(255,255,255,0.06)", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "18px 20px" }}>
+              <div style={{ fontFamily: MONO, fontSize: "9px", color: GOLD, letterSpacing: "0.12em", fontWeight: 700, marginBottom: "12px", opacity: 0.7 }}>
+                {group.label}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {group.items.map(item => (
+                  <div key={item.cmd}>
+                    <code style={{ fontFamily: MONO, fontSize: "10px", color: "#e5dcc8", display: "block", marginBottom: "2px" }}>
+                      {item.cmd}
+                    </code>
+                    <span style={{ fontFamily: MONO, fontSize: "9px", color: "rgba(229,220,200,0.4)", lineHeight: 1.5 }}>
+                      {item.desc}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Endpoint reference */}
       <div style={{ background: "#fff", border: `1px solid ${BORDER}`, borderRadius: "8px", overflow: "hidden" }}>
         <div style={{

@@ -1,18 +1,27 @@
 {
-  "name": "@workspace/scripts",
-  "version": "0.0.0",
-  "private": true,
+  "name": "olympay",
+  "version": "0.1.0",
+  "description": "CLI for Olympay - financial control for autonomous AI agents",
+  "keywords": ["olympay", "ai", "agents", "fintech", "cli"],
+  "license": "MIT",
   "type": "module",
+  "bin": {
+    "olympay": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "hello": "tsx ./src/hello.ts",
+    "build": "node build.mjs",
     "olympay": "tsx ./src/cli.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
-  "devDependencies": {
-    "@types/node": "catalog:",
-    "tsx": "catalog:"
-  },
   "dependencies": {
     "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "esbuild": "^0.25.5",
+    "tsx": "catalog:"
   }
 }
