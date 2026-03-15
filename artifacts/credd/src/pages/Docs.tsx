@@ -241,15 +241,17 @@ export default function Docs() {
     return () => observersRef.current.forEach(o => o.disconnect());
   }, []);
 
-  /* handle hash on mount */
+  /* handle hash on mount - default to overview */
   useEffect(() => {
     const hash = window.location.hash.slice(1);
-    if (hash) {
-      setTimeout(() => {
-        const el = document.getElementById(hash);
-        if (el) { el.scrollIntoView({ behavior: "smooth" }); setActive(hash); }
-      }, 120);
-    }
+    const target = hash || "overview";
+    setTimeout(() => {
+      const el = document.getElementById(target);
+      if (el) {
+        el.scrollIntoView({ behavior: hash ? "smooth" : "auto" });
+        setActive(target);
+      }
+    }, 80);
   }, []);
 
   const scrollTo = (id: string) => {
