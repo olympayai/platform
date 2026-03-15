@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
-import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Menu, X, Github } from "lucide-react";
 import olympayLogo from "@/assets/logo.png";
 const LOGO_GOLD = "brightness(0) saturate(100%) invert(64%) sepia(53%) saturate(601%) hue-rotate(8deg) brightness(98%)";
 const LOGO_WHITE = "brightness(0) invert(1)";
@@ -1693,7 +1693,27 @@ export default function Landing() {
         <p style={{ fontFamily: SANS, fontSize: "12px", color: C.muted }}>
           Spend infrastructure for autonomous AI. Olympay is not a bank.
         </p>
-        <div style={{ display: "flex", gap: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "20px" : "28px" }}>
+          {/* Social icons */}
+          {[
+            { href: "https://x.com/OlympayAI",       label: "X",      icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg> },
+            { href: "https://github.com/olympayai",   label: "GitHub", icon: <Github size={14} /> },
+          ].map(({ href, label, icon }) => (
+            <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+              aria-label={label}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: C.muted, transition: "color 0.15s", lineHeight: 1,
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = C.black)}
+              onMouseLeave={e => (e.currentTarget.style.color = C.muted)}
+            >{icon}</a>
+          ))}
+
+          {/* Divider */}
+          <div style={{ width: "1px", height: "14px", background: C.border }} />
+
+          {/* Text links */}
           {["Privacy", "Terms", "Docs", "API"].map(l => (
             <button key={l} style={{
               background: "none", border: "none", cursor: "pointer",
