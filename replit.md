@@ -45,7 +45,7 @@ Olympay is a financial control platform that gives each AI agent its own financi
 artifacts-monorepo/
 ├── artifacts/
 │   ├── api-server/         # Express API server (all backend routes)
-│   └── credd/              # React + Vite frontend dashboard
+│   └── olympay/            # React + Vite frontend dashboard (internal pkg: @workspace/credd)
 ├── lib/
 │   ├── api-spec/           # OpenAPI spec + Orval codegen config
 │   ├── api-client-react/   # Generated React Query hooks + custom-fetch (injects Privy JWT)
