@@ -1342,7 +1342,7 @@ export default function Landing() {
 
           {/* Left: copy */}
           <div style={{
-            padding: isMobile ? "40px 24px" : "72px 72px",
+            padding: isMobile ? "40px 24px" : "64px 56px",
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
@@ -1350,47 +1350,63 @@ export default function Landing() {
               <span style={{ fontFamily: MONO, fontSize: "10px", color: C.gold, letterSpacing: "0.15em", textTransform: "uppercase" }}>Policies</span>
             </div>
 
-            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(28px, 3vw, 42px)", fontWeight: 400, lineHeight: 1.15, marginBottom: "20px", maxWidth: "420px" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(26px, 2.8vw, 40px)", fontWeight: 400, lineHeight: 1.15, marginBottom: "16px", maxWidth: "400px" }}>
               Rules that enforce themselves before a cent moves.
             </h2>
-            <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, lineHeight: 1.7, marginBottom: "36px", maxWidth: "400px" }}>
-              Attach a policy to any agent or card and it runs automatically on every transaction. No middleware, no manual review unless you require it. Three types cover every control scenario.
+            <p style={{ fontFamily: SANS, fontSize: "14px", color: C.muted, lineHeight: 1.75, marginBottom: "32px", maxWidth: "380px" }}>
+              Attach a policy to any agent or card and it runs automatically on every transaction. Three types cover every control scenario.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
                 {
                   type: "SPEND_LIMIT",
-                  color: "#c2410c", bg: "#fff7ed", border: "#fed7aa",
+                  label: "Spend Limit",
+                  color: "#c2410c", bg: "#fff7ed", border: "#fed7aa", accent: "#c2410c",
                   desc: "Cap daily, weekly, or monthly spend per agent. Transactions that exceed the window are automatically denied.",
                 },
                 {
                   type: "MERCHANT_ALLOWLIST",
-                  color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe",
+                  label: "Merchant Allowlist",
+                  color: "#1d4ed8", bg: "#eff6ff", border: "#bfdbfe", accent: "#1d4ed8",
                   desc: "Restrict charges to a pre-approved list of merchant IDs. Any unknown vendor is blocked before authorization.",
                 },
                 {
                   type: "APPROVAL_REQUIRED",
-                  color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe",
+                  label: "Approval Required",
+                  color: "#7c3aed", bg: "#f5f3ff", border: "#ddd6fe", accent: "#7c3aed",
                   desc: "Escalate any transaction above a threshold to a human reviewer. Funds are held until approved or rejected.",
                 },
               ].map(item => (
-                <div key={item.type} style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
-                  <span style={{
-                    fontFamily: MONO, fontSize: "8px", fontWeight: 700,
-                    letterSpacing: "0.06em", textTransform: "uppercase",
-                    color: item.color, background: item.bg, border: `1px solid ${item.border}`,
-                    borderRadius: "3px", padding: "3px 7px", whiteSpace: "nowrap", marginTop: "2px",
-                    flexShrink: 0,
-                  }}>{item.type}</span>
-                  <span style={{ fontFamily: SANS, fontSize: "13px", color: C.muted, lineHeight: 1.65 }}>{item.desc}</span>
+                <div key={item.type} style={{
+                  display: "flex", gap: "0",
+                  border: `1px solid ${C.border}`,
+                  borderRadius: "6px", overflow: "hidden",
+                  background: "#fff",
+                }}>
+                  {/* Color accent bar */}
+                  <div style={{ width: "3px", flexShrink: 0, background: item.accent, opacity: 0.7 }} />
+                  <div style={{ padding: "14px 16px", flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                      <span style={{
+                        fontFamily: MONO, fontSize: "7.5px", fontWeight: 700,
+                        letterSpacing: "0.07em", textTransform: "uppercase",
+                        color: item.color, background: item.bg,
+                        border: `1px solid ${item.border}`,
+                        borderRadius: "3px", padding: "2px 6px",
+                      }}>{item.type}</span>
+                    </div>
+                    <p style={{ fontFamily: SANS, fontSize: "12.5px", color: C.muted, lineHeight: 1.65, margin: 0 }}>
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
 
             <button onClick={() => { navigate("/docs#policy-docs"); window.scrollTo(0,0); }} style={{
-              marginTop: "40px", display: "inline-flex", alignItems: "center", gap: "8px",
-              width: "fit-content", padding: "11px 24px",
+              marginTop: "32px", display: "inline-flex", alignItems: "center", gap: "8px",
+              width: "fit-content", padding: "10px 22px",
               fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em",
               fontWeight: 600, textTransform: "uppercase",
               background: "transparent", color: C.black,
