@@ -382,6 +382,65 @@ const fadeInit: React.CSSProperties = {
   transition: "opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease",
 };
 
+/* ─── $OPAY Contract Address Widget ─── */
+const OPAY_CA = "FSqXdm86izEsJXZpMa2UVMNtTK2mqq7NvHwB9YMPpump";
+
+function CaWidget() {
+  const [copied, setCopied] = useState(false);
+  const short = OPAY_CA.slice(0, 6) + "..." + OPAY_CA.slice(-6);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(OPAY_CA).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div style={{ marginTop: "24px", width: "fit-content" }}>
+      <div style={{
+        fontFamily: MONO, fontSize: "8px", letterSpacing: "0.14em",
+        textTransform: "uppercase", color: C.muted, marginBottom: "8px",
+      }}>
+        $OPAY Contract Address
+      </div>
+      <button
+        onClick={handleCopy}
+        title="Click to copy full contract address"
+        style={{
+          display: "inline-flex", alignItems: "center", gap: "10px",
+          padding: "10px 16px",
+          background: `${C.gold}0d`,
+          border: `1px solid ${C.gold}55`,
+          borderRadius: "4px", cursor: "pointer",
+          transition: "all 0.15s",
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = `${C.gold}1a`;
+          e.currentTarget.style.borderColor = C.gold;
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = `${C.gold}0d`;
+          e.currentTarget.style.borderColor = `${C.gold}55`;
+        }}
+      >
+        <span style={{ fontFamily: MONO, fontSize: "11px", color: C.gold, letterSpacing: "0.04em" }}>
+          {short}
+        </span>
+        <span style={{
+          fontFamily: MONO, fontSize: "8px", letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: copied ? "#4ade80" : C.muted,
+          transition: "color 0.2s",
+          minWidth: "44px",
+        }}>
+          {copied ? "COPIED!" : "COPY"}
+        </span>
+      </button>
+    </div>
+  );
+}
+
 /* ─── Main component ─── */
 export default function Landing() {
   const [, navigate] = useLocation();
@@ -617,6 +676,9 @@ export default function Landing() {
             >
               OPEN YOUR ACCOUNT
             </button>
+
+            {/* $OPAY CA */}
+            <CaWidget />
 
             {/* Partner logos - scrolling ticker */}
             <div style={{ marginTop: "56px" }}>
