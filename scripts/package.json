@@ -1,6 +1,6 @@
 {
   "name": "olympay",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI for Olympay - financial control for autonomous AI agents",
   "keywords": [
     "olympay",

@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
+import { createInterface } from "readline";
 
 const CONFIG_DIR = join(homedir(), ".olympay");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
@@ -47,10 +48,42 @@ function saveConfig(cfg: Config) {
 function requireConfig(): Config {
   const cfg = loadConfig();
   if (!cfg?.apiKey) {
-    console.error(`${RED}Not logged in.${RESET} Run:  ${GOLD}olympay login --key olympay_ws_...${RESET}`);
+    console.error(`${RED}Not logged in.${RESET} Run:  ${GOLD}olympay login${RESET}`);
     process.exit(1);
   }
   return cfg;
+}
+
+function prompt(question: string, hidden = false): Promise<string> {
+  return new Promise((resolve) => {
+    const rl = createInterface({ input: process.stdin, output: process.stdout });
+    if (hidden) {
+      process.stdout.write(question);
+      process.stdin.setRawMode?.(true);
+      let input = "";
+      process.stdin.resume();
+      process.stdin.setEncoding("utf8");
+      process.stdin.on("data", function handler(ch: string) {
+        if (ch === "\n" || ch === "\r" || ch === "\u0003") {
+          process.stdin.setRawMode?.(false);
+          process.stdin.removeListener("data", handler);
+          process.stdout.write("\n");
+          rl.close();
+          resolve(input);
+        } else if (ch === "\u007f") {
+          if (input.length > 0) input = input.slice(0, -1);
+        } else {
+          input += ch;
+          process.stdout.write("*");
+        }
+      });
+    } else {
+      rl.question(question, (answer) => {
+        rl.close();
+        resolve(answer.trim());
+      });
+    }
+  });
 }
 
 async function apiCall(method: string, path: string, body?: unknown): Promise<any> {
@@ -78,28 +111,39 @@ const program = new Command();
 program
   .name("olympay")
   .description("Olympay CLI - spawn and manage AI agents with financial controls")
-  .version("0.1.0")
+  .version("0.1.2")
   .addHelpText("before", ASCII_BANNER);
 
 program
   .command("login")
   .description("Authenticate with a workspace API key")
-  .requiredOption("--key <key>", "Workspace API key (olympay_ws_...)")
+  .option("--key <key>", "Workspace API key (olympay_ws_...) - skips interactive prompt")
   .option("--api <url>", "API base URL", DEFAULT_API)
-  .action((opts) => {
-    if (!opts.key.startsWith("olympay_ws_")) {
-      console.error(`${RED}Invalid key format.${RESET} Expected: ${GOLD}olympay_ws_...${RESET}`);
+  .action(async (opts) => {
+    let key: string = opts.key ?? "";
+    if (!key) {
+      console.log(ASCII_BANNER);
+      console.log(`${DIM}Get your API key from: ${GOLD}https://olympay.tech${DIM} -> Settings -> Generate Key${RESET}\n`);
+      key = await prompt(`${GOLD}Paste your workspace API key:${RESET} `);
+    }
+    key = key.trim();
+    if (!key) {
+      console.error(`${RED}No key provided. Aborted.${RESET}`);
       process.exit(1);
     }
-    saveConfig({ apiKey: opts.key, apiBase: opts.api });
-    console.log(ASCII_BANNER);
-    console.log(`${GREEN}Logged in successfully.${RESET}`);
-    console.log(`${DIM}API base:${RESET} ${opts.api}`);
-    console.log(`${DIM}Config:  ${RESET} ${CONFIG_FILE}`);
+    if (!key.startsWith("olympay_ws_")) {
+      console.error(`${RED}Invalid key format.${RESET} Expected format: ${GOLD}olympay_ws_...${RESET}`);
+      console.error(`${DIM}Get your key at: https://olympay.tech -> Settings${RESET}`);
+      process.exit(1);
+    }
+    saveConfig({ apiKey: key, apiBase: opts.api });
+    console.log(`\n${GREEN}Logged in successfully.${RESET}`);
+    console.log(`${DIM}API:    ${RESET} ${opts.api}`);
+    console.log(`${DIM}Config: ${RESET} ${CONFIG_FILE}`);
     console.log(`\n${GOLD}Next steps:${RESET}`);
     console.log(`  ${CYAN}olympay agent create --name "my-bot"${RESET}   Spawn your first agent`);
     console.log(`  ${CYAN}olympay agent list${RESET}                      List all agents`);
-    console.log(`  ${CYAN}olympay account create --agent <id> --name "main"${RESET}`);
+    console.log(`  ${CYAN}olympay tx eval --agent <id> --amount 100 --currency USD --merchant "Amazon"${RESET}`);
   });
 
 program
