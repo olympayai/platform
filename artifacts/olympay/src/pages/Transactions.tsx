@@ -4,7 +4,7 @@ import {
   useListAgents, useListAccounts, useListCards,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Play } from "lucide-react";
+import { Play, ShieldCheck, ShieldX, ShieldAlert, Shield } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatMoney, formatDate } from "@/lib/utils";
 import {
@@ -13,9 +13,80 @@ import {
   MUTED, MONO, BLACK, CREAM, BORDER, GOLD,
 } from "@/components/ui/page-shell";
 
+const SANS = "'DM Sans', sans-serif";
+const SERIF = "'Playfair Display', Georgia, serif";
+
+type DecisionFilter = "ALL" | "ALLOW" | "DENY" | "REVIEW" | "NONE";
+
+const DECISION_TABS: { label: string; value: DecisionFilter; icon: any; color: string }[] = [
+  { label: "All",     value: "ALL",    icon: Shield,      color: "#78716c" },
+  { label: "Allowed", value: "ALLOW",  icon: ShieldCheck, color: "#16a34a" },
+  { label: "Denied",  value: "DENY",   icon: ShieldX,     color: "#dc2626" },
+  { label: "Review",  value: "REVIEW", icon: ShieldAlert, color: "#d97706" },
+];
+
+function getMerchant(tx: any): string {
+  if (tx.metadataJson?.merchant) return tx.metadataJson.merchant;
+  if (tx.merchantId) return tx.merchantId;
+  return "Unknown";
+}
+
+function DecisionSummary({ transactions }: { transactions: any[] }) {
+  const allow  = transactions.filter(t => t.decision === "ALLOW").length;
+  const deny   = transactions.filter(t => t.decision === "DENY").length;
+  const review = transactions.filter(t => t.decision === "REVIEW").length;
+  const total  = transactions.length;
+
+  const items = [
+    { label: "Total",   value: total,  color: "#78716c", bg: "#f5f5f4",  border: "#d6d3d1" },
+    { label: "Allowed", value: allow,  color: "#16a34a", bg: "#f0fdf4",  border: "#bbf7d0" },
+    { label: "Denied",  value: deny,   color: "#dc2626", bg: "#fff1f2",  border: "#fecdd3" },
+    { label: "Review",  value: review, color: "#d97706", bg: "#fffbeb",  border: "#fde68a" },
+  ];
+
+  return (
+    <div style={{ display: "flex", gap: "12px", marginBottom: "24px", flexWrap: "wrap" }}>
+      {items.map(item => (
+        <div key={item.label} style={{
+          display: "flex", flexDirection: "column", alignItems: "center",
+          padding: "12px 20px", minWidth: "80px",
+          background: item.bg, border: `1px solid ${item.border}`,
+          borderRadius: "6px",
+        }}>
+          <span style={{ fontFamily: SERIF, fontSize: "24px", fontWeight: 400, color: item.color, lineHeight: 1 }}>
+            {item.value}
+          </span>
+          <span style={{ fontFamily: MONO, fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: item.color, marginTop: "4px", opacity: 0.8 }}>
+            {item.label}
+          </span>
+        </div>
+      ))}
+
+      {total > 0 && (
+        <div style={{
+          flex: 1, minWidth: "180px", padding: "12px 20px",
+          background: "#fff", border: `1px solid ${BORDER}`, borderRadius: "6px",
+          display: "flex", flexDirection: "column", justifyContent: "center", gap: "6px",
+        }}>
+          <span style={{ fontFamily: MONO, fontSize: "8px", letterSpacing: "0.1em", textTransform: "uppercase", color: MUTED }}>Policy Engine</span>
+          <div style={{ display: "flex", gap: "4px", alignItems: "center", height: "8px", borderRadius: "4px", overflow: "hidden", background: "#f5f5f4" }}>
+            {allow  > 0 && <div style={{ flex: allow,  background: "#16a34a", opacity: 0.85 }} />}
+            {review > 0 && <div style={{ flex: review, background: "#d97706", opacity: 0.85 }} />}
+            {deny   > 0 && <div style={{ flex: deny,   background: "#dc2626", opacity: 0.85 }} />}
+          </div>
+          <span style={{ fontFamily: MONO, fontSize: "9px", color: MUTED }}>
+            {total > 0 ? `${Math.round((allow / total) * 100)}% passed · ${Math.round((deny / total) * 100)}% blocked` : "No data"}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Transactions() {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [decisionFilter, setDecisionFilter] = useState<DecisionFilter>("ALL");
   const [attemptResult, setAttemptResult] = useState<any>(null);
   const queryClient = useQueryClient();
 
@@ -40,9 +111,14 @@ export default function Transactions() {
     },
   });
 
-  const filtered = transactions.filter(
-    (t) => t.id.includes(search) || t.merchantId?.includes(search)
-  );
+  const filtered = transactions.filter((t) => {
+    const matchesSearch =
+      t.id.toLowerCase().includes(search.toLowerCase()) ||
+      getMerchant(t).toLowerCase().includes(search.toLowerCase()) ||
+      (t.merchantId || "").toLowerCase().includes(search.toLowerCase());
+    const matchesDecision = decisionFilter === "ALL" || t.decision === decisionFilter;
+    return matchesSearch && matchesDecision;
+  });
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,13 +159,58 @@ export default function Transactions() {
         subtitle="Audit trail of all agent spending and policy evaluations."
       />
 
+      <DecisionSummary transactions={transactions} />
+
+      {/* Decision filter tabs */}
+      <div style={{ display: "flex", gap: "4px", marginBottom: "16px", borderBottom: `1px solid ${BORDER}`, paddingBottom: "0" }}>
+        {DECISION_TABS.map(tab => {
+          const Icon = tab.icon;
+          const active = decisionFilter === tab.value;
+          const count = tab.value === "ALL"
+            ? transactions.length
+            : transactions.filter(t => t.decision === tab.value).length;
+          return (
+            <button
+              key={tab.value}
+              onClick={() => setDecisionFilter(tab.value)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "5px",
+                padding: "7px 14px",
+                fontFamily: MONO, fontSize: "9px", letterSpacing: "0.1em",
+                textTransform: "uppercase", cursor: "pointer", border: "none",
+                borderBottom: active ? `2px solid ${tab.color}` : "2px solid transparent",
+                background: "transparent",
+                color: active ? tab.color : MUTED,
+                fontWeight: active ? 700 : 400,
+                transition: "all 0.15s",
+                marginBottom: "-1px",
+              }}
+            >
+              <Icon size={10} />
+              {tab.label}
+              <span style={{
+                fontFamily: MONO, fontSize: "8px",
+                background: active ? `${tab.color}18` : "#f5f5f4",
+                color: active ? tab.color : MUTED,
+                border: `1px solid ${active ? tab.color + "30" : BORDER}`,
+                borderRadius: "10px", padding: "0 5px",
+              }}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
       <TablePanel
-        search={search} onSearch={setSearch} placeholder="Search by ID or merchant..."
+        search={search} onSearch={setSearch} placeholder="Search by merchant or ID..."
         extra={simulateBtn}
       >
         <TableHead cols={[
-          { label: "Transaction ID" }, { label: "Agent" }, { label: "Decision" },
-          { label: "Status" }, { label: "Amount", right: true }, { label: "Time", right: true },
+          { label: "Merchant" },
+          { label: "Agent" },
+          { label: "Decision" },
+          { label: "Status" },
+          { label: "Amount", right: true },
+          { label: "Time", right: true },
         ]} />
         <tbody>
           {isLoading ? (
@@ -99,17 +220,29 @@ export default function Transactions() {
           ) : (
             filtered.map((tx) => {
               const agent = agents.find((a) => a.id === tx.agentId);
+              const merchant = getMerchant(tx);
+              const category = tx.metadataJson?.category;
               return (
                 <TR key={tx.id}>
                   <TD>
-                    <div style={{ fontFamily: MONO, fontSize: "11px" }}>{tx.id.substring(0, 16)}...</div>
-                    <div style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginTop: "2px" }}>{tx.merchantId || "Unknown"}</div>
+                    <div style={{ fontFamily: SANS, fontSize: "13px", color: BLACK, fontWeight: 500 }}>{merchant}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                      <span style={{ fontFamily: MONO, fontSize: "9px", color: MUTED }}>{tx.id.substring(0, 14)}...</span>
+                      {category && (
+                        <span style={{
+                          fontFamily: MONO, fontSize: "8px", letterSpacing: "0.06em",
+                          textTransform: "uppercase", color: MUTED,
+                          background: "#f5f5f4", border: `1px solid ${BORDER}`,
+                          borderRadius: "2px", padding: "1px 5px",
+                        }}>{category.replace(/_/g, " ")}</span>
+                      )}
+                    </div>
                   </TD>
                   <TD muted>{agent?.name || "Unknown"}</TD>
                   <TD><StatusBadge status={tx.decision} /></TD>
                   <TD><StatusBadge status={tx.status} /></TD>
                   <TD right mono>
-                    <span style={{ color: tx.direction === "CREDIT" ? "#16a34a" : BLACK }}>
+                    <span style={{ color: tx.direction === "CREDIT" ? "#16a34a" : tx.decision === "DENY" ? "#dc2626" : BLACK }}>
                       {tx.direction === "CREDIT" ? "+" : "−"}{formatMoney(tx.amountMinor, tx.currency)}
                     </span>
                   </TD>
@@ -129,7 +262,6 @@ export default function Transactions() {
         >
           {attemptResult ? (
             <div>
-              {/* Result display */}
               <div style={{ textAlign: "center", padding: "24px 0 16px" }}>
                 <div style={{ marginBottom: "12px" }}>
                   <StatusBadge status={attemptResult.decision.result} />
