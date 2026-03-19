@@ -181,7 +181,7 @@ export default function Merchants() {
       </div>
 
       {/* Filter tabs */}
-      <div style={{ display: "flex", gap: "4px", marginBottom: "16px", borderBottom: `1px solid ${BORDER}` }}>
+      <div style={{ display: "flex", gap: "4px", marginBottom: "16px", borderBottom: `1px solid ${BORDER}`, overflowX: "auto", WebkitOverflowScrolling: "touch" } as any}>
         {FILTER_TABS.map(tab => {
           const active = filter === tab.value;
           const count = tab.value === "ALL" ? merchants.length

@@ -162,7 +162,7 @@ export default function Transactions() {
       <DecisionSummary transactions={transactions} />
 
       {/* Decision filter tabs */}
-      <div style={{ display: "flex", gap: "4px", marginBottom: "16px", borderBottom: `1px solid ${BORDER}`, paddingBottom: "0" }}>
+      <div style={{ display: "flex", gap: "4px", marginBottom: "16px", borderBottom: `1px solid ${BORDER}`, paddingBottom: "0", overflowX: "auto", WebkitOverflowScrolling: "touch" } as any}>
         {DECISION_TABS.map(tab => {
           const Icon = tab.icon;
           const active = decisionFilter === tab.value;
