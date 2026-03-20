@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Webhook, Plus, Trash2, ToggleLeft, ToggleRight, Copy, Check,
   Zap, CheckCircle2, XCircle, Clock, Globe,
@@ -75,7 +75,7 @@ export default function Webhooks() {
     "transaction.completed", "transaction.denied", "transaction.review",
   ]);
 
-  const fetchHooks = async () => {
+  const fetchHooks = useCallback(async () => {
     try {
       const token = await getAccessToken();
       const res = await fetch(`${BASE_URL}/api/v1/webhooks`, {
@@ -88,9 +88,9 @@ export default function Webhooks() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [getAccessToken]);
 
-  useState(() => { fetchHooks(); });
+  useEffect(() => { fetchHooks(); }, [fetchHooks]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
