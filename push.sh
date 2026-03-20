@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-TOKEN=$1
+TOKEN=${1:-$GITHUB_PERSONAL_ACCESS_TOKEN}
 
 if [ -z "$TOKEN" ]; then
-  echo "Usage: bash push.sh YOUR_GITHUB_TOKEN"
+  echo "Error: No token found. Either pass as argument or set GITHUB_PERSONAL_ACCESS_TOKEN env var."
   exit 1
 fi
 
