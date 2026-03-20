@@ -22,6 +22,7 @@ import AuditLogs from "@/pages/AuditLogs";
 import Webhooks from "@/pages/Webhooks";
 import Api from "@/pages/Api";
 import Settings from "@/pages/Settings";
+import Protocol from "@/pages/Protocol";
 import Docs from "@/pages/Docs";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
@@ -74,6 +75,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
+      <Route path="/protocol/v1" component={Protocol} />
       <Route path="/docs" component={Docs} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
