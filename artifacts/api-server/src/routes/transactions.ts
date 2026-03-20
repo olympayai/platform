@@ -5,6 +5,7 @@ import { z } from "zod";
 import { sendSuccess, sendError } from "../lib/response.js";
 import { NotFoundError, BadRequestError } from "../lib/errors.js";
 import { createAuditLog } from "../lib/auditLogger.js";
+import { fireWebhooks } from "../lib/webhookFirer.js";
 
 const router = Router();
 
@@ -180,6 +181,17 @@ router.post("/attempt", async (req, res, next) => {
       await createAuditLog({ workspaceId, entityType: "APPROVAL", entityId: approval.id, action: "APPROVAL_REQUESTED", payloadJson: { transactionId: transaction.id } });
       approvalRequest = approval;
     }
+
+    const webhookEvent = decisionResult === "ALLOW"
+      ? "transaction.completed"
+      : decisionResult === "DENY"
+      ? "transaction.denied"
+      : "transaction.review";
+
+    fireWebhooks(workspaceId, webhookEvent, {
+      transaction,
+      decision: { result: decisionResult, reason: decisionReason },
+    }).catch(() => {});
 
     return sendSuccess(res, {
       transaction,

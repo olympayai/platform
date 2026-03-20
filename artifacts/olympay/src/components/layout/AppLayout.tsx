@@ -19,6 +19,7 @@ import {
   Code2,
   Menu,
   X,
+  Webhook,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +43,7 @@ const navigation = [
   { name: "Approvals", href: "/approvals", icon: CheckSquare },
   { name: "Merchants", href: "/merchants", icon: Store },
   { name: "Audit Logs", href: "/audit-logs", icon: FileTerminal },
+  { name: "Webhooks", href: "/webhooks", icon: Webhook },
   { name: "API", href: "/api", icon: Code2 },
   { name: "Settings", href: "/settings", icon: Settings },
 ];

@@ -6,3 +6,4 @@ export * from "./transactions";
 export * from "./approvals";
 export * from "./auditLogs";
 export * from "./workspaceApiKeys";
+export * from "./webhooks";

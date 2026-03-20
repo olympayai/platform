@@ -19,6 +19,7 @@ import Transactions from "@/pages/Transactions";
 import Approvals from "@/pages/Approvals";
 import Merchants from "@/pages/Merchants";
 import AuditLogs from "@/pages/AuditLogs";
+import Webhooks from "@/pages/Webhooks";
 import Api from "@/pages/Api";
 import Settings from "@/pages/Settings";
 import Docs from "@/pages/Docs";
@@ -59,6 +60,7 @@ function DashboardRouter() {
           <Route path="/approvals" component={Approvals} />
           <Route path="/merchants" component={Merchants} />
           <Route path="/audit-logs" component={AuditLogs} />
+          <Route path="/webhooks" component={Webhooks} />
           <Route path="/api" component={Api} />
           <Route path="/settings" component={Settings} />
         </Switch>

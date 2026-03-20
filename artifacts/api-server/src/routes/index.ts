@@ -8,6 +8,7 @@ import transactionsRouter from "./transactions.js";
 import approvalsRouter from "./approvals.js";
 import auditLogsRouter from "./auditLogs.js";
 import monitoringRouter from "./monitoring.js";
+import webhooksRouter from "./webhooks.js";
 import { requireAuth } from "../middleware/auth.js";
 import { db, agentsTable, accountsTable, cardsTable, transactionsTable, policiesTable, policyAssignmentsTable, auditLogsTable, workspaceApiKeysTable } from "@workspace/db";
 import { eq, desc, and, isNull } from "drizzle-orm";
@@ -29,6 +30,7 @@ router.use("/v1/transactions", transactionsRouter);
 router.use("/v1/approvals", approvalsRouter);
 router.use("/v1/audit-logs", auditLogsRouter);
 router.use("/v1/monitoring", monitoringRouter);
+router.use("/v1/webhooks", webhooksRouter);
 
 function generateWorkspaceKey(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
