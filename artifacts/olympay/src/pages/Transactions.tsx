@@ -4,7 +4,7 @@ import {
   useListAgents, useListAccounts, useListCards,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Play, ShieldCheck, ShieldX, ShieldAlert, Shield } from "lucide-react";
+import { Play, ShieldCheck, ShieldX, ShieldAlert, Shield, Zap, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatMoney, formatDate } from "@/lib/utils";
 import {
@@ -12,6 +12,57 @@ import {
   Modal, Field, Input, Select, ModalActions,
   MUTED, MONO, BLACK, CREAM, BORDER, GOLD,
 } from "@/components/ui/page-shell";
+
+function ProtocolBanner() {
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      gap: "12px", flexWrap: "wrap",
+      background: `linear-gradient(135deg, ${BLACK} 0%, #1a1a14 100%)`,
+      border: `1px solid ${GOLD}33`,
+      borderRadius: "8px", padding: "12px 20px",
+      marginBottom: "20px",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div style={{
+          width: "28px", height: "28px", borderRadius: "50%",
+          background: `${GOLD}22`, border: `1px solid ${GOLD}55`,
+          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        }}>
+          <Zap size={13} color={GOLD} />
+        </div>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase", color: GOLD, fontWeight: 600 }}>
+              Olympay Payment Protocol
+            </span>
+            <span style={{
+              fontFamily: MONO, fontSize: "8px", letterSpacing: "0.1em",
+              textTransform: "uppercase", color: BLACK, fontWeight: 700,
+              background: GOLD, borderRadius: "3px", padding: "2px 6px",
+            }}>v1</span>
+          </div>
+          <span style={{ fontFamily: MONO, fontSize: "9px", color: "#a8a29e", marginTop: "2px", display: "block" }}>
+            Every transaction is evaluated in real-time by the policy engine before settlement.
+          </span>
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+        <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#16a34a", boxShadow: "0 0 6px #16a34a88" }} />
+        <span style={{ fontFamily: MONO, fontSize: "9px", color: "#a8a29e", letterSpacing: "0.06em" }}>Engine Active</span>
+        <a
+          href="https://olympay.tech/protocol/v1"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ marginLeft: "8px", color: `${GOLD}99`, display: "flex", alignItems: "center", gap: "3px", textDecoration: "none" }}
+        >
+          <ExternalLink size={10} />
+          <span style={{ fontFamily: MONO, fontSize: "9px" }}>spec</span>
+        </a>
+      </div>
+    </div>
+  );
+}
 
 const SANS = "'DM Sans', sans-serif";
 const SERIF = "'Playfair Display', Georgia, serif";
@@ -159,6 +210,8 @@ export default function Transactions() {
         subtitle="Audit trail of all agent spending and policy evaluations."
       />
 
+      <ProtocolBanner />
+
       <DecisionSummary transactions={transactions} />
 
       {/* Decision filter tabs */}
@@ -262,11 +315,38 @@ export default function Transactions() {
         >
           {attemptResult ? (
             <div>
-              <div style={{ textAlign: "center", padding: "24px 0 16px" }}>
+              {/* Protocol stamp */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                background: BLACK, borderRadius: "6px", padding: "10px 14px", marginBottom: "16px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Zap size={11} color={GOLD} />
+                  <span style={{ fontFamily: MONO, fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: GOLD }}>
+                    Olympay Payment Protocol
+                  </span>
+                  <span style={{ fontFamily: MONO, fontSize: "7px", background: GOLD, color: BLACK, borderRadius: "2px", padding: "1px 5px", fontWeight: 700 }}>v1</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  {attemptResult.protocol && (
+                    <span style={{ fontFamily: MONO, fontSize: "8px", color: "#78716c" }}>
+                      {attemptResult.protocol.policyCount} {attemptResult.protocol.policyCount === 1 ? "policy" : "policies"} evaluated
+                    </span>
+                  )}
+                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#16a34a", boxShadow: "0 0 5px #16a34a88" }} />
+                </div>
+              </div>
+
+              <div style={{ textAlign: "center", padding: "20px 0 16px" }}>
                 <div style={{ marginBottom: "12px" }}>
                   <StatusBadge status={attemptResult.decision.result} />
                 </div>
                 <p style={{ fontFamily: MONO, fontSize: "12px", color: MUTED }}>{attemptResult.decision.reason}</p>
+                {attemptResult.protocol?.evaluatedAt && (
+                  <p style={{ fontFamily: MONO, fontSize: "9px", color: "#a8a29e", marginTop: "6px" }}>
+                    Evaluated at {new Date(attemptResult.protocol.evaluatedAt).toLocaleTimeString()}
+                  </p>
+                )}
               </div>
 
               <div style={{ background: CREAM, border: `1px solid ${BORDER}`, borderRadius: "4px", padding: "16px", marginBottom: "20px" }}>

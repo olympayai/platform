@@ -189,6 +189,13 @@ router.post("/attempt", async (req, res, next) => {
         matchedPolicies: matchedPolicies.map(m => ({ policyId: m.policyId, policyType: m.policyType, outcome: m.outcome })),
       },
       approvalRequest,
+      protocol: {
+        name: "Olympay Payment Protocol",
+        version: "v1",
+        evaluatedAt: new Date().toISOString(),
+        policyCount: matchedPolicies.length,
+        specUrl: "https://olympay.tech/protocol/v1",
+      },
     });
   } catch (err) {
     next(err);
